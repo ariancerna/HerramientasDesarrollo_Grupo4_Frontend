@@ -18,3 +18,14 @@ export interface RegistroAsistencia {
   fechaHora: string;
   metodo: MetodoAsistencia;
 }
+
+export interface DatosCorreccionAsistencia {
+  fechaHora: string;
+  metodo: MetodoAsistencia;
+}
+
+export interface FiltrosAsistencia {
+  texto?: string;
+  categoria?: string;
+  fecha?: string;
+}
