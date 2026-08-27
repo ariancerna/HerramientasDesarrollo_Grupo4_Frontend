@@ -3,41 +3,17 @@
 import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Pdf417Scanner from "@/components/scanner/pdf417-scanner";
+import ConfirmacionEscaneo from "@/components/shared/confirmacion-escaneo";
+import { RoleGuard } from "@/components/shared/role-guard";
 import {
   EstudianteAsistencia,
   MetodoAsistencia,
   RegistroAsistencia,
   registrarAsistencia,
 } from "@/store/asistencia-store";
+import { obtenerAlumnos } from "@/store/alumnos-store";
 
 type Vista = "ESCANEO" | "MANUAL";
-
-const ESTUDIANTES_DEMO: EstudianteAsistencia[] = [
-  {
-    id: "alu-001",
-    dni: "76543210",
-    nombres: "Valentina",
-    apellidos: "Rojas Pérez",
-    categoria: "Sub-17 femenino",
-    activo: true,
-  },
-  {
-    id: "alu-002",
-    dni: "71234567",
-    nombres: "Diego",
-    apellidos: "Mendoza Ruiz",
-    categoria: "Sub-19 masculino",
-    activo: true,
-  },
-  {
-    id: "alu-003",
-    dni: "70456789",
-    nombres: "Camila",
-    apellidos: "Torres Silva",
-    categoria: "Mayores femenino",
-    activo: true,
-  },
-];
 
 function extraerDni(rawValue: string) {
   const exactValue = rawValue.trim();
@@ -60,6 +36,12 @@ function formatoHoraInput(date: Date) {
   ).padStart(2, "0")}`;
 }
 
+interface ConfirmacionPendiente {
+  estudiante: EstudianteAsistencia;
+  metodo: MetodoAsistencia;
+  fechaHora: string;
+}
+
 export default function AsistenciaProfesorPage() {
   const [vista, setVista] = useState<Vista>("ESCANEO");
   const [estudianteEscaneado, setEstudianteEscaneado] =
@@ -74,14 +56,27 @@ export default function AsistenciaProfesorPage() {
   const [mensajeError, setMensajeError] = useState("");
   const [ultimoRegistro, setUltimoRegistro] =
     useState<RegistroAsistencia | null>(null);
+  const [confirmacionPendiente, setConfirmacionPendiente] =
+    useState<ConfirmacionPendiente | null>(null);
 
   const limpiarMensajes = () => {
     setMensajeError("");
     setUltimoRegistro(null);
   };
 
-  const buscarEstudiante = (dni: string) =>
-    ESTUDIANTES_DEMO.find((estudiante) => estudiante.dni === dni);
+  const buscarEstudiante = (dni: string): EstudianteAsistencia | undefined => {
+    const alumno = obtenerAlumnos().find((item) => item.dni === dni);
+    if (!alumno) return undefined;
+
+    return {
+      id: alumno.id,
+      dni: alumno.dni,
+      nombres: alumno.nombres,
+      apellidos: alumno.apellidos,
+      categoria: alumno.categoria,
+      activo: alumno.estado === "activo",
+    };
+  };
 
   const procesarLectura = (rawValue: string) => {
     limpiarMensajes();
@@ -121,6 +116,7 @@ export default function AsistenciaProfesorPage() {
       setUltimoRegistro(registro);
       setEstudianteEscaneado(null);
       setDniManual("");
+      setConfirmacionPendiente(null);
     } catch (error) {
       setMensajeError(
         error instanceof Error
@@ -128,6 +124,16 @@ export default function AsistenciaProfesorPage() {
           : "No se pudo registrar la asistencia.",
       );
     }
+  };
+
+  const solicitarConfirmacion = (
+    estudiante: EstudianteAsistencia,
+    metodo: MetodoAsistencia,
+    fechaHora = new Date().toISOString(),
+  ) => {
+    limpiarMensajes();
+    setEstudianteEscaneado(null);
+    setConfirmacionPendiente({ estudiante, metodo, fechaHora });
   };
 
   const registrarManual = (event: FormEvent<HTMLFormElement>) => {
@@ -147,6 +153,11 @@ export default function AsistenciaProfesorPage() {
       return;
     }
 
+    if (!estudiante.activo) {
+      setMensajeError("El estudiante encontrado no está activo.");
+      return;
+    }
+
     if (!fechaManual || !horaManual) {
       setMensajeError("Selecciona la fecha y la hora de asistencia.");
       return;
@@ -158,17 +169,19 @@ export default function AsistenciaProfesorPage() {
       return;
     }
 
-    guardarRegistro(estudiante, "MANUAL", fechaHora.toISOString());
+    solicitarConfirmacion(estudiante, "MANUAL", fechaHora.toISOString());
   };
 
   const cambiarVista = (nextView: Vista) => {
     setVista(nextView);
     setEstudianteEscaneado(null);
+    setConfirmacionPendiente(null);
     limpiarMensajes();
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-amber-50 px-4 py-8 sm:px-6 lg:px-8">
+    <RoleGuard allowedRoles={["profesor"]}>
+      <main className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-amber-50 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <header className="mb-6 flex items-center gap-4 rounded-2xl bg-slate-950 px-5 py-4 shadow-lg sm:gap-6 sm:px-7">
           <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
@@ -228,7 +241,21 @@ export default function AsistenciaProfesorPage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-          {vista === "ESCANEO" ? (
+          {confirmacionPendiente ? (
+            <ConfirmacionEscaneo
+              estudiante={confirmacionPendiente.estudiante}
+              metodo={confirmacionPendiente.metodo}
+              fechaHora={confirmacionPendiente.fechaHora}
+              onConfirmar={() =>
+                guardarRegistro(
+                  confirmacionPendiente.estudiante,
+                  confirmacionPendiente.metodo,
+                  confirmacionPendiente.fechaHora,
+                )
+              }
+              onCancelar={() => setConfirmacionPendiente(null)}
+            />
+          ) : vista === "ESCANEO" ? (
             <Pdf417Scanner
               onDetected={procesarLectura}
               onError={(message) => {
@@ -327,10 +354,12 @@ export default function AsistenciaProfesorPage() {
             <div className="mt-5 flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
+                onClick={() =>
+                  solicitarConfirmacion(estudianteEscaneado, "ESCANEO")
+                }
                 className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
               >
-                Registrar asistencia
+                Continuar a confirmación
               </button>
               <button
                 type="button"
@@ -370,6 +399,7 @@ export default function AsistenciaProfesorPage() {
           </div>
         )}
       </div>
-    </main>
+      </main>
+    </RoleGuard>
   );
 }
