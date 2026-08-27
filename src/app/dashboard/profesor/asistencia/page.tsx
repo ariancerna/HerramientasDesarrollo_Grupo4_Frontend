@@ -265,9 +265,6 @@ export default function AsistenciaProfesorPage() {
                 }`}
               >
                 Escanear DNI
-                <span className="ml-2 hidden rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] text-emerald-700 sm:inline">
-                  SCRUM-14
-                </span>
               </button>
               <button
                 type="button"
@@ -281,9 +278,6 @@ export default function AsistenciaProfesorPage() {
                 }`}
               >
                 Registro manual
-                <span className="ml-2 hidden rounded-full bg-amber-100 px-2 py-0.5 text-[10px] text-amber-700 sm:inline">
-                  SCRUM-16
-                </span>
               </button>
             </div>
 
@@ -321,9 +315,6 @@ export default function AsistenciaProfesorPage() {
                         Úsalo cuando el DNI esté deteriorado o la cámara no esté disponible.
                       </p>
                     </div>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                      Solo frontend · guardado local
-                    </span>
                   </div>
 
                   <form onSubmit={registrarManual} className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -446,9 +437,6 @@ export default function AsistenciaProfesorPage() {
                   }).format(new Date(ultimoRegistro.fechaHora))}
                 </p>
               </div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700">
-                SCRUM-15
-              </span>
             </div>
           )}
 
