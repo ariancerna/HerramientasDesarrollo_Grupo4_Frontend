@@ -11,9 +11,11 @@ export default function LoginPage() {
         {/* Overlay oscuro para contraste */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628]/85 via-[#0A1628]/60 to-[#0A1628]/85" />
 
+
+
         {/* Logo */}
-        <div className="relative z-10">
-          <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white border-4 border-white shadow-xl overflow-hidden">
+        <div className="relative z-10 flex w-full justify-center">
+          <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-white border-4 border-white shadow-xl overflow-hidden">
             <img
               src="/logo-el-golazo-club.jpg"
               alt="El Golazo Club"
@@ -40,13 +42,18 @@ export default function LoginPage() {
           </p>
 
           <p className="mt-4 text-sm text-gray-200 max-w-sm leading-relaxed">
-            Formamos deportistas competitivos a través de pasión dentro y
-            fuera de la cancha.
+            Impulsamos el talento y la pasión por el voleibol, formando atletas dispuestos a darlo todo en cada set y fuera de la cancha.
           </p>
         </div>
 
+
+
+
+
+
+   <div className="relative z-10 mb-16 w-full">
         {/* Contacto y dirección */}
-        <div className="relative z-10 border-t border-white/15 pt-5 text-xs text-gray-300 space-y-2">
+        <div className="relative z-10 border-t border-white/15 pt-5 text-sm text-gray-300 space-y-3 -mt-16">
           <p className="text-[#6FCF3A] font-bold tracking-wide text-sm mb-1">
             CONTÁCTANOS Y DIRECCIÓN
           </p>
@@ -75,13 +82,14 @@ export default function LoginPage() {
           </p>
 
       <p className="flex items-center gap-2">
-  <img src="/face.png" alt="Facebook" className="w-4 h-4 invert" />
+  <img src="/face.png" alt="Facebook" className="w-5 h-5 invert" />
   Club Deportivo El Golazo
 </p>  
           <p className="flex items-center gap-2">
-            <img src="/insta.png" alt="Instagram" className="w-4 h-4" />
+            <img src="/insta.png" alt="Instagram" className="w-5 h-5 invert" />
             Club Deportivo El Golazo
           </p>
+        </div>
         </div>
       </div>
 
