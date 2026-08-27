@@ -7,7 +7,7 @@ import {
   saveSession,
   touchSession,
 } from "@/store/auth-store";
-import { Session } from "@/types";
+import { Role, Session } from "@/types";
 
 const ACTIVITY_EVENTS = ["mousemove", "keydown", "click", "scroll"] as const;
 const CHECK_INTERVAL_MS = 15 * 1000;
@@ -20,6 +20,7 @@ interface LoginParams {
 interface LoginResult {
   ok: boolean;
   error?: string;
+  rol?: Role;
 }
 
 export function useAuth() {
@@ -46,7 +47,7 @@ export function useAuth() {
     const { password: _password, ...usuarioSinPassword } = match;
     const newSession = saveSession(usuarioSinPassword);
     setSession(newSession);
-    return { ok: true };
+    return { ok: true, rol: usuarioSinPassword.rol };
   }, []);
 
   const logout = useCallback(() => {

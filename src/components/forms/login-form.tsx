@@ -58,7 +58,7 @@ export function LoginForm() {
         setSubmitError(result.error ?? "No se pudo iniciar sesión.");
         return;
       }
-      router.push(ROLE_HOME_ROUTE.administrador);
+      router.push(ROLE_HOME_ROUTE[result.rol ?? "administrador"]);
     }, 400);
   }
 
