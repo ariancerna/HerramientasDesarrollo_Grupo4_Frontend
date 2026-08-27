@@ -1,23 +1,14 @@
-export type MetodoAsistencia = "ESCANEO" | "MANUAL";
+import {
+  EstudianteAsistencia,
+  MetodoAsistencia,
+  RegistroAsistencia,
+} from "@/types/asistencia";
 
-export interface EstudianteAsistencia {
-  id: string;
-  dni: string;
-  nombres: string;
-  apellidos: string;
-  categoria: string;
-  activo: boolean;
-}
-
-export interface RegistroAsistencia {
-  id: string;
-  estudianteId: string;
-  dni: string;
-  estudiante: string;
-  categoria: string;
-  fechaHora: string;
-  metodo: MetodoAsistencia;
-}
+export type {
+  EstudianteAsistencia,
+  MetodoAsistencia,
+  RegistroAsistencia,
+} from "@/types/asistencia";
 
 const STORAGE_KEY = "kickstamp-asistencias";
 
