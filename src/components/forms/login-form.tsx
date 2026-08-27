@@ -67,19 +67,19 @@ export function LoginForm() {
       {submitError && (
         <div
           role="alert"
-          className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+          className="mb-5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-medium text-red-700"
         >
           {submitError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
-          <label htmlFor="usuario" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="usuario" className="mb-1.5 block text-sm font-semibold text-slate-700">
             Usuario
           </label>
           <div className="relative">
-            <UserIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <UserIcon className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-500" />
             <input
               id="usuario"
               name="usuario"
@@ -88,21 +88,21 @@ export function LoginForm() {
               value={form.usuario}
               onChange={handleChange}
               aria-invalid={Boolean(errors.usuario)}
-              className={`w-full rounded-md border pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${
-                errors.usuario ? "border-red-400" : "border-gray-300"
+              className={`h-11 w-full rounded-lg border bg-white pl-10 pr-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#16794C] focus:ring-4 focus:ring-[#16794C]/10 ${
+                errors.usuario ? "border-red-400 focus:border-red-500 focus:ring-red-100" : "border-slate-300"
               }`}
-              placeholder="Usuario"
+              placeholder="Ingresa tu usuario"
             />
           </div>
-          {errors.usuario && <p className="mt-1 text-xs text-red-500">{errors.usuario}</p>}
+          {errors.usuario && <p className="mt-1.5 text-xs font-medium text-red-600">{errors.usuario}</p>}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700">
             Contraseña
           </label>
           <div className="relative">
-            <LockIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <LockIcon className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-500" />
             <input
               id="password"
               name="password"
@@ -111,27 +111,27 @@ export function LoginForm() {
               value={form.password}
               onChange={handleChange}
               aria-invalid={Boolean(errors.password)}
-              className={`w-full rounded-md border pl-9 pr-9 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${
-                errors.password ? "border-red-400" : "border-gray-300"
+              className={`h-11 w-full rounded-lg border bg-white pl-10 pr-11 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#16794C] focus:ring-4 focus:ring-[#16794C]/10 ${
+                errors.password ? "border-red-400 focus:border-red-500 focus:ring-red-100" : "border-slate-300"
               }`}
-              placeholder="••••••••"
+              placeholder="Ingresa tu contraseña"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16794C]/30"
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
-              <EyeIcon open={showPassword} className="w-4 h-4" />
+              <EyeIcon open={showPassword} className="h-[18px] w-[18px]" />
             </button>
           </div>
-          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+          {errors.password && <p className="mt-1.5 text-xs font-medium text-red-600">{errors.password}</p>}
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-[#16794C] hover:bg-[#12613D] disabled:opacity-60 text-white text-sm font-medium py-2.5 transition-colors"
+          className="flex h-11 w-full items-center justify-center rounded-lg bg-[#16794C] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-4 focus:ring-[#16794C]/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
