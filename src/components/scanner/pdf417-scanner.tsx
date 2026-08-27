@@ -82,6 +82,12 @@ export default function Pdf417Scanner({
         throw new Error("Este navegador no permite acceder a la cámara.");
       }
 
+      if (!window.isSecureContext) {
+        throw new Error(
+          "La cámara requiere una conexión segura (HTTPS) o ejecutar la app en localhost.",
+        );
+      }
+
       const BarcodeDetectorApi = getBarcodeDetector();
       if (!BarcodeDetectorApi) {
         throw new Error(
@@ -128,7 +134,17 @@ export default function Pdf417Scanner({
 
           if (context) {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const results = await detector.detect(canvas);
+            let results: BarcodeDetectorResult[];
+            try {
+              results = await detector.detect(canvas);
+            } catch {
+              stopCamera();
+              reportError(
+                "Se interrumpió la lectura del DNI. Intenta activar la cámara nuevamente.",
+              );
+              return;
+            }
+
             const value = results.find((result) => result.rawValue)?.rawValue;
 
             if (value) {

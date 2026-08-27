@@ -65,6 +65,11 @@ export function registrarAsistencia(
     throw new Error("El registro solo está disponible en el navegador.");
   }
 
+  const fecha = new Date(fechaHora);
+  if (Number.isNaN(fecha.getTime())) {
+    throw new Error("La fecha u hora de asistencia no es válida.");
+  }
+
   const registros = leerRegistros();
   const fechaRegistro = fechaLocal(fechaHora);
   const duplicado = registros.some(
@@ -93,7 +98,9 @@ export function registrarAsistencia(
 }
 
 export function obtenerRegistrosAsistencia(): RegistroAsistencia[] {
-  return leerRegistros();
+  return [...leerRegistros()].sort(
+    (a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime(),
+  );
 }
 
 export function obtenerAsistenciasPorEstudiante(
