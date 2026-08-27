@@ -51,50 +51,93 @@ export default function LoginPage() {
 
 
 
-   <div className="relative z-10 mb-16 w-full">
-        {/* Contacto y dirección */}
-        <div className="relative z-10 border-t border-white/15 pt-5 text-sm text-gray-300 space-y-3 -mt-16">
-          <p className="text-[#6FCF3A] font-bold tracking-wide text-sm mb-1">
-            CONTÁCTANOS Y DIRECCIÓN
-          </p>
+        <div className="relative z-10 mb-16 w-full">
+          {/* Contacto y dirección */}
+          <div className="relative z-10 border-t border-white/15 pt-5 text-sm text-gray-300 space-y-3 -mt-16">
+            <p className="text-[#6FCF3A] font-bold tracking-wide text-sm mb-1">
+              CONTÁCTANOS Y DIRECCIÓN
+            </p>
 
-         <p className="flex items-center gap-2">
+
+<a
+  href="https://wa.me/message/QOWSTIZGBL72H1"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center gap-2"
+>
   <img 
-    src="/phone.png" 
-    alt="Teléfono" 
-    className="w-[15px] h-[15px] rotate-180 object-contain" 
+    src="/wsp.png" 
+    alt="WhatsApp" 
+    className="w-[17px] h-[17px] object-contain invert" 
   />
-            994 796 381 &nbsp;•&nbsp; 998 678 259
-          </p>
+  994 796 381
+</a>
 
 
-    <p className="flex items-start gap-2">
-  <img 
-    src="/location.png" 
-    alt="Ubicación" 
-    className="w-[15px] h-[15px] object-contain mt-0.5" 
-  />
-  <span>Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7</span>
-</p>
 
-          <p className="text-[#6FCF3A] font-bold tracking-wide text-sm pt-3">
-            SÍGUENOS EN REDES
-          </p>
 
-      <p className="flex items-center gap-2">
-  <img src="/face.png" alt="Facebook" className="w-5 h-5 invert" />
-  Club Deportivo El Golazo
-</p>  
-          <p className="flex items-center gap-2">
-            <img src="/insta.png" alt="Instagram" className="w-5 h-5 invert" />
-            Club Deportivo El Golazo
-          </p>
-        </div>
+
+            <p className="flex items-center gap-2">
+              <img
+                src="/phone.png"
+                alt="Teléfono"
+                className="w-[15px] h-[15px] rotate-180 object-contain"
+              />
+              998 678 259
+            </p>
+
+
+            <p className="flex items-start gap-2">
+              <img
+                src="/location.png"
+                alt="Ubicación"
+                className="w-[15px] h-[15px] object-contain mt-0.5"
+              />
+              <span>Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7</span>
+            </p>
+
+            <p className="text-[#6FCF3A] font-bold tracking-wide text-sm pt-3">
+              SÍGUENOS EN REDES
+            </p>
+
+
+
+            <a
+              href="https://www.facebook.com/clubgolazo/about?locale=es_LA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/face.png"
+                alt="Facebook"
+                className="w-5 h-5 invert"
+              />
+              Club Deportivo El Golazo
+            </a>
+
+
+
+            <a
+              href="https://www.tiktok.com/@clubdeportivoelgolazo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/tiktok.png"
+                alt="TikTok"
+                className="w-5 h-5 invert"
+              />
+              Club Deportivo El Golazo
+            </a>
+
+
+
+
+          </div>
         </div>
       </div>
-
-
-
 
 
       {/* Panel derecho — formulario */}
