@@ -2,20 +2,143 @@ import { LoginForm } from "@/components/forms/login-form";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#F7F9F7]">
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white">
       {/* Panel izquierdo — marca */}
-      <div className="md:w-1/2 bg-[#0D2B21] text-white flex flex-col items-center justify-center px-10 py-16 text-center">
-        <div className="w-20 h-20 rounded-full bg-[#16794C] flex items-center justify-center mb-6">
-          <BallIcon className="w-10 h-10 text-white" />
+      <div
+        className="md:w-1/2 relative flex flex-col justify-between px-10 py-10 text-white bg-cover bg-center overflow-hidden"
+        style={{ backgroundImage: `url('/login-fondo.png')` }}
+      >
+        {/* Overlay oscuro para contraste */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628]/85 via-[#0A1628]/60 to-[#0A1628]/85" />
+
+
+
+        {/* Logo */}
+        <div className="relative z-10 flex w-full justify-center">
+          <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-white border-4 border-white shadow-xl overflow-hidden">
+            <img
+              src="/logo-el-golazo-club.jpg"
+              alt="El Golazo Club"
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
-        <h1 className="text-3xl font-bold tracking-wide">KICKSTAMP</h1>
-        <p className="mt-3 text-sm text-[#B9CFC3] max-w-xs">
-          Sistema Inteligente de Control de Asistencia del Golazo Club
-        </p>
-        <p className="mt-8 text-xs text-[#7FA491] italic">
-          Disciplina hoy, mejores jugadores mañana.
-        </p>
+
+        {/* Mensaje central */}
+        <div className="relative z-10 max-w-md">
+          <p className="text-base md:text-lg font-bold text-[#6FCF3A] tracking-wide">
+            MÁS QUE UN CLUB,
+          </p>
+          <h1 className="mt-1 text-4xl md:text-[42px] font-extrabold leading-[1.15] text-white">
+            UNA FAMILIA,
+            <br />
+            UN PROPÓSITO,
+          </h1>
+          <p
+            className="mt-1 text-5xl md:text-6xl text-[#6FCF3A]"
+            style={{ fontFamily: "var(--font-caveat)" }}
+          >
+            un golazo.
+          </p>
+
+          <p className="mt-4 text-sm text-gray-200 max-w-sm leading-relaxed">
+            Impulsamos el talento y la pasión por el voleibol, formando atletas dispuestos a darlo todo en cada set y fuera de la cancha.
+          </p>
+        </div>
+
+
+
+
+
+
+        <div className="relative z-10 mb-16 w-full">
+          {/* Contacto y dirección */}
+          <div className="relative z-10 border-t border-white/15 pt-5 text-sm text-gray-300 space-y-3 -mt-16">
+            <p className="text-[#6FCF3A] font-bold tracking-wide text-sm mb-1">
+              CONTÁCTANOS Y DIRECCIÓN
+            </p>
+
+
+<a
+  href="https://wa.me/message/QOWSTIZGBL72H1"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center gap-2"
+>
+  <img 
+    src="/wsp.png" 
+    alt="WhatsApp" 
+    className="w-[17px] h-[17px] object-contain invert" 
+  />
+  994 796 381
+</a>
+
+
+
+
+
+            <p className="flex items-center gap-2">
+              <img
+                src="/phone.png"
+                alt="Teléfono"
+                className="w-[15px] h-[15px] rotate-180 object-contain"
+              />
+              998 678 259
+            </p>
+
+
+            <p className="flex items-start gap-2">
+              <img
+                src="/location.png"
+                alt="Ubicación"
+                className="w-[15px] h-[15px] object-contain mt-0.5"
+              />
+              <span>Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7</span>
+            </p>
+
+            <p className="text-[#6FCF3A] font-bold tracking-wide text-sm pt-3">
+              SÍGUENOS EN REDES
+            </p>
+
+
+
+            <a
+              href="https://www.facebook.com/clubgolazo/about?locale=es_LA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/face.png"
+                alt="Facebook"
+                className="w-5 h-5 invert"
+              />
+              Club Deportivo El Golazo
+            </a>
+
+
+
+            <a
+              href="https://www.tiktok.com/@clubdeportivoelgolazo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/tiktok.png"
+                alt="TikTok"
+                className="w-5 h-5 invert"
+              />
+              Club Deportivo El Golazo
+            </a>
+
+
+
+
+          </div>
+        </div>
       </div>
+
 
       {/* Panel derecho — formulario */}
       <div className="md:w-1/2 flex flex-col items-center justify-center px-8 py-16">
