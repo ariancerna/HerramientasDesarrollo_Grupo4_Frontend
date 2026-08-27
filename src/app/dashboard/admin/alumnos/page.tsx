@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
@@ -15,17 +15,13 @@ import {
 } from "@/store/alumnos-store";
 
 export default function AlumnosAdminPage() {
-  const [alumnos, setAlumnos] = useState<Student[]>([]);
+  const [alumnos, setAlumnos] = useState<Student[]>(obtenerAlumnos);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alumnoAEditar, setAlumnoAEditar] = useState<Student | null>(null);
-
-  useEffect(() => {
-    setAlumnos(obtenerAlumnos());
-  }, []);
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos, { texto, categoria, estado }),
@@ -99,12 +95,14 @@ export default function AlumnosAdminPage() {
             onEliminar={handleEliminar}
           />
 
-          <AlumnoForm
-            isOpen={isModalOpen}
-            alumnoAEditar={alumnoAEditar}
-            onClose={() => setIsModalOpen(false)}
-            onGuardar={handleGuardar}
-          />
+          {isModalOpen && (
+            <AlumnoForm
+              key={alumnoAEditar?.id ?? "nuevo"}
+              alumnoAEditar={alumnoAEditar}
+              onClose={() => setIsModalOpen(false)}
+              onGuardar={handleGuardar}
+            />
+          )}
         </div>
       </main>
     </RoleGuard>

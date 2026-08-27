@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
@@ -8,14 +8,10 @@ import { Student } from "@/types/student";
 import { filtrarAlumnos, obtenerAlumnos } from "@/store/alumnos-store";
 
 export default function AlumnosProfesorPage() {
-  const [alumnos, setAlumnos] = useState<Student[]>([]);
+  const [alumnos] = useState<Student[]>(obtenerAlumnos);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
-
-  useEffect(() => {
-    setAlumnos(obtenerAlumnos());
-  }, []);
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos, { texto, categoria, estado }),

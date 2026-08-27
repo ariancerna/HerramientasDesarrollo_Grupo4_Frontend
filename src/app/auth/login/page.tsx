@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/forms/login-form";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -16,9 +17,11 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="relative z-10 flex w-full justify-center">
           <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-white border-4 border-white shadow-xl overflow-hidden">
-            <img
+            <Image
               src="/logo-el-golazo-club.jpg"
               alt="El Golazo Club"
+              width={176}
+              height={176}
               className="w-full h-full object-cover"
             />
           </div>
@@ -65,9 +68,11 @@ export default function LoginPage() {
   rel="noopener noreferrer"
   className="flex items-center gap-2"
 >
-  <img 
+  <Image
     src="/wsp.png" 
     alt="WhatsApp" 
+    width={17}
+    height={17}
     className="w-[17px] h-[17px] object-contain invert" 
   />
   994 796 381
@@ -78,9 +83,11 @@ export default function LoginPage() {
 
 
             <p className="flex items-center gap-2">
-              <img
+              <Image
                 src="/phone.png"
                 alt="Teléfono"
+                width={15}
+                height={15}
                 className="w-[15px] h-[15px] rotate-180 object-contain"
               />
               998 678 259
@@ -88,9 +95,11 @@ export default function LoginPage() {
 
 
             <p className="flex items-start gap-2">
-              <img
+              <Image
                 src="/location.png"
                 alt="Ubicación"
+                width={15}
+                height={15}
                 className="w-[15px] h-[15px] object-contain mt-0.5"
               />
               <span>Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7</span>
@@ -108,9 +117,11 @@ export default function LoginPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
-              <img
+              <Image
                 src="/face.png"
                 alt="Facebook"
+                width={20}
+                height={20}
                 className="w-5 h-5 invert"
               />
               Club Deportivo El Golazo
@@ -124,9 +135,11 @@ export default function LoginPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
-              <img
+              <Image
                 src="/tiktok.png"
                 alt="TikTok"
+                width={20}
+                height={20}
                 className="w-5 h-5 invert"
               />
               Club Deportivo El Golazo
@@ -156,19 +169,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-function BallIcon({ className }: { className: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 7l3 2.2-1.1 3.6H10.1L9 9.2 12 7zM12 3v4M12 17v4M4 8l3.5 1M20 8l-3.5 1M4 16l3.5-1M20 16l-3.5-1"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

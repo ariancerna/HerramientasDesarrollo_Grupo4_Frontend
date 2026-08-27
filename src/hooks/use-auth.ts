@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
 import {
   clearSession,
-  getSession,
+  getSessionSnapshot,
   isSessionExpired,
+  parseSessionSnapshot,
   saveSession,
+  subscribeToSession,
   touchSession,
 } from "@/store/auth-store";
 import { Role, Session } from "@/types";
@@ -24,16 +26,21 @@ interface LoginResult {
 }
 
 export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
-  // Evita parpadeos: en el primer render (servidor) no sabemos si hay
-  // sesión, así que "isLoading" nos deja mostrar un estado neutral.
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const stored = getSession();
-    setSession(stored && !isSessionExpired(stored) ? stored : null);
-    setIsLoading(false);
-  }, []);
+  const snapshot = useSyncExternalStore(
+    subscribeToSession,
+    getSessionSnapshot,
+    () => null,
+  );
+  const isHydrated = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const parsedSession = useMemo(() => parseSessionSnapshot(snapshot), [snapshot]);
+  const session: Session | null =
+    parsedSession && !isSessionExpired(parsedSession) ? parsedSession : null;
+  const isLoading = !isHydrated;
+  const lastTouchRef = useRef(0);
 
   const login = useCallback(({ usuario, password }: LoginParams): LoginResult => {
     const match = MOCK_USUARIOS.find(
@@ -44,15 +51,19 @@ export function useAuth() {
       return { ok: false, error: "Usuario o contraseña incorrectos." };
     }
 
-    const { password: _password, ...usuarioSinPassword } = match;
-    const newSession = saveSession(usuarioSinPassword);
-    setSession(newSession);
+    const usuarioSinPassword = {
+      id: match.id,
+      usuario: match.usuario,
+      nombre: match.nombre,
+      rol: match.rol,
+      estudianteId: match.estudianteId,
+    };
+    saveSession(usuarioSinPassword);
     return { ok: true, rol: usuarioSinPassword.rol };
   }, []);
 
   const logout = useCallback(() => {
     clearSession();
-    setSession(null);
   }, []);
 
   // Reinicia el contador de inactividad ante actividad del usuario
@@ -60,8 +71,10 @@ export function useAuth() {
     if (!session) return;
 
     const handleActivity = () => {
-      const updated = touchSession();
-      if (updated) setSession(updated);
+      const now = Date.now();
+      if (now - lastTouchRef.current < 30_000) return;
+      lastTouchRef.current = now;
+      touchSession();
     };
 
     ACTIVITY_EVENTS.forEach((evt) => window.addEventListener(evt, handleActivity));
@@ -75,10 +88,9 @@ export function useAuth() {
     if (!session) return;
 
     const interval = setInterval(() => {
-      const current = getSession();
+      const current = parseSessionSnapshot(getSessionSnapshot());
       if (isSessionExpired(current)) {
         clearSession();
-        setSession(null);
       }
     }, CHECK_INTERVAL_MS);
 

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Student, StudentFormData } from "@/types/student";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 
 interface AlumnoFormProps {
-  isOpen: boolean;
   alumnoAEditar: Student | null;
   onClose: () => void;
   onGuardar: (data: StudentFormData, id?: string) => void;
@@ -26,25 +25,26 @@ const formularioVacio: StudentFormData = {
 type Errores = Partial<Record<keyof StudentFormData, string>>;
 
 export default function AlumnoForm({
-  isOpen,
   alumnoAEditar,
   onClose,
   onGuardar,
 }: AlumnoFormProps) {
-  const [form, setForm] = useState<StudentFormData>(formularioVacio);
+  const [form, setForm] = useState<StudentFormData>(() => {
+    if (!alumnoAEditar) return formularioVacio;
+
+    return {
+      dni: alumnoAEditar.dni,
+      codigo: alumnoAEditar.codigo,
+      nombres: alumnoAEditar.nombres,
+      apellidos: alumnoAEditar.apellidos,
+      email: alumnoAEditar.email,
+      categoria: alumnoAEditar.categoria,
+      carrera: alumnoAEditar.carrera,
+      ciclo: alumnoAEditar.ciclo,
+      estado: alumnoAEditar.estado,
+    };
+  });
   const [errores, setErrores] = useState<Errores>({});
-
-  useEffect(() => {
-    if (alumnoAEditar) {
-      const { id: _id, ...resto } = alumnoAEditar;
-      setForm(resto);
-    } else {
-      setForm(formularioVacio);
-    }
-    setErrores({});
-  }, [alumnoAEditar, isOpen]);
-
-  if (!isOpen) return null;
 
   const validar = (): boolean => {
     const nuevosErrores: Errores = {};
