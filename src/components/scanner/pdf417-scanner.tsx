@@ -82,12 +82,6 @@ export default function Pdf417Scanner({
         throw new Error("Este navegador no permite acceder a la cámara.");
       }
 
-      if (!window.isSecureContext) {
-        throw new Error(
-          "La cámara requiere una conexión segura (HTTPS) o ejecutar la app en localhost.",
-        );
-      }
-
       const BarcodeDetectorApi = getBarcodeDetector();
       if (!BarcodeDetectorApi) {
         throw new Error(
@@ -134,17 +128,7 @@ export default function Pdf417Scanner({
 
           if (context) {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            let results: BarcodeDetectorResult[];
-            try {
-              results = await detector.detect(canvas);
-            } catch {
-              stopCamera();
-              reportError(
-                "Se interrumpió la lectura del DNI. Intenta activar la cámara nuevamente.",
-              );
-              return;
-            }
-
+            const results = await detector.detect(canvas);
             const value = results.find((result) => result.rawValue)?.rawValue;
 
             if (value) {
@@ -195,7 +179,7 @@ export default function Pdf417Scanner({
         </p>
       </div>
 
-      <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-950">
+      <div className="relative aspect-video overflow-hidden rounded-lg bg-[#0A1628]">
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
@@ -209,7 +193,7 @@ export default function Pdf417Scanner({
           </div>
         )}
         <div
-          className="pointer-events-none absolute inset-x-[10%] top-1/2 h-[42%] -translate-y-1/2 rounded-xl border-2 border-dashed border-amber-400"
+          className="pointer-events-none absolute inset-x-[10%] top-1/2 h-[42%] -translate-y-1/2 rounded-lg border-2 border-dashed border-[#6FCF3A]"
           aria-hidden="true"
         />
       </div>
@@ -224,13 +208,13 @@ export default function Pdf417Scanner({
         <button
           type="button"
           onClick={isScanning ? stopCamera : startCamera}
-          className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+          className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
         >
           {isScanning ? "Detener cámara" : "Activar cámara"}
         </button>
       </div>
 
-      <details className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <details className="rounded-lg border border-slate-200 bg-slate-50 p-4">
         <summary className="cursor-pointer text-sm font-semibold text-slate-800">
           Probar sin cámara
         </summary>
@@ -244,11 +228,11 @@ export default function Pdf417Scanner({
             onChange={(event) => setTestValue(event.target.value)}
             inputMode="numeric"
             placeholder="Ejemplo: 76543210"
-            className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
           />
           <button
             type="submit"
-            className="rounded-xl border border-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-amber-500 hover:bg-amber-50"
+            className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#16794C] hover:bg-[#edf8e8]"
           >
             Simular lectura
           </button>

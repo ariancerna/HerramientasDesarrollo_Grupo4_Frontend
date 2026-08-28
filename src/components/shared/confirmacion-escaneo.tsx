@@ -24,7 +24,7 @@ export default function ConfirmacionEscaneo({
 
   return (
     <section
-      className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
+      className="rounded-lg border border-emerald-200 bg-emerald-50 p-5"
       aria-labelledby="confirmacion-asistencia-title"
     >
       <p className="text-sm font-semibold text-emerald-800">
@@ -74,14 +74,14 @@ export default function ConfirmacionEscaneo({
         <button
           type="button"
           onClick={onConfirmar}
-          className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+          className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
         >
           Confirmar asistencia
         </button>
         <button
           type="button"
           onClick={onCancelar}
-          className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
+          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
         >
           Cancelar
         </button>

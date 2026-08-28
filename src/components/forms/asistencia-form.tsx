@@ -85,7 +85,7 @@ export default function AsistenciaForm({
               value={fecha}
               onChange={(event) => setFecha(event.target.value)}
               required
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
           </label>
 
@@ -98,7 +98,7 @@ export default function AsistenciaForm({
               value={hora}
               onChange={(event) => setHora(event.target.value)}
               required
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
           </label>
 
@@ -111,7 +111,7 @@ export default function AsistenciaForm({
               onChange={(event) =>
                 setMetodo(event.target.value as RegistroAsistencia["metodo"])
               }
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             >
               <option value="ESCANEO">Escaneo de DNI</option>
               <option value="MANUAL">Registro manual</option>
@@ -128,7 +128,7 @@ export default function AsistenciaForm({
             </button>
             <button
               type="submit"
-              className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+              className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
             >
               Guardar corrección
             </button>
