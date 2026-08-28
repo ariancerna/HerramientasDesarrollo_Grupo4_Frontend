@@ -5,7 +5,7 @@ export default function CategoriasPage() {
     <ModuloEnConstruccion
       titulo="Categorías"
       descripcion="La gestión de categorías estará disponible cuando el equipo complete este módulo."
-      icono="🏷️"
+      icono="tag"
     />
   );
 }
