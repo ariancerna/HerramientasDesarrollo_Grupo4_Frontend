@@ -5,6 +5,7 @@ export interface Usuario {
   usuario: string;
   nombre: string;
   rol: Role;
+  estudianteId?: string;
 }
 
 export interface Session {

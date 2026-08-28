@@ -58,10 +58,12 @@ export function LoginForm() {
         setSubmitError(result.error ?? "No se pudo iniciar sesión.");
         return;
       }
-      router.push(ROLE_HOME_ROUTE.administrador);
+
+      if (result.rol) {
+        router.push(ROLE_HOME_ROUTE[result.rol]);
+      }
     }, 400);
   }
-
   return (
     <>
       {submitError && (
@@ -88,9 +90,8 @@ export function LoginForm() {
               value={form.usuario}
               onChange={handleChange}
               aria-invalid={Boolean(errors.usuario)}
-              className={`w-full rounded-md border pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${
-                errors.usuario ? "border-red-400" : "border-gray-300"
-              }`}
+              className={`w-full rounded-md border pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${errors.usuario ? "border-red-400" : "border-gray-300"
+                }`}
               placeholder="Usuario"
             />
           </div>
@@ -111,9 +112,8 @@ export function LoginForm() {
               value={form.password}
               onChange={handleChange}
               aria-invalid={Boolean(errors.password)}
-              className={`w-full rounded-md border pl-9 pr-9 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${
-                errors.password ? "border-red-400" : "border-gray-300"
-              }`}
+              className={`w-full rounded-md border pl-9 pr-9 py-2 text-sm outline-none focus:ring-2 focus:ring-[#16794C] ${errors.password ? "border-red-400" : "border-gray-300"
+                }`}
               placeholder="••••••••"
             />
             <button

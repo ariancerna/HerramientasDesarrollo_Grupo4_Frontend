@@ -20,6 +20,7 @@ interface LoginParams {
 interface LoginResult {
   ok: boolean;
   error?: string;
+  rol?: Session["usuario"]["rol"]; // <- agregar esto
 }
 
 export function useAuth() {
@@ -46,7 +47,7 @@ export function useAuth() {
     const { password: _password, ...usuarioSinPassword } = match;
     const newSession = saveSession(usuarioSinPassword);
     setSession(newSession);
-    return { ok: true };
+    return { ok: true, rol: newSession.usuario.rol }; // <- agregar rol
   }, []);
 
   const logout = useCallback(() => {
