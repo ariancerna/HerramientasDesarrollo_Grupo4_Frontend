@@ -168,9 +168,9 @@ export default function AsistenciaProfesorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-amber-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div>
       <div className="mx-auto max-w-4xl">
-        <header className="mb-6 flex items-center gap-4 rounded-2xl bg-slate-950 px-5 py-4 shadow-lg sm:gap-6 sm:px-7">
+        <header className="mb-6 flex items-center gap-4 rounded-lg bg-[#0A1628] px-5 py-4 shadow-sm sm:gap-6 sm:px-7">
           <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
             <Image
               src="/logo-voley.png"
@@ -182,8 +182,8 @@ export default function AsistenciaProfesorPage() {
             />
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-400">
-              KickStamp · Profesor
+            <p className="text-sm font-semibold tracking-[0.1em] text-[#9adf76]">
+              PROFESOR
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
               Registro de asistencia
@@ -206,7 +206,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("ESCANEO")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "ESCANEO"
-                ? "bg-white text-amber-700 shadow-sm"
+                ? "bg-white text-[#16794C] shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -219,7 +219,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("MANUAL")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "MANUAL"
-                ? "bg-white text-amber-700 shadow-sm"
+                ? "bg-white text-[#16794C] shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -227,7 +227,7 @@ export default function AsistenciaProfesorPage() {
           </button>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           {vista === "ESCANEO" ? (
             <Pdf417Scanner
               onDetected={procesarLectura}
@@ -259,7 +259,7 @@ export default function AsistenciaProfesorPage() {
                     autoComplete="off"
                     placeholder="8 dígitos"
                     required
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
                   />
                 </label>
 
@@ -272,7 +272,7 @@ export default function AsistenciaProfesorPage() {
                     value={fechaManual}
                     onChange={(event) => setFechaManual(event.target.value)}
                     required
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
                   />
                 </label>
 
@@ -285,14 +285,14 @@ export default function AsistenciaProfesorPage() {
                     value={horaManual}
                     onChange={(event) => setHoraManual(event.target.value)}
                     required
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
                   />
                 </label>
 
                 <div className="sm:col-span-2">
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-slate-950 px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                    className="w-full rounded-lg bg-[#16794C] px-4 py-3 font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
                   >
                     Registrar asistencia manual
                   </button>
@@ -307,7 +307,7 @@ export default function AsistenciaProfesorPage() {
         </p>
 
         {estudianteEscaneado && (
-          <section className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+          <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5">
             <p className="text-sm font-semibold text-emerald-800">
               Estudiante identificado
             </p>
@@ -328,14 +328,14 @@ export default function AsistenciaProfesorPage() {
               <button
                 type="button"
                 onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
-                className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
               >
                 Registrar asistencia
               </button>
               <button
                 type="button"
                 onClick={() => setEstudianteEscaneado(null)}
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
               >
                 Cancelar
               </button>
@@ -370,6 +370,6 @@ export default function AsistenciaProfesorPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

@@ -81,8 +81,8 @@ export default function AlumnoForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+      <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg sm:p-6">
         <h2 className="text-lg font-bold text-slate-950">
           {alumnoAEditar ? "Editar alumno" : "Nuevo alumno"}
         </h2>
@@ -102,7 +102,7 @@ export default function AlumnoForm({
               }
               inputMode="numeric"
               placeholder="8 dígitos"
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
             {errores.dni && <p className="mt-1 text-xs text-red-600">{errores.dni}</p>}
           </label>
@@ -114,7 +114,7 @@ export default function AlumnoForm({
             <input
               value={form.codigo}
               onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
             {errores.codigo && (
               <p className="mt-1 text-xs text-red-600">{errores.codigo}</p>
@@ -128,7 +128,7 @@ export default function AlumnoForm({
             <input
               value={form.nombres}
               onChange={(e) => setForm({ ...form, nombres: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
             {errores.nombres && (
               <p className="mt-1 text-xs text-red-600">{errores.nombres}</p>
@@ -142,7 +142,7 @@ export default function AlumnoForm({
             <input
               value={form.apellidos}
               onChange={(e) => setForm({ ...form, apellidos: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
             {errores.apellidos && (
               <p className="mt-1 text-xs text-red-600">{errores.apellidos}</p>
@@ -157,7 +157,7 @@ export default function AlumnoForm({
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
             {errores.email && (
               <p className="mt-1 text-xs text-red-600">{errores.email}</p>
@@ -171,7 +171,7 @@ export default function AlumnoForm({
             <select
               value={form.categoria}
               onChange={(e) => setForm({ ...form, categoria: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             >
               {NOMBRES_CATEGORIAS.map((c) => (
                 <option key={c} value={c}>
@@ -190,7 +190,7 @@ export default function AlumnoForm({
               onChange={(e) =>
                 setForm({ ...form, estado: e.target.value as StudentFormData["estado"] })
               }
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             >
               <option value="activo">Activo</option>
               <option value="inactivo">Inactivo</option>
@@ -204,7 +204,7 @@ export default function AlumnoForm({
             <input
               value={form.carrera ?? ""}
               onChange={(e) => setForm({ ...form, carrera: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
           </label>
 
@@ -223,7 +223,7 @@ export default function AlumnoForm({
                   ciclo: e.target.value ? Number(e.target.value) : undefined,
                 })
               }
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
             />
           </label>
 
@@ -237,7 +237,7 @@ export default function AlumnoForm({
             </button>
             <button
               type="submit"
-              className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+              className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
             >
               Guardar
             </button>

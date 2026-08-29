@@ -1,179 +1,156 @@
 "use client";
 
-import type { ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { Role } from "@/types";
+import type { Role } from "@/types";
+
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
 interface NavItem {
   label: string;
   href: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: IconName;
 }
 
-const NAV_BY_ROLE: Record<Role, NavItem[]> = {
+type IconName = "home" | "students" | "attendance" | "tag" | "chart" | "settings";
+
+const NAV_ITEMS: Record<Role, NavItem[]> = {
   administrador: [
-    { label: "Panel", href: "/dashboard/admin", icon: HomeIcon },
-    { label: "Alumnos", href: "/dashboard/admin/alumnos", icon: StudentsIcon },
-    { label: "Asistencia", href: "/dashboard/admin/asistencia", icon: AttendanceIcon },
-    { label: "Categorías", href: "/dashboard/admin/categorias", icon: TagIcon },
-    { label: "Reportes", href: "/dashboard/admin/reportes", icon: ChartIcon },
-    { label: "Configuración", href: "/dashboard/admin/configuracion", icon: GearIcon },
+    { label: "Inicio", href: "/dashboard/admin", icon: "home" },
+    { label: "Alumnos", href: "/dashboard/admin/alumnos", icon: "students" },
+    { label: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
+    { label: "Categorías", href: "/dashboard/admin/categorias", icon: "tag" },
+    { label: "Reportes", href: "/dashboard/admin/reportes", icon: "chart" },
+    { label: "Configuración", href: "/dashboard/admin/configuracion", icon: "settings" },
   ],
   profesor: [
-    { label: "Panel", href: "/dashboard/profesor", icon: HomeIcon },
-    { label: "Registrar asistencia", href: "/dashboard/profesor/asistencia", icon: AttendanceIcon },
-    { label: "Alumnos", href: "/dashboard/profesor/alumnos", icon: StudentsIcon },
+    { label: "Inicio", href: "/dashboard/profesor", icon: "home" },
+    { label: "Registrar asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance" },
+    { label: "Alumnos", href: "/dashboard/profesor/alumnos", icon: "students" },
   ],
   alumno: [
-    { label: "Panel", href: "/dashboard/alumno", icon: HomeIcon },
-    { label: "Mi historial", href: "/dashboard/alumno/historial", icon: HistoryIcon },
+    { label: "Inicio", href: "/dashboard/alumno", icon: "home" },
+    { label: "Mi historial", href: "/dashboard/alumno/historial", icon: "attendance" },
   ],
 };
 
-interface SidebarProps {
-  mobileOpen: boolean;
-  onClose: () => void;
-}
-
-export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
-  const { session } = useAuth();
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const items = session ? NAV_BY_ROLE[session.usuario.rol] ?? [] : [];
+  const { session } = useAuth();
+  const items = session ? NAV_ITEMS[session.usuario.rol] : [];
 
   return (
     <>
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
+      <button
+        type="button"
+        aria-label="Cerrar menú"
+        onClick={onClose}
+        className={`fixed inset-0 z-40 bg-slate-950/45 transition-opacity lg:hidden ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:static lg:translate-x-0 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        id="dashboard-sidebar"
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-800 bg-[#0A1628] text-white shadow-xl transition-transform duration-200 lg:translate-x-0 lg:shadow-none ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center gap-3 border-b border-slate-200 px-5 py-5">
+        <div className="flex h-20 items-center gap-3 border-b border-white/10 px-5">
           <Image
             src="/logo-el-golazo-club.jpg"
             alt="El Golazo Club"
-            width={36}
-            height={36}
-            className="h-9 w-9 rounded-full border border-slate-200 object-cover"
+            width={48}
+            height={48}
+            priority
+            className="h-12 w-12 shrink-0 rounded-full border-2 border-white/80 object-cover"
           />
-          <div>
-            <p className="text-sm font-bold tracking-wide text-[#0A1628]">
-              EL GOLAZO CLUB
-            </p>
-            <p className="text-xs text-slate-500">
-              {roleLabel(session?.usuario.rol)}
-            </p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-extrabold tracking-wide">EL GOLAZO</p>
+            <p className="text-xs text-slate-400">Control de asistencia</p>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white lg:hidden"
+            aria-label="Cerrar menú"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {items.map((item) => {
-            const active = pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  active
-                    ? "bg-[#edf8e8] text-[#16794C]"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                }`}
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="Navegación principal">
+          <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Menú
+          </p>
+          <ul className="space-y-1">
+            {items.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== items[0]?.href && pathname.startsWith(`${item.href}/`));
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onClose}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
+                      isActive
+                        ? "bg-[#6FCF3A] text-[#0A1628]"
+                        : "text-slate-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <NavIcon name={item.icon} />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
+
+        <div className="border-t border-white/10 px-5 py-4">
+          <p className="truncate text-sm font-semibold text-white">{session?.usuario.nombre}</p>
+          <p className="mt-0.5 text-xs capitalize text-slate-400">{session?.usuario.rol}</p>
+        </div>
       </aside>
     </>
   );
 }
 
-function roleLabel(rol?: Role) {
-  switch (rol) {
-    case "administrador":
-      return "Panel del administrador";
-    case "profesor":
-      return "Panel del profesor";
-    case "alumno":
-      return "Panel del alumno";
-    default:
-      return "";
+function NavIcon({ name }: { name: IconName }) {
+  if (name === "home") {
+    return <Icon><path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6" /></Icon>;
   }
+  if (name === "students") {
+    return <Icon><circle cx="9" cy="8" r="3" /><path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" /></Icon>;
+  }
+  if (name === "attendance") {
+    return <Icon><path d="M7 3v3M17 3v3M4 9h16" /><rect x="4" y="5" width="16" height="16" rx="3" /><path d="m8.5 15 2 2 4.5-5" /></Icon>;
+  }
+  if (name === "tag") {
+    return <Icon><path d="M11.5 3H5a2 2 0 0 0-2 2v6.5l8.6 8.6a2 2 0 0 0 2.8 0l5.7-5.7a2 2 0 0 0 0-2.8Z" /><circle cx="8" cy="8" r="1.4" /></Icon>;
+  }
+  if (name === "chart") {
+    return <Icon><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></Icon>;
+  }
+  return <Icon><circle cx="12" cy="12" r="3" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" /></Icon>;
 }
 
-function HomeIcon({ className }: { className?: string }) {
+function Icon({ children }: { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function StudentsIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function AttendanceIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M7 3v3M17 3v3M4 9h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="m8.5 15 2 2 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TagIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M11.5 3H5a2 2 0 0 0-2 2v6.5a2 2 0 0 0 .59 1.41l8.5 8.5a2 2 0 0 0 2.82 0l6.5-6.5a2 2 0 0 0 0-2.82l-8.5-8.5A2 2 0 0 0 11.5 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-      <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function ChartIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function GearIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function HistoryIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M3 3v5h5M3.05 13a9 9 0 1 0 2.13-7.14L3 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 shrink-0" aria-hidden="true">
+      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {children}
+      </g>
     </svg>
   );
 }

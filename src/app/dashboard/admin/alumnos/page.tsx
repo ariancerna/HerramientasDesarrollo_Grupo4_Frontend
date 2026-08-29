@@ -60,11 +60,10 @@ export default function AlumnosAdminPage() {
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
-      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <div>
           <header className="mb-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
-              KickStamp · Administración
+            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+              ADMINISTRACIÓN
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Gestión de alumnos
@@ -103,8 +102,7 @@ export default function AlumnosAdminPage() {
               onGuardar={handleGuardar}
             />
           )}
-        </div>
-      </main>
+      </div>
     </RoleGuard>
   );
 }

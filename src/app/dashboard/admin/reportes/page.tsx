@@ -5,7 +5,7 @@ export default function ReportesPage() {
     <ModuloEnConstruccion
       titulo="Reportes"
       descripcion="Los indicadores y reportes se habilitarán cuando se implemente esta sección."
-      icono="📊"
+      icono="chart"
     />
   );
 }
