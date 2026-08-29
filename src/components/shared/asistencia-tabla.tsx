@@ -23,7 +23,7 @@ export default function AsistenciaTabla({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="min-w-[720px] divide-y divide-slate-200 text-sm">
+      <table className="w-full min-w-[720px] divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50">
           <tr>
             <th className="px-4 py-3 text-left font-semibold text-slate-600">
