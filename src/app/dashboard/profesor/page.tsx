@@ -1,11 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
-import { ROUTES } from "@/constants/routes";
 
 const fechaActual = new Intl.DateTimeFormat("es-PE", {
   weekday: "long",
@@ -31,53 +28,12 @@ const ACCESOS = [
 ];
 
 export default function ProfesorDashboardPage() {
-  const { session, logout } = useAuth();
-  const router = useRouter();
+  const { session } = useAuth();
   const primerNombre = session?.usuario.nombre.split(" ")[0] ?? "Profesor";
-
-  const handleLogout = () => {
-    logout();
-    router.push(ROUTES.LOGIN);
-  };
 
   return (
     <RoleGuard allowedRoles={["profesor"]}>
-      <div className="min-h-screen bg-[#f5f7f6]">
-        <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/logo-el-golazo-club.jpg"
-                alt="El Golazo Club"
-                width={48}
-                height={48}
-                priority
-                className="h-12 w-12 rounded-full border border-slate-200 object-cover"
-              />
-              <div>
-                <p className="text-sm font-bold tracking-wide text-[#0A1628]">
-                  EL GOLAZO CLUB
-                </p>
-                <p className="text-xs text-slate-500">Panel del profesor</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="hidden text-sm text-slate-500 sm:inline">
-                {session?.usuario.nombre}
-              </span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-              >
-                Cerrar sesión
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <div>
           <section className="relative overflow-hidden rounded-2xl bg-[#0A1628] px-6 py-8 text-white sm:px-9 sm:py-10">
             <div className="absolute inset-y-0 left-0 w-1.5 bg-[#6FCF3A]" aria-hidden="true" />
             <div className="relative max-w-2xl">
@@ -143,7 +99,6 @@ export default function ProfesorDashboardPage() {
               })}
             </div>
           </section>
-        </main>
       </div>
     </RoleGuard>
   );

@@ -59,8 +59,8 @@ export default function AsistenciaForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+      <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg sm:p-6">
         <h2 className="text-lg font-bold text-slate-950">Corregir asistencia</h2>
         <p className="mt-1 text-sm text-slate-500">
           Actualiza la fecha, hora o método del registro de {registro.estudiante}.
