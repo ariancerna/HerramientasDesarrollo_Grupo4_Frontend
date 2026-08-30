@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import {
   FILTROS_REPORTE_INICIALES,
@@ -21,6 +22,7 @@ export default function ReportesPage() {
     useState<FiltrosReporteAsistencia | null>(null);
   const [registros, setRegistros] = useState<RegistroAsistencia[] | null>(null);
   const [error, setError] = useState("");
+  const [mensajeExportacion, setMensajeExportacion] = useState("");
 
   const actualizarFiltro = <K extends keyof FiltrosReporteAsistencia>(
     campo: K,
@@ -46,6 +48,7 @@ export default function ReportesPage() {
     setRegistros(nuevosRegistros);
     setFiltrosAplicados({ ...filtros });
     setError("");
+    setMensajeExportacion("");
   };
 
   const handleLimpiar = () => {
@@ -53,6 +56,16 @@ export default function ReportesPage() {
     setFiltrosAplicados(null);
     setRegistros(null);
     setError("");
+    setMensajeExportacion("");
+  };
+
+  const handleExportar = () => {
+    if (!registros || registros.length === 0) return;
+
+    descargarCsvReporteAsistencia(registros);
+    setMensajeExportacion(
+      `Se exportaron ${registros.length} registro${registros.length === 1 ? "" : "s"} correctamente.`,
+    );
   };
 
   return (
@@ -186,15 +199,34 @@ export default function ReportesPage() {
             </div>
           ) : (
             <>
-              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-[#16794C]">RESULTADO</p>
                   <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-[#0A1628]">
                     {registros.length} registro{registros.length === 1 ? "" : "s"} encontrado{registros.length === 1 ? "" : "s"}
                   </h2>
                 </div>
-                {filtrosAplicados && <ResumenFiltros filtros={filtrosAplicados} />}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  {filtrosAplicados && <ResumenFiltros filtros={filtrosAplicados} />}
+                  <button
+                    type="button"
+                    onClick={handleExportar}
+                    disabled={registros.length === 0}
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[#16794C] bg-white px-4 py-2.5 text-sm font-bold text-[#16794C] transition hover:bg-[#edf8e8] focus:outline-none focus:ring-2 focus:ring-[#6FCF3A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white"
+                  >
+                    <DownloadIcon />
+                    Exportar CSV
+                  </button>
+                </div>
               </div>
+              {mensajeExportacion && (
+                <p
+                  role="status"
+                  className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+                >
+                  {mensajeExportacion}
+                </p>
+              )}
               <AsistenciaTabla registros={registros} />
             </>
           )}
@@ -261,6 +293,14 @@ function ChartIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
       <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
