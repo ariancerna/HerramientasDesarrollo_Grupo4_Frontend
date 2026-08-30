@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import IndicadoresAsistenciaPanel from "@/components/reportes/indicadores-asistencia";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
@@ -8,6 +9,7 @@ import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import {
   FILTROS_REPORTE_INICIALES,
   FiltrosReporteAsistencia,
+  calcularIndicadoresAsistencia,
   generarReporteAsistencia,
   validarPeriodoReporte,
 } from "@/lib/reportes-asistencia";
@@ -23,6 +25,9 @@ export default function ReportesPage() {
   const [registros, setRegistros] = useState<RegistroAsistencia[] | null>(null);
   const [error, setError] = useState("");
   const [mensajeExportacion, setMensajeExportacion] = useState("");
+  const indicadores = registros
+    ? calcularIndicadoresAsistencia(registros)
+    : null;
 
   const actualizarFiltro = <K extends keyof FiltrosReporteAsistencia>(
     campo: K,
@@ -199,6 +204,9 @@ export default function ReportesPage() {
             </div>
           ) : (
             <>
+              {indicadores && (
+                <IndicadoresAsistenciaPanel indicadores={indicadores} />
+              )}
               <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-[#16794C]">RESULTADO</p>
