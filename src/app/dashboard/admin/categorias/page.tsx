@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Categoria } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import { RoleGuard } from "@/components/shared/role-guard";
@@ -8,6 +8,8 @@ import CategoriaForm from "@/components/forms/categoria-form";
 import CategoriasTabla from "@/components/shared/categorias-tabla";
 import {
   obtenerCategorias,
+  obtenerCategoriasIniciales,
+  suscribirCategorias,
   crearCategoria,
   actualizarCategoria,
   eliminarCategoria,
@@ -15,17 +17,16 @@ import {
 
 export default function CategoriasPage() {
   const { session } = useAuth();
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const categorias = useSyncExternalStore(
+    suscribirCategorias,
+    obtenerCategorias,
+    obtenerCategoriasIniciales
+  );
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [categoriaAEditar, setCategoriaAEditar] = useState<Categoria | null>(
     null
   );
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
-
-  // Cargar categorías al montar el componente
-  useEffect(() => {
-    cargarCategorias();
-  }, []);
 
   // Ocultar mensaje de éxito después de 3 segundos
   useEffect(() => {
@@ -34,10 +35,6 @@ export default function CategoriasPage() {
       return () => clearTimeout(timer);
     }
   }, [mensajeExito]);
-
-  const cargarCategorias = () => {
-    setCategorias(obtenerCategorias());
-  };
 
   const handleAbrirFormularioNuevo = () => {
     setCategoriaAEditar(null);
@@ -57,16 +54,15 @@ export default function CategoriasPage() {
       if (id) {
         // Actualizar categoría existente
         actualizarCategoria(id, data);
-        setMensajeExito(`✅ Categoría "${data.nombre}" actualizada correctamente`);
+        setMensajeExito(`Categoría "${data.nombre}" actualizada correctamente`);
       } else {
         // Crear nueva categoría
         crearCategoria(data);
-        setMensajeExito(`✅ Categoría "${data.nombre}" creada correctamente`);
+        setMensajeExito(`Categoría "${data.nombre}" creada correctamente`);
       }
-      cargarCategorias();
     } catch (error) {
       console.error("Error al guardar categoría:", error);
-      setMensajeExito("❌ Error al guardar la categoría");
+      setMensajeExito("Error al guardar la categoría");
     }
   };
 
@@ -78,11 +74,10 @@ export default function CategoriasPage() {
   const handleEliminarCategoria = (categoria: Categoria) => {
     try {
       eliminarCategoria(categoria.id);
-      setMensajeExito(`✅ Categoría "${categoria.nombre}" eliminada correctamente`);
-      cargarCategorias();
+      setMensajeExito(`Categoría "${categoria.nombre}" eliminada correctamente`);
     } catch (error) {
       console.error("Error al eliminar categoría:", error);
-      setMensajeExito("❌ Error al eliminar la categoría");
+      setMensajeExito("Error al eliminar la categoría");
     }
   };
 
@@ -103,7 +98,8 @@ export default function CategoriasPage() {
             onClick={handleAbrirFormularioNuevo}
             className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            ➕ Nueva Categoría
+            <PlusIcon />
+            Nueva Categoría
           </button>
         </div>
 
@@ -124,35 +120,6 @@ export default function CategoriasPage() {
           />
         </div>
 
-        {/* Estadísticas */}
-        {categorias.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="text-3xl font-bold text-gray-900">
-                {categorias.length}
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                Categorías registradas
-              </p>
-            </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="text-3xl font-bold text-gray-900">
-                {categorias.reduce((sum, cat) => sum + cat.horarios.length, 0)}
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                Horarios en total
-              </p>
-            </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="text-3xl font-bold text-gray-900">
-                {categorias.filter((cat) => cat.horarios.length > 0).length}
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                Categorías con horarios
-              </p>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Modal del formulario */}
@@ -164,5 +131,13 @@ export default function CategoriasPage() {
         />
       )}
     </RoleGuard>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
   );
 }
