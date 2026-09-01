@@ -10,19 +10,19 @@
   --color-primary-light: #dcfce7;
   --color-primary-soft: #f0fdf4;
 
-  /* ===== Neutrales (blanco / gris) ===== */
-  --color-ink: #0f172a;
-  --color-body: #475569;
-  --color-muted: #94a3b8;
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
-  --color-surface: #ffffff;
-  --color-bg: #f8fafc;
-  --color-bg-subtle: #f1f5f9;
+  /* ===== Neutrales (gris cálido, no azulado) ===== */
+  --color-ink: #1c1917;       /* texto principal */
+  --color-body: #57534e;      /* texto secundario */
+  --color-muted: #a8a29e;     /* texto terciario / placeholders */
+  --color-border: #e7e5e0;    /* bordes */
+  --color-border-strong: #d6d3cd;
+  --color-surface: #ffffff;   /* tarjetas, inputs — siguen blancas para contraste */
+  --color-bg: #f5f4ef;        /* fondo de página — gris cálido, no blanco puro */
+  --color-bg-subtle: #efeee6;
 
   /* ===== Contraste fuerte ===== */
-  --color-contrast: #0f172a;
-  --color-contrast-soft: #1e293b;
+  --color-contrast: #1c1917;
+  --color-contrast-soft: #292524;
 
   /* ===== Estados ===== */
   --color-danger: #ef4444;
@@ -41,9 +41,9 @@
   --radius-xl: 1.25rem;
 
   /* ===== Sombra ===== */
-  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
-  --shadow-card-hover: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.06);
-  --shadow-popover: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.05);
+  --shadow-card: 0 1px 2px 0 rgb(28 25 23 / 0.05), 0 1px 3px 0 rgb(28 25 23 / 0.07);
+  --shadow-card-hover: 0 4px 6px -1px rgb(28 25 23 / 0.09), 0 2px 4px -2px rgb(28 25 23 / 0.07);
+  --shadow-popover: 0 10px 15px -3px rgb(28 25 23 / 0.1), 0 4px 6px -4px rgb(28 25 23 / 0.06);
 }
 
 @theme inline {
