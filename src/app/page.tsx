@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-import { ROUTES } from "@/constants/routes";
+import { WelcomeScreen } from "@/components/screens/welcome-screen";
 
 export default function Home() {
-  redirect(ROUTES.LOGIN);
+  return <WelcomeScreen />;
 }
