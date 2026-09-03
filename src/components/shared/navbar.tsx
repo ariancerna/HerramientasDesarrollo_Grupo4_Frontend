@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
 import { HeaderDropdown } from "@/components/shared/header-dropdown";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 interface NavbarProps {
   isMenuOpen: boolean;
@@ -18,7 +19,6 @@ const ROLE_LABELS = {
   alumno: "Alumno",
 } as const;
 
-// TODO: reemplazar por datos reales cuando exista backend/notificaciones en vivo.
 const NOTIFICATIONS = [
   { title: "Nueva asistencia registrada", description: "Se registró una asistencia hace unos minutos.", time: "Hoy" },
   { title: "Recordatorio", description: "Revisa las categorías pendientes de configurar.", time: "Ayer" },
@@ -62,7 +62,6 @@ export default function Navbar({ isMenuOpen, onMenuToggle }: NavbarProps) {
           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
 
-        {/* Buscador */}
         <div className="relative min-w-0 flex-1 lg:max-w-md">
           <div className="flex items-center gap-2 rounded-full bg-bg-subtle px-4 py-2.5 text-body transition focus-within:ring-4 focus-within:ring-primary/15">
             <SearchIcon className="h-[18px] w-[18px] shrink-0" />
@@ -92,8 +91,9 @@ export default function Navbar({ isMenuOpen, onMenuToggle }: NavbarProps) {
           )}
         </div>
 
-        {/* Acciones */}
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
+
           <div className="relative">
             <button
               type="button"

@@ -96,8 +96,8 @@ export default function LoginPage() {
       </section>
 
       {/* Sección Derecha - Formulario */}
-      <main className="flex w-full items-center justify-center bg-primary-soft px-6 py-10 md:w-1/2 md:px-10">
-        <div className="w-full max-w-lg rounded-3xl bg-surface p-10 shadow-popover md:p-12">
+      <main className="flex w-full items-center justify-center bg-bg px-6 py-10 md:w-1/2 md:px-10">
+        <div className="w-full max-w-lg rounded-3xl border border-border bg-surface p-10 shadow-popover md:p-12">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-bg-subtle">
               <Image
@@ -163,8 +163,8 @@ function SocialButton({ provider }: { provider: "google" | "facebook" }) {
       onClick={() =>
         alert(
           "La autenticación con " +
-            (isGoogle ? "Google" : "Facebook") +
-            " estará disponible cuando conectemos el backend."
+          (isGoogle ? "Google" : "Facebook") +
+          " estará disponible cuando conectemos el backend."
         )
       }
       className="flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-surface text-sm font-semibold text-ink shadow-sm transition hover:bg-bg-subtle"

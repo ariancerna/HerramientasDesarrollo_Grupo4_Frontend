@@ -3,35 +3,37 @@
 :root {
   color-scheme: light;
 
-  /* ===== Marca: verde vibrante deportivo ===== */
-  --color-primary: #22c55e;
-  --color-primary-hover: #16a34a;
-  --color-primary-dark: #15803d;
+  /* ===== Marca: verde premium ===== */
+  --color-primary: #15803d;
+  --color-primary-hover: #166534;
+  --color-primary-active: #14532d;
+  --color-primary-dark: #14532d;
   --color-primary-light: #dcfce7;
   --color-primary-soft: #f0fdf4;
 
-  /* ===== Neutrales (gris cálido, no azulado) ===== */
-  --color-ink: #1c1917;       /* texto principal */
-  --color-body: #57534e;      /* texto secundario */
-  --color-muted: #a8a29e;     /* texto terciario / placeholders */
-  --color-border: #e7e5e0;    /* bordes */
-  --color-border-strong: #d6d3cd;
-  --color-surface: #ffffff;   /* tarjetas, inputs — siguen blancas para contraste */
-  --color-bg: #f5f4ef;        /* fondo de página — gris cálido, no blanco puro */
-  --color-bg-subtle: #efeee6;
+  /* ===== Neutrales: blanco limpio, gris frío neutro (no beige) ===== */
+  --color-ink: #111827;
+  --color-body: #4b5563;
+  --color-muted: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-surface: #ffffff;
+  --color-surface-2: #fbfbfc;
+  --color-bg: #f7f8fa;
+  --color-bg-subtle: #eef0f3;
 
-  /* ===== Contraste fuerte ===== */
-  --color-contrast: #1c1917;
-  --color-contrast-soft: #292524;
+  /* ===== Contraste fuerte (banner, botones oscuros) ===== */
+  --color-contrast: #0f172a;
+  --color-contrast-soft: #1e293b;
 
   /* ===== Estados ===== */
-  --color-danger: #ef4444;
+  --color-danger: #dc2626;
   --color-danger-light: #fef2f2;
-  --color-warning: #f59e0b;
+  --color-warning: #d97706;
   --color-warning-light: #fffbeb;
-  --color-success: #22c55e;
+  --color-success: #15803d;
   --color-success-light: #f0fdf4;
-  --color-info: #3b82f6;
+  --color-info: #2563eb;
   --color-info-light: #eff6ff;
 
   /* ===== Forma ===== */
@@ -41,14 +43,48 @@
   --radius-xl: 1.25rem;
 
   /* ===== Sombra ===== */
-  --shadow-card: 0 1px 2px 0 rgb(28 25 23 / 0.05), 0 1px 3px 0 rgb(28 25 23 / 0.07);
-  --shadow-card-hover: 0 4px 6px -1px rgb(28 25 23 / 0.09), 0 2px 4px -2px rgb(28 25 23 / 0.07);
-  --shadow-popover: 0 10px 15px -3px rgb(28 25 23 / 0.1), 0 4px 6px -4px rgb(28 25 23 / 0.06);
+  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+  --shadow-card-hover: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+  --shadow-popover: 0 12px 24px -6px rgb(15 23 42 / 0.12), 0 4px 8px -4px rgb(15 23 42 / 0.06);
 }
 
+/* ===== Modo oscuro (toggle global, aplica a toda la app) ===== */
+.dark {
+  color-scheme: dark;
+
+  --color-ink: #f4f4f5;
+  --color-body: #a1a1aa;
+  --color-muted: #71717a;
+  --color-border: #27272a;
+  --color-border-strong: #3f3f46;
+  --color-surface: #18181b;
+  --color-surface-2: #1f1f23;
+  --color-bg: #09090b;
+  --color-bg-subtle: #141417;
+
+  --color-primary: #22c55e;
+  --color-primary-hover: #16a34a;
+  --color-primary-active: #4ade80;
+  --color-primary-dark: #4ade80;
+  --color-primary-light: rgba(34, 197, 94, 0.16);
+  --color-primary-soft: rgba(34, 197, 94, 0.08);
+
+  --color-contrast: #000000;
+  --color-contrast-soft: #0f0f11;
+
+  --color-danger: #f87171;
+  --color-danger-light: rgba(248, 113, 113, 0.14);
+  --color-warning: #fbbf24;
+  --color-warning-light: rgba(251, 191, 36, 0.14);
+  --color-success: #4ade80;
+  --color-success-light: rgba(74, 222, 128, 0.14);
+  --color-info: #60a5fa;
+  --color-info-light: rgba(96, 165, 250, 0.14);
+}
 @theme inline {
   --color-primary: var(--color-primary);
   --color-primary-hover: var(--color-primary-hover);
+  --color-primary-active: var(--color-primary-active);
   --color-primary-dark: var(--color-primary-dark);
   --color-primary-light: var(--color-primary-light);
   --color-primary-soft: var(--color-primary-soft);
@@ -59,6 +95,7 @@
   --color-border: var(--color-border);
   --color-border-strong: var(--color-border-strong);
   --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
   --color-bg: var(--color-bg);
   --color-bg-subtle: var(--color-bg-subtle);
 
@@ -85,6 +122,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {
