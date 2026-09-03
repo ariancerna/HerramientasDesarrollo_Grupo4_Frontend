@@ -1,78 +1,223 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
+import { AuthCarousel } from "@/components/ui/auth-carousel";
 import { LoginForm } from "@/components/forms/login-form";
+import { ROUTES } from "@/constants/routes";
+
+const SLIDES = [
+  { src: "/login-fondo.png", alt: "Entrenamiento de El Golazo Club" },
+];
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-white md:flex-row">
-      <section
-        className="relative flex flex-col justify-between overflow-hidden bg-cover bg-center px-10 py-10 text-white md:w-1/2"
-        style={{ backgroundImage: "url('/login-fondo.png')" }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628]/85 via-[#0A1628]/60 to-[#0A1628]/85" />
+    <div className="flex min-h-screen w-full bg-bg">
+      {/* Sección Izquierda - Ilustración y Carrusel */}
+      <section className="relative hidden overflow-hidden md:flex md:w-1/2">
+        <AuthCarousel slides={SLIDES} />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-contrast/85 via-contrast/55 to-contrast/90" />
 
-        <div className="relative z-10 flex w-full justify-center">
-          <div className="h-36 w-36 overflow-hidden rounded-full border-4 border-white bg-white shadow-xl md:h-44 md:w-44">
-            <Image
-              src="/logo-el-golazo-club.jpg"
-              alt="El Golazo Club"
-              width={176}
-              height={176}
-              className="h-full w-full object-cover"
-            />
+        <div className="relative z-20 flex w-full flex-col justify-between px-10 py-10 text-white">
+          <div className="flex justify-center">
+            <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg">
+              <Image
+                src="/logo-el-golazo-club.jpg"
+                alt="El Golazo Club"
+                width={128}
+                height={128}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="relative z-10 max-w-md">
-          <p className="text-base font-bold tracking-wide text-[#6FCF3A] md:text-lg">MÁS QUE UN CLUB,</p>
-          <h1 className="mt-1 text-4xl font-extrabold leading-[1.15] text-white md:text-[42px]">
-            UNA FAMILIA,
-            <br />
-            UN PROPÓSITO,
-          </h1>
-          <p className="mt-1 text-5xl text-[#6FCF3A] md:text-6xl" style={{ fontFamily: "var(--font-caveat)" }}>
-            un golazo.
-          </p>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-200">
-            Impulsamos el talento y la pasión por el voleibol, formando atletas dispuestos a darlo todo en cada set y fuera de la cancha.
-          </p>
-        </div>
+          <div className="max-w-md">
+            <p className="text-sm font-bold tracking-wide text-primary md:text-base">
+              MÁS QUE UN CLUB,
+            </p>
+            <h1 className="mt-1 text-3xl font-extrabold leading-[1.15] md:text-[38px]">
+              UNA FAMILIA,
+              <br />
+              UN PROPÓSITO,
+            </h1>
+            <p
+              className="mt-1 text-4xl text-primary md:text-5xl"
+              style={{ fontFamily: "var(--font-caveat)" }}
+            >
+              un golazo.
+            </p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/80">
+              Impulsamos el talento y la pasión deportiva, formando atletas
+              dispuestos a darlo todo dentro y fuera de la cancha.
+            </p>
+          </div>
 
-        <div className="relative z-10 mt-8 w-full">
-          <div className="space-y-3 border-t border-white/15 pt-5 text-sm text-gray-300">
-            <p className="mb-1 text-sm font-bold tracking-wide text-[#6FCF3A]">CONTÁCTANOS Y DIRECCIÓN</p>
-            <a href="https://wa.me/message/QOWSTIZGBL72H1" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 transition hover:text-white">
-              <Image src="/wsp.png" alt="WhatsApp" width={17} height={17} className="h-[17px] w-[17px] object-contain invert" />
+          <div className="space-y-3 border-t border-white/15 pt-5 text-sm text-white/75">
+            <p className="text-sm font-bold tracking-wide text-primary">
+              CONTÁCTANOS
+            </p>
+
+            <a
+              href="https://wa.me/message/QOWSTIZGBL72H1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 transition hover:text-white"
+            >
+              <Image
+                src="/wsp.png"
+                alt="WhatsApp"
+                width={16}
+                height={16}
+                className="h-4 w-4 object-contain invert"
+              />
               994 796 381
             </a>
             <p className="flex items-center gap-2">
-              <Image src="/phone.png" alt="Teléfono" width={15} height={15} className="h-[15px] w-[15px] rotate-180 object-contain" />
+              <Image
+                src="/phone.png"
+                alt="Teléfono"
+                width={14}
+                height={14}
+                className="h-3.5 w-3.5 rotate-180 object-contain"
+              />
               998 678 259
             </p>
             <p className="flex items-start gap-2">
-              <Image src="/location.png" alt="Ubicación" width={15} height={15} className="mt-0.5 h-[15px] w-[15px] object-contain" />
+              <Image
+                src="/location.png"
+                alt="Ubicación"
+                width={14}
+                height={14}
+                className="mt-0.5 h-3.5 w-3.5 object-contain"
+              />
               <span>Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7</span>
             </p>
-            <p className="pt-3 text-sm font-bold tracking-wide text-[#6FCF3A]">SÍGUENOS EN REDES</p>
-            <a href="https://www.facebook.com/clubgolazo/about?locale=es_LA" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 transition hover:text-white">
-              <Image src="/face.png" alt="Facebook" width={20} height={20} className="h-5 w-5 invert" />
-              Club Deportivo El Golazo
-            </a>
-            <a href="https://www.tiktok.com/@clubdeportivoelgolazo" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 transition hover:text-white">
-              <Image src="/tiktok.png" alt="TikTok" width={20} height={20} className="h-5 w-5 invert" />
-              Club Deportivo El Golazo
-            </a>
           </div>
         </div>
       </section>
 
-      <main className="flex flex-col items-center justify-center px-8 py-16 md:w-1/2">
-        <div className="w-full max-w-sm">
-          <h2 className="text-center text-2xl font-semibold text-[#16233C]">Iniciar sesión</h2>
-          <p className="mb-8 mt-1 text-center text-sm text-gray-500">Ingresa tus credenciales para continuar</p>
+      {/* Sección Derecha - Formulario */}
+      <main className="flex w-full items-center justify-center bg-bg px-6 py-10 md:w-1/2 md:px-10">
+        <div className="w-full max-w-lg rounded-3xl border border-border bg-surface p-10 shadow-popover md:p-12">
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-bg-subtle">
+              <Image
+                src="/logo-el-golazo-club.jpg"
+                alt="El Golazo Club"
+                width={44}
+                height={44}
+                className="h-11 w-11 rounded-full object-cover"
+              />
+            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary-dark">
+              El Golazo Club
+            </p>
+          </div>
+
+          <div className="mb-8 text-center">
+            <h2 className="text-[28px] font-extrabold tracking-tight text-ink">
+              Bienvenido
+            </h2>
+            <p className="mt-1.5 text-sm text-body">
+              Inicia sesión para continuar
+            </p>
+          </div>
+
           <LoginForm />
-          <p className="mt-10 text-center text-xs text-gray-400">© 2025 Golazo Club</p>
+
+          <div className="my-7 flex items-center gap-3">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs font-medium text-muted">o</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <SocialButton provider="google" />
+            <SocialButton provider="facebook" />
+          </div>
+
+          <p className="mt-7 text-center text-sm text-body">
+            ¿No tienes cuenta?{" "}
+            <Link
+              href={ROUTES.REGISTER}
+              className="font-bold text-primary-dark hover:text-primary-hover"
+            >
+              Regístrate
+            </Link>
+          </p>
+
+          <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-muted">
+            <ShieldIcon />
+            Sistema seguro y confidencial
+          </div>
         </div>
       </main>
     </div>
+  );
+}
+
+function SocialButton({ provider }: { provider: "google" | "facebook" }) {
+  const isGoogle = provider === "google";
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        alert(
+          "La autenticación con " +
+          (isGoogle ? "Google" : "Facebook") +
+          " estará disponible cuando conectemos el backend."
+        )
+      }
+      className="flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-surface text-sm font-semibold text-ink shadow-sm transition hover:bg-bg-subtle"
+    >
+      {isGoogle ? <GoogleIcon /> : <FacebookIcon />}
+      {isGoogle ? "Google" : "Facebook"}
+    </button>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" aria-hidden="true">
+      <path
+        d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.5 12.3c0-.85-.08-1.67-.22-2.45H12v4.63h6.46a5.53 5.53 0 0 1-2.4 3.63v3h3.87c2.27-2.09 3.57-5.17 3.57-8.81Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.96-1.07 7.94-2.9l-3.87-3c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.1A12 12 0 0 0 12 24Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.27 14.29a7.2 7.2 0 0 1 0-4.58v-3.1H1.27a12 12 0 0 0 0 10.78l4-3.1Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.76 0 3.34.6 4.59 1.79l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.6l4 3.1C6.22 6.86 8.87 4.75 12 4.75Z"
+      />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+      <path
+        fill="#1877F2"
+        d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07Z"
+      />
+    </svg>
   );
 }

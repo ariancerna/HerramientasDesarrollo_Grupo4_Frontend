@@ -15,15 +15,15 @@ export default function AsistenciaTabla({
 }: AsistenciaTablaProps) {
   if (registros.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">
+      <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500">
         No se encontraron registros de asistencia con los filtros aplicados.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[720px] divide-y divide-slate-200 text-sm">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50">
           <tr>
             <th className="px-4 py-3 text-left font-semibold text-slate-600">
@@ -61,7 +61,7 @@ export default function AsistenciaTabla({
                 }).format(new Date(registro.fechaHora))}
               </td>
               <td className="px-4 py-3">
-                <span className="inline-flex rounded-full bg-[#edf8e8] px-2.5 py-0.5 text-xs font-medium text-[#16794C]">
+                <span className="inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
                   {registro.metodo === "ESCANEO" ? "Escaneo" : "Manual"}
                 </span>
               </td>
@@ -70,7 +70,7 @@ export default function AsistenciaTabla({
                   <button
                     type="button"
                     onClick={() => onCorregir?.(registro)}
-                    className="font-semibold text-[#16794C] hover:text-[#12613D]"
+                    className="font-medium text-slate-700 hover:text-slate-950"
                   >
                     Corregir
                   </button>

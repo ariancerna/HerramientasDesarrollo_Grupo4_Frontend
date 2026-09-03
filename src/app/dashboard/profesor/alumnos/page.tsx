@@ -20,10 +20,11 @@ export default function AlumnosProfesorPage() {
 
   return (
     <RoleGuard allowedRoles={["profesor"]}>
-      <div>
+      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <header className="mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              PROFESOR
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
+              KickStamp · Profesor
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Alumnos
@@ -49,7 +50,8 @@ export default function AlumnosProfesorPage() {
 
           {/* puedeGestionar=false (por defecto): oculta editar/eliminar */}
           <AlumnoTabla alumnos={alumnosFiltrados} />
-      </div>
+        </div>
+      </main>
     </RoleGuard>
   );
 }

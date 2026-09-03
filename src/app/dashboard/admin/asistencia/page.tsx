@@ -40,10 +40,11 @@ export default function AsistenciaAdminPage() {
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
-      <div>
+      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <header className="mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              ADMINISTRACIÓN
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
+              KickStamp · Administración
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Corrección de asistencia
@@ -53,7 +54,7 @@ export default function AsistenciaAdminPage() {
             </p>
           </header>
 
-          <section className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-end">
+          <section className="mb-5 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-end">
             <label className="flex-1">
               <span className="mb-1.5 block text-sm font-medium text-slate-700">
                 Buscar estudiante o DNI
@@ -62,7 +63,7 @@ export default function AsistenciaAdminPage() {
                 value={texto}
                 onChange={(event) => setTexto(event.target.value)}
                 placeholder="Nombre o DNI..."
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
               />
             </label>
 
@@ -73,7 +74,7 @@ export default function AsistenciaAdminPage() {
               <select
                 value={categoria}
                 onChange={(event) => setCategoria(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
               >
                 <option value="todas">Todas las categorías</option>
                 {NOMBRES_CATEGORIAS.map((nombre) => (
@@ -92,7 +93,7 @@ export default function AsistenciaAdminPage() {
                 type="date"
                 value={fecha}
                 onChange={(event) => setFecha(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
               />
             </label>
           </section>
@@ -127,7 +128,8 @@ export default function AsistenciaAdminPage() {
               onGuardar={handleCorregir}
             />
           )}
-      </div>
+        </div>
+      </main>
     </RoleGuard>
   );
 }

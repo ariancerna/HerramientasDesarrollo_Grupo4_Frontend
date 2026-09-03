@@ -5,7 +5,7 @@ export default function ConfiguracionPage() {
     <ModuloEnConstruccion
       titulo="Configuración"
       descripcion="Los ajustes generales se incorporarán en una próxima entrega del equipo."
-      icono="settings"
+      icono="⚙️"
     />
   );
 }

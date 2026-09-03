@@ -18,15 +18,15 @@ export default function AlumnoTabla({
 }: AlumnoTablaProps) {
   if (alumnos.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">
+      <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500">
         No se encontraron alumnos con los filtros aplicados.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[760px] divide-y divide-slate-200 text-sm">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50">
           <tr>
             <th className="px-4 py-3 text-left font-semibold text-slate-600">DNI</th>
@@ -71,7 +71,7 @@ export default function AlumnoTabla({
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => onEditar?.(alumno)}
-                    className="mr-3 font-semibold text-[#16794C] hover:text-[#12613D]"
+                    className="mr-3 font-medium text-slate-700 hover:text-slate-950"
                   >
                     Editar
                   </button>

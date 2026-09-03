@@ -22,17 +22,18 @@ export default function HistorialAlumnoPage() {
 
   return (
     <RoleGuard allowedRoles={["alumno"]}>
-      <div>
+      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <Link
             href="/dashboard/alumno"
-            className="inline-flex items-center text-sm font-semibold text-slate-600 transition hover:text-[#16794C]"
+            className="text-sm font-semibold text-slate-600 hover:text-slate-950"
           >
             ← Volver al inicio
           </Link>
 
           <header className="mt-5 mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              MI ESPACIO
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
+              KickStamp · Alumno
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Mi historial de asistencia
@@ -53,7 +54,7 @@ export default function HistorialAlumnoPage() {
             </div>
           ) : (
             <>
-              <section className="mb-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Asistencias registradas</p>
                 <p className="mt-1 text-3xl font-bold text-slate-950">
                   {registros.length}
@@ -63,7 +64,8 @@ export default function HistorialAlumnoPage() {
               <AsistenciaTabla registros={registros} />
             </>
           )}
-      </div>
+        </div>
+      </main>
     </RoleGuard>
   );
 }

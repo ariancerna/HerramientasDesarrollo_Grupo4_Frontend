@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Caveat, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,27 +13,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
-// 2. Añadida la configuración de Caveat
-const caveatFont = Caveat({
-  variable: "--font-caveat",
-  subsets: ["latin"],
-});
-
-
 export const metadata: Metadata = {
-  title: "KickStamp | El Golazo Club",
-  description: "Gestión de alumnos y asistencia de El Golazo Club",
+  title: "KickStamp",
+  description: "Sistema Inteligente de Control de Asistencia del Golazo Club",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} ${caveatFont.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
-

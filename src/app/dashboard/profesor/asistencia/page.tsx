@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Image from "next/image";
 import Pdf417Scanner from "@/components/scanner/pdf417-scanner";
 import {
   EstudianteAsistencia,
@@ -168,208 +167,194 @@ export default function AsistenciaProfesorPage() {
   };
 
   return (
-    <div>
-      <div className="mx-auto max-w-4xl">
-        <header className="mb-6 flex items-center gap-4 rounded-lg bg-[#0A1628] px-5 py-4 shadow-sm sm:gap-6 sm:px-7">
-          <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
-            <Image
-              src="/logo-voley.png"
-              alt="Logo del club de vóley"
-              fill
-              priority
-              sizes="(min-width: 640px) 112px, 96px"
-              className="object-contain"
-            />
-          </div>
-          <div>
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#9adf76]">
-              PROFESOR
-            </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              Registro de asistencia
-            </h1>
-            <p className="mt-2 text-sm text-slate-300 sm:text-base">
-              Escanea el DNI o registra la asistencia manualmente.
-            </p>
-          </div>
-        </header>
-
-        <div
-          className="mb-5 grid grid-cols-2 rounded-xl bg-slate-200 p-1"
-          role="tablist"
-          aria-label="Método de registro"
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={vista === "ESCANEO"}
-            onClick={() => cambiarVista("ESCANEO")}
-            className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
-              vista === "ESCANEO"
-                ? "bg-white text-[#16794C] shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Escanear DNI
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={vista === "MANUAL"}
-            onClick={() => cambiarVista("MANUAL")}
-            className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
-              vista === "MANUAL"
-                ? "bg-white text-[#16794C] shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Registro manual
-          </button>
-        </div>
-
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-          {vista === "ESCANEO" ? (
-            <Pdf417Scanner
-              onDetected={procesarLectura}
-              onError={(message) => {
-                setMensajeError(message);
-                setUltimoRegistro(null);
-              }}
-            />
-          ) : (
-            <section aria-labelledby="manual-title">
-              <h2 id="manual-title" className="text-lg font-semibold text-slate-900">
-                Registro manual
-              </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Completa los datos cuando no sea posible leer el DNI con la cámara.
-              </p>
-
-              <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
-                <label className="sm:col-span-2">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
-                    DNI del estudiante
-                  </span>
-                  <input
-                    value={dniManual}
-                    onChange={(event) =>
-                      setDniManual(event.target.value.replace(/\D/g, "").slice(0, 8))
-                    }
-                    inputMode="numeric"
-                    autoComplete="off"
-                    placeholder="8 dígitos"
-                    required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
-                  />
-                </label>
-
-                <label>
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Fecha
-                  </span>
-                  <input
-                    type="date"
-                    value={fechaManual}
-                    onChange={(event) => setFechaManual(event.target.value)}
-                    required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
-                  />
-                </label>
-
-                <label>
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Hora
-                  </span>
-                  <input
-                    type="time"
-                    value={horaManual}
-                    onChange={(event) => setHoraManual(event.target.value)}
-                    required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
-                  />
-                </label>
-
-                <div className="sm:col-span-2">
-                  <button
-                    type="submit"
-                    className="w-full rounded-lg bg-[#16794C] px-4 py-3 font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
-                  >
-                    Registrar asistencia manual
-                  </button>
-                </div>
-              </form>
-            </section>
-          )}
-        </div>
-
-        <p className="mt-3 text-xs text-slate-500">
-          Datos de prueba disponibles: 76543210, 71234567 y 70456789.
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-6">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">
+          KickStamp · Profesor
         </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          Registro de asistencia
+        </h1>
+        <p className="mt-1.5 text-sm text-body sm:text-base">
+          Escanea el DNI o registra la asistencia manualmente.
+        </p>
+      </div>
 
-        {estudianteEscaneado && (
-          <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-            <p className="text-sm font-semibold text-emerald-800">
-              Estudiante identificado
-            </p>
-            <h2 className="mt-1 text-xl font-bold text-slate-950">
-              {estudianteEscaneado.nombres} {estudianteEscaneado.apellidos}
+      <div
+        className="mb-5 grid grid-cols-2 rounded-xl bg-bg-subtle p-1"
+        role="tablist"
+        aria-label="Método de registro"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={vista === "ESCANEO"}
+          onClick={() => cambiarVista("ESCANEO")}
+          className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
+            vista === "ESCANEO"
+              ? "bg-surface text-primary-dark shadow-sm"
+              : "text-body hover:text-ink"
+          }`}
+        >
+          Escanear DNI
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={vista === "MANUAL"}
+          onClick={() => cambiarVista("MANUAL")}
+          className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
+            vista === "MANUAL"
+              ? "bg-surface text-primary-dark shadow-sm"
+              : "text-body hover:text-ink"
+          }`}
+        >
+          Registro manual
+        </button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface p-5 shadow-card sm:p-7">
+        {vista === "ESCANEO" ? (
+          <Pdf417Scanner
+            onDetected={procesarLectura}
+            onError={(message) => {
+              setMensajeError(message);
+              setUltimoRegistro(null);
+            }}
+          />
+        ) : (
+          <section aria-labelledby="manual-title">
+            <h2 id="manual-title" className="text-lg font-semibold text-ink">
+              Registro manual
             </h2>
-            <dl className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
-              <div>
-                <dt className="font-medium text-slate-500">DNI</dt>
-                <dd>{estudianteEscaneado.dni}</dd>
+            <p className="mt-1 text-sm text-body">
+              Completa los datos cuando no sea posible leer el DNI con la cámara.
+            </p>
+
+            <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
+              <label className="sm:col-span-2">
+                <span className="mb-1.5 block text-sm font-medium text-body">
+                  DNI del estudiante
+                </span>
+                <input
+                  value={dniManual}
+                  onChange={(event) =>
+                    setDniManual(event.target.value.replace(/\D/g, "").slice(0, 8))
+                  }
+                  inputMode="numeric"
+                  autoComplete="off"
+                  placeholder="8 dígitos"
+                  required
+                  className="w-full rounded-xl border border-border px-3 py-2.5 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                />
+              </label>
+
+              <label>
+                <span className="mb-1.5 block text-sm font-medium text-body">
+                  Fecha
+                </span>
+                <input
+                  type="date"
+                  value={fechaManual}
+                  onChange={(event) => setFechaManual(event.target.value)}
+                  required
+                  className="w-full rounded-xl border border-border px-3 py-2.5 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                />
+              </label>
+
+              <label>
+                <span className="mb-1.5 block text-sm font-medium text-body">
+                  Hora
+                </span>
+                <input
+                  type="time"
+                  value={horaManual}
+                  onChange={(event) => setHoraManual(event.target.value)}
+                  required
+                  className="w-full rounded-xl border border-border px-3 py-2.5 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                />
+              </label>
+
+              <div className="sm:col-span-2">
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary/20"
+                >
+                  Registrar asistencia manual
+                </button>
               </div>
-              <div>
-                <dt className="font-medium text-slate-500">Categoría</dt>
-                <dd>{estudianteEscaneado.categoria}</dd>
-              </div>
-            </dl>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
-                className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
-              >
-                Registrar asistencia
-              </button>
-              <button
-                type="button"
-                onClick={() => setEstudianteEscaneado(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
-              >
-                Cancelar
-              </button>
-            </div>
+            </form>
           </section>
         )}
-
-        {mensajeError && (
-          <div
-            className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800"
-            role="alert"
-          >
-            {mensajeError}
-          </div>
-        )}
-
-        {ultimoRegistro && (
-          <div
-            className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4"
-            role="status"
-          >
-            <p className="font-semibold text-emerald-900">
-              Asistencia registrada correctamente
-            </p>
-            <p className="mt-1 text-sm text-emerald-800">
-              {ultimoRegistro.estudiante} · {ultimoRegistro.dni} ·{" "}
-              {new Intl.DateTimeFormat("es-PE", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              }).format(new Date(ultimoRegistro.fechaHora))}
-            </p>
-          </div>
-        )}
       </div>
+
+      <p className="mt-3 text-xs text-muted">
+        Datos de prueba disponibles: 76543210, 71234567 y 70456789.
+      </p>
+
+      {estudianteEscaneado && (
+        <section className="mt-5 rounded-2xl border border-primary/25 bg-primary-soft p-5">
+          <p className="text-sm font-semibold text-primary-dark">
+            Estudiante identificado
+          </p>
+          <h2 className="mt-1 text-xl font-bold text-ink">
+            {estudianteEscaneado.nombres} {estudianteEscaneado.apellidos}
+          </h2>
+          <dl className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
+            <div>
+              <dt className="font-medium text-muted">DNI</dt>
+              <dd>{estudianteEscaneado.dni}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-muted">Categoría</dt>
+              <dd>{estudianteEscaneado.categoria}</dd>
+            </div>
+          </dl>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
+              className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary/20"
+            >
+              Registrar asistencia
+            </button>
+            <button
+              type="button"
+              onClick={() => setEstudianteEscaneado(null)}
+              className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-body transition hover:bg-bg-subtle"
+            >
+              Cancelar
+            </button>
+          </div>
+        </section>
+      )}
+
+      {mensajeError && (
+        <div
+          className="mt-5 rounded-xl border border-danger/25 bg-danger-light p-4 text-sm font-medium text-danger"
+          role="alert"
+        >
+          {mensajeError}
+        </div>
+      )}
+
+      {ultimoRegistro && (
+        <div
+          className="mt-5 rounded-xl border border-primary/25 bg-primary-soft p-4"
+          role="status"
+        >
+          <p className="font-semibold text-primary-dark">
+            Asistencia registrada correctamente
+          </p>
+          <p className="mt-1 text-sm text-body">
+            {ultimoRegistro.estudiante} · {ultimoRegistro.dni} ·{" "}
+            {new Intl.DateTimeFormat("es-PE", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }).format(new Date(ultimoRegistro.fechaHora))}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

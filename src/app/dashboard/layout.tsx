@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
-import Navbar from "@/components/shared/navbar";
 import Sidebar from "@/components/shared/sidebar";
+import Navbar from "@/components/shared/navbar";
 
 export default function DashboardLayout({
   children,
@@ -12,27 +12,11 @@ export default function DashboardLayout({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isMenuOpen) return;
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
-    };
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [isMenuOpen]);
-
   return (
     <RoleGuard>
-      <div className="min-h-screen bg-[#f5f7f6]">
+      <div className="min-h-screen bg-bg">
         <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        <div className="min-w-0 lg:pl-64">
+        <div className="min-w-0 lg:pl-72">
           <Navbar
             isMenuOpen={isMenuOpen}
             onMenuToggle={() => setIsMenuOpen((current) => !current)}
