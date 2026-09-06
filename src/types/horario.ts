@@ -1,10 +1,16 @@
 import { Horario } from "@/types";
 
-export interface HorarioAsignado extends Horario {
+export type EstadoHorario = "activo" | "cancelado";
+
+export interface HorarioEntrenamiento extends Omit<Horario, "cancha" | "estado"> {
   categoriaId: string;
   categoria: string;
   profesorId: string;
+  cancha?: string;
+  estado: EstadoHorario;
 }
+
+export type HorarioAsignado = HorarioEntrenamiento;
 
 export const DIAS_SEMANA: Horario["dia"][] = [
   "lunes",

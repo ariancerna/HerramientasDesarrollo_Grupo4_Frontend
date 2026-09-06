@@ -1,40 +1,41 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import HorarioCard from "@/components/horarios/horario-card";
+import HorarioFiltros from "@/components/horarios/horario-filtros";
 import { useAuth } from "@/hooks/use-auth";
-import { suscribirCategorias } from "@/store/categorias-store";
-import { obtenerHorariosPorProfesor } from "@/store/horarios-store";
-import { DIAS_SEMANA, NOMBRES_DIAS, HorarioAsignado } from "@/types/horario";
+import {
+  obtenerCategorias,
+  obtenerCategoriasIniciales,
+  suscribirCategorias,
+} from "@/store/categorias-store";
+import {
+  filtrarHorariosPorDia,
+  obtenerHorariosPorProfesor,
+} from "@/store/horarios-store";
+import { DIAS_SEMANA } from "@/types/horario";
 
 export default function HorarioProfesorPage() {
   const { session } = useAuth();
-  const [horarios, setHorarios] = useState<HorarioAsignado[]>([]);
-  const [diaSeleccionado, setDiaSeleccionado] = useState("todos");
-
-  useEffect(() => {
-    const profesorId = session?.usuario.id;
-    if (!profesorId) {
-      setHorarios([]);
-      return;
-    }
-
-    const actualizarHorarios = () => {
-      setHorarios(obtenerHorariosPorProfesor(profesorId));
-    };
-
-    actualizarHorarios();
-    return suscribirCategorias(actualizarHorarios);
-  }, [session?.usuario.id]);
-
-  const horariosFiltrados = useMemo(
-    () =>
-      diaSeleccionado === "todos"
-        ? horarios
-        : horarios.filter((horario) => horario.dia === diaSeleccionado),
-    [diaSeleccionado, horarios],
+  const categorias = useSyncExternalStore(
+    suscribirCategorias,
+    obtenerCategorias,
+    obtenerCategoriasIniciales,
   );
+  const [diaSeleccionado, setDiaSeleccionado] = useState("todos");
+  const horarios = useMemo(
+    () => obtenerHorariosPorProfesor(session?.usuario.id ?? "", categorias),
+    [categorias, session?.usuario.id],
+  );
+
+  const horariosFiltrados = useMemo(() => {
+    if (diaSeleccionado === "todos") return horarios;
+    return filtrarHorariosPorDia(
+      horarios,
+      diaSeleccionado as (typeof DIAS_SEMANA)[number],
+    );
+  }, [diaSeleccionado, horarios]);
 
   return (
     <RoleGuard allowedRoles={["profesor"]}>
@@ -52,21 +53,7 @@ export default function HorarioProfesorPage() {
             </p>
           </div>
 
-          <label className="text-sm font-semibold text-slate-700">
-            <span className="mr-2">Filtrar por día</span>
-            <select
-              value={diaSeleccionado}
-              onChange={(event) => setDiaSeleccionado(event.target.value)}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-800 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
-            >
-              <option value="todos">Todos los días</option>
-              {DIAS_SEMANA.map((dia) => (
-                <option key={dia} value={dia}>
-                  {NOMBRES_DIAS[dia]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <HorarioFiltros dia={diaSeleccionado} onDiaChange={setDiaSeleccionado} />
         </header>
 
         {horariosFiltrados.length === 0 ? (
