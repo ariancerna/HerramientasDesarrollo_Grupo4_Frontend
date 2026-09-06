@@ -25,7 +25,7 @@ export default function HistorialAlumnoPage() {
       <div>
           <Link
             href="/dashboard/alumno"
-            className="inline-flex items-center text-sm font-semibold text-slate-600 transition hover:text-[#16794C]"
+            className="inline-flex items-center text-sm font-semibold text-slate-600 transition hover:text-[#16794C] dark:text-slate-400 dark:hover:text-emerald-400"
           >
             ← Volver al inicio
           </Link>
@@ -34,10 +34,10 @@ export default function HistorialAlumnoPage() {
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
               MI ESPACIO
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
               Mi historial de asistencia
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {alumno
                 ? `${alumno.nombres} ${alumno.apellidos} · ${alumno.categoria}`
                 : "Consulta todas tus asistencias registradas."}
@@ -47,15 +47,15 @@ export default function HistorialAlumnoPage() {
           {!estudianteId ? (
             <div
               role="alert"
-              className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-800"
+              className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
             >
               No se pudo identificar al alumno asociado a esta sesión.
             </div>
           ) : (
             <>
-              <section className="mb-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="text-sm text-slate-500">Asistencias registradas</p>
-                <p className="mt-1 text-3xl font-bold text-slate-950">
+              <section className="mb-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Asistencias registradas</p>
+                <p className="mt-1 text-3xl font-bold text-slate-950 dark:text-white">
                   {registros.length}
                 </p>
               </section>

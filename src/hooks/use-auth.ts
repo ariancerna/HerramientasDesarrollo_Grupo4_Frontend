@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
+import { obtenerProfesores } from "@/store/profesores-store";
 import {
   clearSession,
   getSessionSnapshot,
@@ -43,7 +44,15 @@ export function useAuth() {
   const lastTouchRef = useRef(0);
 
   const login = useCallback(({ usuario, password }: LoginParams): LoginResult => {
-    const match = MOCK_USUARIOS.find(
+    const profesoresRegistrados = obtenerProfesores().map((profesor) => ({
+      id: profesor.id,
+      usuario: profesor.usuario,
+      password: profesor.password,
+      nombre: profesor.nombre,
+      rol: "profesor" as const,
+      estudianteId: undefined,
+    }));
+    const match = [...MOCK_USUARIOS, ...profesoresRegistrados].find(
       (u) => u.usuario === usuario && u.password === password
     );
 

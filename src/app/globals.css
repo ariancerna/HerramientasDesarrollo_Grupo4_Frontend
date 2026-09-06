@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Modo oscuro manual (toggle en Configuración), aplicado solo dentro del
+   layout del dashboard: las pantallas de auth mantienen su paleta fija. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Categoria } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
+import { useConfirm } from "@/hooks/use-confirm";
 import { RoleGuard } from "@/components/shared/role-guard";
 import CategoriaForm from "@/components/forms/categoria-form";
 import CategoriasTabla from "@/components/shared/categorias-tabla";
@@ -27,6 +28,7 @@ export default function CategoriasPage() {
     null
   );
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirm();
 
   // Ocultar mensaje de éxito después de 3 segundos
   useEffect(() => {
@@ -71,7 +73,21 @@ export default function CategoriasPage() {
     setMostrarFormulario(true);
   };
 
-  const handleEliminarCategoria = (categoria: Categoria) => {
+  const handleEliminarCategoria = async (categoria: Categoria) => {
+    const confirmado = await confirm({
+      title: "Eliminar categoría",
+      message: (
+        <>
+          ¿Está seguro de que desea eliminar la categoría{" "}
+          <strong>{categoria.nombre}</strong>? Esta acción no se puede deshacer.
+        </>
+      ),
+      confirmLabel: "Eliminar",
+      cancelLabel: "Cancelar",
+      variant: "danger",
+    });
+    if (!confirmado) return;
+
     try {
       eliminarCategoria(categoria.id);
       setMensajeExito(`Categoría "${categoria.nombre}" eliminada correctamente`);
@@ -87,16 +103,16 @@ export default function CategoriasPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Categorías</h1>
-            <p className="mt-1 text-sm text-gray-600">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Categorías</h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
               Gestiona las categorías y horarios de entrenamiento del club
             </p>
           </div>
           <button
             onClick={handleAbrirFormularioNuevo}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
           >
             <PlusIcon />
             Nueva Categoría
@@ -105,13 +121,13 @@ export default function CategoriasPage() {
 
         {/* Toast de éxito */}
         {mensajeExito && (
-          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm animate-in fade-in">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm animate-in fade-in dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
 
         {/* Tabla de categorías */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <CategoriasTabla
             categorias={categorias}
             puedeGestionar={isAdmin}
@@ -130,6 +146,8 @@ export default function CategoriasPage() {
           onGuardar={handleGuardarCategoria}
         />
       )}
+
+      {dialog}
     </RoleGuard>
   );
 }

@@ -1,6 +1,14 @@
 import type { Role } from "@/types";
 
-export type IconName = "home" | "students" | "attendance" | "tag" | "chart" | "settings";
+export type IconName =
+    | "home"
+    | "students"
+    | "attendance"
+    | "tag"
+    | "chart"
+    | "settings"
+    | "teacher"
+    | "location";
 
 export interface NavItem {
     label: string;
@@ -13,8 +21,10 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
     administrador: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/admin", icon: "home" },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/admin/alumnos", icon: "students" },
+        { label: "Profesores", shortLabel: "Profesores", href: "/dashboard/admin/profesores", icon: "teacher" },
         { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
         { label: "Categorías", shortLabel: "Categorías", href: "/dashboard/admin/categorias", icon: "tag" },
+        { label: "Sedes", shortLabel: "Sedes", href: "/dashboard/admin/sedes", icon: "location" },
         { label: "Reportes", shortLabel: "Reportes", href: "/dashboard/admin/reportes", icon: "chart" },
         { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/admin/configuracion", icon: "settings" },
     ],
@@ -22,10 +32,12 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/profesor", icon: "home" },
         { label: "Registrar asistencia", shortLabel: "Asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance" },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/profesor/alumnos", icon: "students" },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/profesor/configuracion", icon: "settings" },
     ],
     alumno: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/alumno", icon: "home" },
         { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance" },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/alumno/configuracion", icon: "settings" },
     ],
 };
 
@@ -71,6 +83,21 @@ export function NavIcon({ name, className }: { name: IconName; className?: strin
                 <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
             </Icon>
         );
+    if (name === "teacher")
+        return (
+            <Icon className={cls}>
+                <circle cx="12" cy="7" r="3" />
+                <path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" />
+                <path d="M9 20h6" />
+            </Icon>
+        );
+    if (name === "location")
+        return (
+            <Icon className={cls}>
+                <path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" />
+                <circle cx="12" cy="9.5" r="2.3" />
+            </Icon>
+        );
     return (
         <Icon className={cls}>
             <circle cx="12" cy="12" r="3" />
@@ -78,22 +105,6 @@ export function NavIcon({ name, className }: { name: IconName; className?: strin
         </Icon>
     );
 }
-export function RoleAvatar({ rol, nombre }: { rol?: Role; nombre?: string }) {
-    const inicial = nombre?.charAt(0).toUpperCase() ?? "?";
-    const colorByRole: Record<Role, string> = {
-        administrador: "bg-primary text-white",
-        profesor: "bg-info text-white",
-        alumno: "bg-warning text-white",
-    };
-    const colorClass = rol ? colorByRole[rol] : "bg-muted text-white";
-
-    return (
-        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-bold ${colorClass}`}>
-            {inicial}
-        </span>
-    );
-}
-
 function Icon({ children, className }: { children: React.ReactNode; className: string }) {
     return (
         <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">

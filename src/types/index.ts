@@ -27,3 +27,17 @@ export interface Categoria {
   descripcion?: string;
   horarios: Horario[];
 }
+
+export interface Sede {
+  id: string;
+  nombre: string;        // "Puente Piedra", "Los Olivos", etc.
+  direccion?: string;
+}
+
+export interface Profesor {
+  id: string;
+  nombre: string;
+  usuario: string;
+  password: string;
+  sedeId: string;
+}

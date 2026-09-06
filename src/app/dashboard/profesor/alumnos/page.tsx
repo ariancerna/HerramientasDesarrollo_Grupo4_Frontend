@@ -25,10 +25,10 @@ export default function AlumnosProfesorPage() {
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
               PROFESOR
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
               Alumnos
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Consulta y filtra la lista de alumnos de tus categorías.
             </p>
           </header>
@@ -43,7 +43,7 @@ export default function AlumnosProfesorPage() {
             onEstadoChange={setEstado}
           />
 
-          <p className="mb-3 text-sm text-slate-500">
+          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
             {alumnosFiltrados.length} alumno(s) encontrado(s)
           </p>
 
