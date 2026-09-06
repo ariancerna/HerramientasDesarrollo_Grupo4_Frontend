@@ -5,6 +5,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
 import AlumnoForm from "@/components/forms/alumno-form";
+import { useConfirm } from "@/hooks/use-confirm";
 import { Student, StudentFormData } from "@/types/student";
 import {
   actualizarAlumno,
@@ -22,6 +23,7 @@ export default function AlumnosAdminPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alumnoAEditar, setAlumnoAEditar] = useState<Student | null>(null);
+  const { confirm, dialog } = useConfirm();
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos, { texto, categoria, estado }),
@@ -38,10 +40,22 @@ export default function AlumnosAdminPage() {
     setIsModalOpen(true);
   };
 
-  const handleEliminar = (alumno: Student) => {
-    const confirmado = window.confirm(
-      `¿Seguro que deseas eliminar a ${alumno.nombres} ${alumno.apellidos}?`,
-    );
+  const handleEliminar = async (alumno: Student) => {
+    const confirmado = await confirm({
+      title: "Eliminar alumno",
+      message: (
+        <>
+          ¿Seguro que deseas eliminar a{" "}
+          <strong>
+            {alumno.nombres} {alumno.apellidos}
+          </strong>
+          ? Esta acción no se puede deshacer.
+        </>
+      ),
+      confirmLabel: "Eliminar",
+      cancelLabel: "Cancelar",
+      variant: "danger",
+    });
     if (!confirmado) return;
 
     eliminarAlumno(alumno.id);
@@ -65,10 +79,10 @@ export default function AlumnosAdminPage() {
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
               ADMINISTRACIÓN
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
               Gestión de alumnos
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Busca, filtra, crea, edita y elimina alumnos del club.
             </p>
           </header>
@@ -83,7 +97,7 @@ export default function AlumnosAdminPage() {
             onNuevoAlumno={handleNuevo}
           />
 
-          <p className="mb-3 text-sm text-slate-500">
+          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
             {alumnosFiltrados.length} alumno(s) encontrado(s)
           </p>
 
@@ -102,6 +116,8 @@ export default function AlumnosAdminPage() {
               onGuardar={handleGuardar}
             />
           )}
+
+          {dialog}
       </div>
     </RoleGuard>
   );

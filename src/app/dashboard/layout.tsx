@@ -5,6 +5,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
 import MobileBottomNav from "@/components/shared/mobile-bottom-nav";
+import { useSettings } from "@/hooks/use-settings";
 
 export default function DashboardLayout({
   children,
@@ -12,10 +13,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { settings } = useSettings();
+  const dataTheme = settings.tema === "oscuro" ? "dark" : "light";
 
   return (
     <RoleGuard>
-      <div className="min-h-screen bg-bg">
+      <div data-theme={dataTheme} className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
         <div className="min-w-0 lg:pl-72">
           <Navbar

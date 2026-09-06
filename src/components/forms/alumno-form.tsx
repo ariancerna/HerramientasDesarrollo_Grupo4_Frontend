@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Student, StudentFormData } from "@/types/student";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface AlumnoFormProps {
   alumnoAEditar: Student | null;
@@ -45,6 +46,7 @@ export default function AlumnoForm({
     };
   });
   const [errores, setErrores] = useState<Errores>({});
+  const { confirm, dialog } = useConfirm();
 
   const validar = (): boolean => {
     const nuevosErrores: Errores = {};
@@ -74,25 +76,44 @@ export default function AlumnoForm({
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validar()) return;
+
+    if (alumnoAEditar) {
+      const confirmado = await confirm({
+        title: "Guardar cambios",
+        message: (
+          <>
+            ¿Deseas guardar los cambios realizados en{" "}
+            <strong>
+              {alumnoAEditar.nombres} {alumnoAEditar.apellidos}
+            </strong>
+            ?
+          </>
+        ),
+        confirmLabel: "Guardar",
+        cancelLabel: "Cancelar",
+      });
+      if (!confirmado) return;
+    }
+
     onGuardar(form, alumnoAEditar?.id);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
-      <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg sm:p-6">
-        <h2 className="text-lg font-bold text-slate-950">
+      <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
+        <h2 className="text-lg font-bold text-slate-950 dark:text-white">
           {alumnoAEditar ? "Editar alumno" : "Nuevo alumno"}
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Completa los datos del jugador.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               DNI
             </span>
             <input
@@ -102,76 +123,76 @@ export default function AlumnoForm({
               }
               inputMode="numeric"
               placeholder="8 dígitos"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
-            {errores.dni && <p className="mt-1 text-xs text-red-600">{errores.dni}</p>}
+            {errores.dni && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.dni}</p>}
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Código
             </span>
             <input
               value={form.codigo}
               onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.codigo && (
-              <p className="mt-1 text-xs text-red-600">{errores.codigo}</p>
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.codigo}</p>
             )}
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Nombres
             </span>
             <input
               value={form.nombres}
               onChange={(e) => setForm({ ...form, nombres: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.nombres && (
-              <p className="mt-1 text-xs text-red-600">{errores.nombres}</p>
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.nombres}</p>
             )}
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Apellidos
             </span>
             <input
               value={form.apellidos}
               onChange={(e) => setForm({ ...form, apellidos: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.apellidos && (
-              <p className="mt-1 text-xs text-red-600">{errores.apellidos}</p>
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.apellidos}</p>
             )}
           </label>
 
           <label className="sm:col-span-2">
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Correo electrónico
             </span>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.email && (
-              <p className="mt-1 text-xs text-red-600">{errores.email}</p>
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.email}</p>
             )}
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Categoría
             </span>
             <select
               value={form.categoria}
               onChange={(e) => setForm({ ...form, categoria: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
               {NOMBRES_CATEGORIAS.map((c) => (
                 <option key={c} value={c}>
@@ -182,7 +203,7 @@ export default function AlumnoForm({
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Estado
             </span>
             <select
@@ -190,7 +211,7 @@ export default function AlumnoForm({
               onChange={(e) =>
                 setForm({ ...form, estado: e.target.value as StudentFormData["estado"] })
               }
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
               <option value="activo">Activo</option>
               <option value="inactivo">Inactivo</option>
@@ -198,19 +219,19 @@ export default function AlumnoForm({
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
-              Carrera <span className="text-slate-400">(opcional)</span>
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Carrera <span className="text-slate-400 dark:text-slate-500">(opcional)</span>
             </span>
             <input
               value={form.carrera ?? ""}
               onChange={(e) => setForm({ ...form, carrera: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
           </label>
 
           <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
-              Ciclo <span className="text-slate-400">(opcional)</span>
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ciclo <span className="text-slate-400 dark:text-slate-500">(opcional)</span>
             </span>
             <input
               type="number"
@@ -223,7 +244,7 @@ export default function AlumnoForm({
                   ciclo: e.target.value ? Number(e.target.value) : undefined,
                 })
               }
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
           </label>
 
@@ -231,7 +252,7 @@ export default function AlumnoForm({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Cancelar
             </button>
@@ -244,6 +265,8 @@ export default function AlumnoForm({
           </div>
         </form>
       </div>
+
+      {dialog}
     </div>
   );
 }

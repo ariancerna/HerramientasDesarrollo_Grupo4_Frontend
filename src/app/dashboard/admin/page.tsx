@@ -17,8 +17,10 @@ interface SeccionAdmin {
 
 const SECCIONES: SeccionAdmin[] = [
   { titulo: "Alumnos", descripcion: "Administra el padrón, datos y estado de cada jugador.", href: "/dashboard/admin/alumnos", etiqueta: "Gestionar alumnos", icono: StudentsIcon },
+  { titulo: "Profesores", descripcion: "Da de alta profesores y asígnalos a una sede.", href: "/dashboard/admin/profesores", etiqueta: "Gestionar profesores", icono: TeacherIcon },
   { titulo: "Asistencia", descripcion: "Revisa los registros y corrige datos cuando sea necesario.", href: "/dashboard/admin/asistencia", etiqueta: "Ver asistencia", icono: AttendanceIcon },
   { titulo: "Categorías", descripcion: "Organiza los grupos deportivos del club.", href: "/dashboard/admin/categorias", etiqueta: "Ver categorías", icono: TagIcon },
+  { titulo: "Sedes", descripcion: "Administra los locales donde opera el club.", href: "/dashboard/admin/sedes", etiqueta: "Gestionar sedes", icono: LocationIcon },
   { titulo: "Reportes", descripcion: "Consulta los indicadores de participación del club.", href: "/dashboard/admin/reportes", etiqueta: "Ver reportes", icono: ChartIcon },
   { titulo: "Configuración", descripcion: "Gestiona los ajustes generales del sistema.", href: "/dashboard/admin/configuracion", etiqueta: "Abrir configuración", icono: GearIcon },
 ];
@@ -53,22 +55,22 @@ export default function AdminDashboardPage() {
 
         <section className="mt-9" aria-labelledby="admin-actions-title">
           <div className="mb-4">
-            <h2 id="admin-actions-title" className="text-xl font-bold text-[#0A1628]">Gestión del club</h2>
-            <p className="mt-1 text-sm text-slate-500">Selecciona el área que deseas administrar.</p>
+            <h2 id="admin-actions-title" className="text-xl font-bold text-[#0A1628] dark:text-white">Gestión del club</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Selecciona el área que deseas administrar.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {SECCIONES.map((seccion) => {
               const Icon = seccion.icono;
               return (
-                <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md">
+                <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
                   <div className="flex items-start gap-4">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C]"><Icon /></span>
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400"><Icon /></span>
                     <div>
-                      <h3 className="text-lg font-bold text-[#0A1628]">{seccion.titulo}</h3>
-                      <p className="mt-1.5 text-sm leading-6 text-slate-500">{seccion.descripcion}</p>
+                      <h3 className="text-lg font-bold text-[#0A1628] dark:text-white">{seccion.titulo}</h3>
+                      <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">{seccion.descripcion}</p>
                     </div>
                   </div>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C]">{seccion.etiqueta}<ArrowIcon /></span>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">{seccion.etiqueta}<ArrowIcon /></span>
                 </Link>
               );
             })}
@@ -89,4 +91,6 @@ function AttendanceIcon() { return <IconFrame><path d="M7 3v3M17 3v3M4 9h16" str
 function TagIcon() { return <IconFrame><path d="M11.5 3H5a2 2 0 0 0-2 2v6.5a2 2 0 0 0 .59 1.41l8.5 8.5a2 2 0 0 0 2.82 0l6.5-6.5a2 2 0 0 0 0-2.82l-8.5-8.5A2 2 0 0 0 11.5 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><circle cx="8" cy="8" r="1.5" fill="currentColor" /></IconFrame>; }
 function ChartIcon() { return <IconFrame><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
 function GearIcon() { return <IconFrame><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
+function TeacherIcon() { return <IconFrame><circle cx="12" cy="7" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M9 20h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
+function LocationIcon() { return <IconFrame><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" strokeWidth="1.8" /></IconFrame>; }
 function ArrowIcon() { return <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>; }

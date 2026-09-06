@@ -59,10 +59,10 @@ export default function ProfesorDashboardPage() {
 
           <section className="mt-9" aria-labelledby="accesos-title">
             <div className="mb-4">
-              <h2 id="accesos-title" className="text-xl font-bold text-[#0A1628]">
+              <h2 id="accesos-title" className="text-xl font-bold text-[#0A1628] dark:text-white">
                 Accesos principales
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 Selecciona la tarea que deseas realizar.
               </p>
             </div>
@@ -75,22 +75,22 @@ export default function ProfesorDashboardPage() {
                   <Link
                     key={acceso.href}
                     href={acceso.href}
-                    className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md"
+                    className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60"
                   >
                     <div className="flex items-start gap-4">
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C]">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">
                         <Icon />
                       </span>
                       <div>
-                        <h3 className="text-lg font-bold text-[#0A1628]">
+                        <h3 className="text-lg font-bold text-[#0A1628] dark:text-white">
                           {acceso.titulo}
                         </h3>
-                        <p className="mt-1.5 text-sm leading-6 text-slate-500">
+                        <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">
                           {acceso.descripcion}
                         </p>
                       </div>
                     </div>
-                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C]">
+                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">
                       {acceso.etiqueta}
                       <ArrowIcon />
                     </span>

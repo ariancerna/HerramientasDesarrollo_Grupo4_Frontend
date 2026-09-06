@@ -32,21 +32,21 @@ export default function AlumnoDashboardPage() {
         </section>
 
         <section className="mt-9 grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
-          <Link href="/dashboard/alumno/historial" className="group flex min-h-48 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md">
+          <Link href="/dashboard/alumno/historial" className="group flex min-h-48 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
             <div className="flex items-start gap-4">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C]"><HistoryIcon /></span>
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400"><HistoryIcon /></span>
               <div>
-                <h2 className="text-xl font-bold text-[#0A1628]">Mi historial de asistencia</h2>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-slate-500">Revisa las fechas y los métodos registrados para tus asistencias.</p>
+                <h2 className="text-xl font-bold text-[#0A1628] dark:text-white">Mi historial de asistencia</h2>
+                <p className="mt-2 max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-400">Revisa las fechas y los métodos registrados para tus asistencias.</p>
               </div>
             </div>
-            <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#16794C]">Ver mi historial<ArrowIcon /></span>
+            <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">Ver mi historial<ArrowIcon /></span>
           </Link>
 
-          <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-semibold text-[#0A1628]">Mi categoría</p>
-            <p className="mt-2 text-lg font-bold text-[#16794C]">{alumno?.categoria ?? "Sin categoría"}</p>
-            <p className="mt-3 border-t border-slate-100 pt-3 text-sm leading-6 text-slate-500">Tu asistencia se registra durante los entrenamientos.</p>
+          <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-sm font-semibold text-[#0A1628] dark:text-white">Mi categoría</p>
+            <p className="mt-2 text-lg font-bold text-[#16794C] dark:text-emerald-400">{alumno?.categoria ?? "Sin categoría"}</p>
+            <p className="mt-3 border-t border-slate-100 pt-3 text-sm leading-6 text-slate-500 dark:border-slate-800 dark:text-slate-400">Tu asistencia se registra durante los entrenamientos.</p>
           </aside>
         </section>
       </div>

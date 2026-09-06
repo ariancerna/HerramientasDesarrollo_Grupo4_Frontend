@@ -1,9 +1,9 @@
 import { RoleGuard } from "@/components/shared/role-guard";
 import ConfiguracionScreen from "@/components/screens/configuracion-screen";
 
-export default function ConfiguracionAdminPage() {
+export default function ConfiguracionProfesorPage() {
   return (
-    <RoleGuard allowedRoles={["administrador"]}>
+    <RoleGuard allowedRoles={["profesor"]}>
       <ConfiguracionScreen />
     </RoleGuard>
   );

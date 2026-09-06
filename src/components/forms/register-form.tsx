@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface FormState {
   nombre: string;
@@ -22,6 +23,7 @@ export function RegisterForm() {
   const [form, setForm] = useState<FormState>({ nombre: "", usuario: "", password: "", confirmarPassword: "" });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const { confirm, dialog } = useConfirm();
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -43,9 +45,14 @@ export function RegisterForm() {
     event.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       setLoading(false);
-      alert("Cuenta creada. Cuando el backend esté listo, esto quedará guardado de verdad.");
+      await confirm({
+        title: "Cuenta creada",
+        message: "Cuando el backend esté listo, esto quedará guardado de verdad.",
+        confirmLabel: "Entendido",
+        hideCancel: true,
+      });
       router.push(ROUTES.LOGIN);
     }, 500);
   }
@@ -56,6 +63,7 @@ export function RegisterForm() {
     }`;
 
   return (
+    <>
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
         <input
@@ -117,5 +125,7 @@ export function RegisterForm() {
         {loading ? "Creando cuenta..." : "Crear cuenta"}
       </button>
     </form>
+    {dialog}
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Categoria, Horario } from "@/types";
 import { HorarioForm } from "./horario-form";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface CategoriaFormProps {
   categoriaAEditar: Categoria | null;
@@ -38,6 +39,7 @@ export default function CategoriaForm({
 
   const [errores, setErrores] = useState<Errores>({});
   const [mostrarErrores, setMostrarErrores] = useState(false);
+  const { confirm, dialog } = useConfirm();
 
   /**
    * Valida que no haya dos horarios en el mismo día
@@ -81,11 +83,26 @@ export default function CategoriaForm({
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMostrarErrores(true);
 
     if (!validar()) return;
+
+    if (categoriaAEditar) {
+      const confirmado = await confirm({
+        title: "Guardar cambios",
+        message: (
+          <>
+            ¿Deseas guardar los cambios realizados en la categoría{" "}
+            <strong>{form.nombre}</strong>?
+          </>
+        ),
+        confirmLabel: "Guardar",
+        cancelLabel: "Cancelar",
+      });
+      if (!confirmado) return;
+    }
 
     onGuardar(form, categoriaAEditar?.id);
     onClose();
@@ -141,9 +158,9 @@ export default function CategoriaForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b p-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-slate-900">
+        <div className="sticky top-0 bg-white border-b p-6 dark:border-slate-700 dark:bg-slate-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {categoriaAEditar ? "Editar Categoría" : "Nueva Categoría"}
           </h2>
         </div>
@@ -151,7 +168,7 @@ export default function CategoriaForm({
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Nombre */}
           <div>
-            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Nombre de la categoría *
             </label>
             <input
@@ -162,20 +179,20 @@ export default function CategoriaForm({
               onChange={(e) =>
                 setForm({ ...form, nombre: e.target.value })
               }
-              className={`w-full border rounded-lg px-4 py-2 text-sm transition focus:outline-none focus:ring-2 ${
+              className={`w-full border rounded-lg px-4 py-2 text-sm transition focus:outline-none focus:ring-2 dark:bg-slate-800 dark:text-white ${
                 mostrarErrores && errores.nombre
-                  ? "border-red-500 bg-red-50 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-blue-500"
+                  ? "border-red-500 bg-red-50 focus:ring-red-500 dark:bg-red-500/10"
+                  : "border-gray-300 focus:ring-blue-500 dark:border-slate-600"
               }`}
             />
             {mostrarErrores && errores.nombre && (
-              <p className="text-red-600 text-xs mt-1">{errores.nombre}</p>
+              <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errores.nombre}</p>
             )}
           </div>
 
           {/* Descripción */}
           <div>
-            <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Descripción (Opcional)
             </label>
             <textarea
@@ -186,21 +203,21 @@ export default function CategoriaForm({
                 setForm({ ...form, descripcion: e.target.value })
               }
               rows={3}
-              className={`w-full border rounded-lg px-4 py-2 text-sm transition focus:outline-none focus:ring-2 ${
+              className={`w-full border rounded-lg px-4 py-2 text-sm transition focus:outline-none focus:ring-2 dark:bg-slate-800 dark:text-white ${
                 mostrarErrores && errores.descripcion
-                  ? "border-red-500 bg-red-50 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-blue-500"
+                  ? "border-red-500 bg-red-50 focus:ring-red-500 dark:bg-red-500/10"
+                  : "border-gray-300 focus:ring-blue-500 dark:border-slate-600"
               }`}
             />
             {mostrarErrores && errores.descripcion && (
-              <p className="text-red-600 text-xs mt-1">{errores.descripcion}</p>
+              <p className="text-red-600 dark:text-red-400 text-xs mt-1">{errores.descripcion}</p>
             )}
           </div>
 
           {/* Horarios */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Horarios de entrenamiento *
               </label>
               <button
@@ -213,7 +230,7 @@ export default function CategoriaForm({
             </div>
 
             {form.horarios.length === 0 && (
-              <div className="p-4 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center text-gray-500 text-sm">
+              <div className="p-4 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center text-gray-500 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
                 No hay horarios. Haz click en &quot;Agregar horario&quot; para comenzar.
               </div>
             )}
@@ -233,16 +250,16 @@ export default function CategoriaForm({
             </div>
 
             {mostrarErrores && errores.horarios && (
-              <p className="text-red-600 text-xs mt-2">{errores.horarios}</p>
+              <p className="text-red-600 dark:text-red-400 text-xs mt-2">{errores.horarios}</p>
             )}
           </div>
 
           {/* Botones */}
-          <div className="flex gap-3 justify-end pt-4 border-t">
+          <div className="flex gap-3 justify-end pt-4 border-t dark:border-slate-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Cancelar
             </button>
@@ -255,6 +272,8 @@ export default function CategoriaForm({
           </div>
         </form>
       </div>
+
+      {dialog}
     </div>
   );
 }

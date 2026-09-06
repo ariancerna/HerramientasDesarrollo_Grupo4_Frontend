@@ -195,7 +195,7 @@ export default function AsistenciaProfesorPage() {
         </header>
 
         <div
-          className="mb-5 grid grid-cols-2 rounded-xl bg-slate-200 p-1"
+          className="mb-5 grid grid-cols-2 rounded-xl bg-slate-200 p-1 dark:bg-slate-800"
           role="tablist"
           aria-label="Método de registro"
         >
@@ -206,8 +206,8 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("ESCANEO")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "ESCANEO"
-                ? "bg-white text-[#16794C] shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
             Escanear DNI
@@ -219,15 +219,15 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("MANUAL")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "MANUAL"
-                ? "bg-white text-[#16794C] shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
             Registro manual
           </button>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-7">
           {vista === "ESCANEO" ? (
             <Pdf417Scanner
               onDetected={procesarLectura}
@@ -238,16 +238,16 @@ export default function AsistenciaProfesorPage() {
             />
           ) : (
             <section aria-labelledby="manual-title">
-              <h2 id="manual-title" className="text-lg font-semibold text-slate-900">
+              <h2 id="manual-title" className="text-lg font-semibold text-slate-900 dark:text-white">
                 Registro manual
               </h2>
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                 Completa los datos cuando no sea posible leer el DNI con la cámara.
               </p>
 
               <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
                 <label className="sm:col-span-2">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     DNI del estudiante
                   </span>
                   <input
@@ -259,12 +259,12 @@ export default function AsistenciaProfesorPage() {
                     autoComplete="off"
                     placeholder="8 dígitos"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
                 <label>
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Fecha
                   </span>
                   <input
@@ -272,12 +272,12 @@ export default function AsistenciaProfesorPage() {
                     value={fechaManual}
                     onChange={(event) => setFechaManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
                 <label>
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Hora
                   </span>
                   <input
@@ -285,7 +285,7 @@ export default function AsistenciaProfesorPage() {
                     value={horaManual}
                     onChange={(event) => setHoraManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
@@ -302,25 +302,25 @@ export default function AsistenciaProfesorPage() {
           )}
         </div>
 
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Datos de prueba disponibles: 76543210, 71234567 y 70456789.
         </p>
 
         {estudianteEscaneado && (
-          <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-            <p className="text-sm font-semibold text-emerald-800">
+          <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/30 dark:bg-emerald-500/10">
+            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
               Estudiante identificado
             </p>
-            <h2 className="mt-1 text-xl font-bold text-slate-950">
+            <h2 className="mt-1 text-xl font-bold text-slate-950 dark:text-white">
               {estudianteEscaneado.nombres} {estudianteEscaneado.apellidos}
             </h2>
-            <dl className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
+            <dl className="mt-3 grid gap-2 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-2">
               <div>
-                <dt className="font-medium text-slate-500">DNI</dt>
+                <dt className="font-medium text-slate-500 dark:text-slate-400">DNI</dt>
                 <dd>{estudianteEscaneado.dni}</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-500">Categoría</dt>
+                <dt className="font-medium text-slate-500 dark:text-slate-400">Categoría</dt>
                 <dd>{estudianteEscaneado.categoria}</dd>
               </div>
             </dl>
@@ -335,7 +335,7 @@ export default function AsistenciaProfesorPage() {
               <button
                 type="button"
                 onClick={() => setEstudianteEscaneado(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 Cancelar
               </button>
@@ -345,7 +345,7 @@ export default function AsistenciaProfesorPage() {
 
         {mensajeError && (
           <div
-            className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800"
+            className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
             role="alert"
           >
             {mensajeError}
@@ -354,13 +354,13 @@ export default function AsistenciaProfesorPage() {
 
         {ultimoRegistro && (
           <div
-            className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4"
+            className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-500/30 dark:bg-emerald-500/10"
             role="status"
           >
-            <p className="font-semibold text-emerald-900">
+            <p className="font-semibold text-emerald-900 dark:text-emerald-300">
               Asistencia registrada correctamente
             </p>
-            <p className="mt-1 text-sm text-emerald-800">
+            <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-300">
               {ultimoRegistro.estudiante} · {ultimoRegistro.dni} ·{" "}
               {new Intl.DateTimeFormat("es-PE", {
                 dateStyle: "medium",

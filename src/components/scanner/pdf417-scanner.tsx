@@ -171,10 +171,10 @@ export default function Pdf417Scanner({
   return (
     <section className="space-y-4" aria-labelledby="scanner-title">
       <div>
-        <h2 id="scanner-title" className="text-lg font-semibold text-slate-900">
+        <h2 id="scanner-title" className="text-lg font-semibold text-slate-900 dark:text-white">
           Escanear DNI
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
           Lee el código PDF417 que se encuentra en el reverso del documento.
         </p>
       </div>
@@ -200,7 +200,7 @@ export default function Pdf417Scanner({
 
       <canvas ref={canvasRef} className="hidden" aria-hidden="true" />
 
-      <p className="min-h-5 text-sm text-slate-600" role="status">
+      <p className="min-h-5 text-sm text-slate-600 dark:text-slate-400" role="status">
         {message}
       </p>
 
@@ -214,8 +214,8 @@ export default function Pdf417Scanner({
         </button>
       </div>
 
-      <details className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-800">
+      <details className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-800 dark:text-slate-200">
           Probar sin cámara
         </summary>
         <form onSubmit={submitTestValue} className="mt-3 flex flex-col gap-3 sm:flex-row">
@@ -228,11 +228,11 @@ export default function Pdf417Scanner({
             onChange={(event) => setTestValue(event.target.value)}
             inputMode="numeric"
             placeholder="Ejemplo: 76543210"
-            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
           />
           <button
             type="submit"
-            className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#16794C] hover:bg-[#edf8e8]"
+            className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#16794C] hover:bg-[#edf8e8] dark:border-slate-600 dark:text-slate-200 dark:hover:bg-emerald-500/10"
           >
             Simular lectura
           </button>

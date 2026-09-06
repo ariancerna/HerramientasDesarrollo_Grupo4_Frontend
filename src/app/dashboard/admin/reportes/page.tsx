@@ -80,25 +80,25 @@ export default function ReportesPage() {
           <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
             ADMINISTRACIÓN
           </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Reportes de asistencia
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Consulta la participación del club por periodo, categoría y método de registro.
           </p>
         </header>
 
         <form
           onSubmit={handleGenerar}
-          className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
         >
           <div className="mb-4 flex items-start gap-3">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C]">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">
               <FilterIcon />
             </span>
             <div>
-              <h2 className="font-bold text-[#0A1628]">Configurar reporte</h2>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <h2 className="font-bold text-[#0A1628] dark:text-white">Configurar reporte</h2>
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Deja los campos sin seleccionar para incluir todos los registros.
               </p>
             </div>
@@ -167,17 +167,17 @@ export default function ReportesPage() {
           {error && (
             <p
               role="alert"
-              className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+              className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
             >
               {error}
             </p>
           )}
 
-          <div className="mt-5 flex flex-col-reverse gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-5 flex flex-col-reverse gap-3 border-t border-slate-100 pt-4 dark:border-slate-800 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={handleLimpiar}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Limpiar filtros
             </button>
@@ -193,12 +193,12 @@ export default function ReportesPage() {
 
         <section className="mt-7" aria-live="polite" aria-labelledby="resultado-title">
           {registros === null ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center">
-              <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white text-slate-400 shadow-sm">
+            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900">
+              <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white text-slate-400 shadow-sm dark:bg-slate-800 dark:text-slate-500">
                 <ChartIcon />
               </span>
-              <h2 className="mt-4 font-bold text-slate-800">Reporte pendiente</h2>
-              <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">
+              <h2 className="mt-4 font-bold text-slate-800 dark:text-slate-200">Reporte pendiente</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Selecciona los filtros que necesites y genera el reporte para consultar los registros.
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function ReportesPage() {
               <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-[#16794C]">RESULTADO</p>
-                  <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-[#0A1628]">
+                  <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-[#0A1628] dark:text-white">
                     {registros.length} registro{registros.length === 1 ? "" : "s"} encontrado{registros.length === 1 ? "" : "s"}
                   </h2>
                 </div>
@@ -220,7 +220,7 @@ export default function ReportesPage() {
                     type="button"
                     onClick={handleExportar}
                     disabled={registros.length === 0}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[#16794C] bg-white px-4 py-2.5 text-sm font-bold text-[#16794C] transition hover:bg-[#edf8e8] focus:outline-none focus:ring-2 focus:ring-[#6FCF3A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[#16794C] bg-white px-4 py-2.5 text-sm font-bold text-[#16794C] transition hover:bg-[#edf8e8] focus:outline-none focus:ring-2 focus:ring-[#6FCF3A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-800 dark:disabled:border-slate-700 dark:disabled:text-slate-600 dark:disabled:hover:bg-slate-900"
                   >
                     <DownloadIcon />
                     Exportar CSV
@@ -230,7 +230,7 @@ export default function ReportesPage() {
               {mensajeExportacion && (
                 <p
                   role="status"
-                  className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+                  className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
                 >
                   {mensajeExportacion}
                 </p>
@@ -245,7 +245,7 @@ export default function ReportesPage() {
 }
 
 const INPUT_CLASS =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30";
+  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white";
 
 function CampoFiltro({
   etiqueta,
@@ -256,7 +256,7 @@ function CampoFiltro({
 }) {
   return (
     <label>
-      <span className="mb-1.5 block text-sm font-semibold text-slate-700">
+      <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
         {etiqueta}
       </span>
       {children}
@@ -277,7 +277,7 @@ function ResumenFiltros({ filtros }: { filtros: FiltrosReporteAsistencia }) {
   ].filter(Boolean);
 
   return (
-    <p className="text-sm text-slate-500">
+    <p className="text-sm text-slate-500 dark:text-slate-400">
       {partes.length > 0 ? partes.join(" · ") : "Todos los registros"}
     </p>
   );
