@@ -19,3 +19,42 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ===== Paleta exclusiva para Welcome / Login / Registro / Recuperar contraseña ===== */
+:root {
+  --color-primary: #15803d;
+  --color-primary-hover: #166534;
+  --color-primary-dark: #14532d;
+  --color-primary-light: #dcfce7;
+  --color-primary-soft: #f0fdf4;
+
+  --color-ink: #111827;
+  --color-body: #4b5563;
+  --color-muted: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-surface: #ffffff;
+  --color-bg-auth: #f7f8fa;
+  --color-contrast: #0f172a;
+
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+
+  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+  --shadow-popover: 0 12px 24px -6px rgb(15 23 42 / 0.12), 0 4px 8px -4px rgb(15 23 42 / 0.06);
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-ink: var(--color-ink);
+  --color-body: var(--color-body);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-surface: var(--color-surface);
+  --color-bg-auth: var(--color-bg-auth);
+  --color-contrast: var(--color-contrast);
+  --color-danger: var(--color-danger);
+  --color-danger-light: var(--color-danger-light);
+}
