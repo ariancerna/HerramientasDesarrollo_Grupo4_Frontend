@@ -25,6 +25,7 @@ export interface Categoria {
   id: string;
   nombre: string;        // "Sub-10", "Sub-12", etc.
   descripcion?: string;
+  profesorIds?: string[];
   horarios: Horario[];
 }
 
