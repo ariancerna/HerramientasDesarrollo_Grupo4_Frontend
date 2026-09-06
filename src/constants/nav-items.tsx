@@ -9,7 +9,8 @@ export type IconName =
     | "settings"
     | "teacher"
     | "location"
-    | "calendar";
+    | "calendar"
+    | "evaluation";
 
 export interface NavItem {
     label: string;
@@ -34,6 +35,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
         { label: "Registrar asistencia", shortLabel: "Asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance" },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/profesor/alumnos", icon: "students" },
         { label: "Mi horario", shortLabel: "Horario", href: "/dashboard/profesor/horario", icon: "calendar" },
+        { label: "Evaluaciones", shortLabel: "Evaluaciones", href: "/dashboard/profesor/evaluaciones", icon: "evaluation" },
         { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/profesor/configuracion", icon: "settings" },
     ],
     alumno: [
@@ -105,6 +107,12 @@ export function NavIcon({ name, className }: { name: IconName; className?: strin
             <Icon className={cls}>
                 <rect x="4" y="5" width="16" height="16" rx="2" />
                 <path d="M8 3v4M16 3v4M4 10h16M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+            </Icon>
+        );
+    if (name === "evaluation")
+        return (
+            <Icon className={cls}>
+                <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" />
             </Icon>
         );
     return (
