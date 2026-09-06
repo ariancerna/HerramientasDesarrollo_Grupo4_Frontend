@@ -2,6 +2,7 @@ export type EstadoEstudiante = "activo" | "inactivo";
 
 export interface Student {
   id: string;
+  profesorId?: string;
   dni: string;
   codigo: string;
   nombres: string;

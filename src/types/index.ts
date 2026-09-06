@@ -19,12 +19,15 @@ export interface Horario {
   dia: "lunes" | "martes" | "miércoles" | "jueves" | "viernes" | "sábado" | "domingo";
   horaInicio: string; // "09:00"
   horaFin: string;    // "11:00"
+  cancha?: string;
+  estado?: "activo" | "cancelado";
 }
 
 export interface Categoria {
   id: string;
   nombre: string;        // "Sub-10", "Sub-12", etc.
   descripcion?: string;
+  profesorIds?: string[];
   horarios: Horario[];
 }
 
