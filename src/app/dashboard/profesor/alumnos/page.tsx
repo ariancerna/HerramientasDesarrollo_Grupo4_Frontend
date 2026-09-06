@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
@@ -8,14 +8,10 @@ import { Student } from "@/types/student";
 import { filtrarAlumnos, obtenerAlumnos } from "@/store/alumnos-store";
 
 export default function AlumnosProfesorPage() {
-  const [alumnos, setAlumnos] = useState<Student[]>([]);
+  const [alumnos] = useState<Student[]>(obtenerAlumnos);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
-
-  useEffect(() => {
-    setAlumnos(obtenerAlumnos());
-  }, []);
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos, { texto, categoria, estado }),
@@ -24,11 +20,10 @@ export default function AlumnosProfesorPage() {
 
   return (
     <RoleGuard allowedRoles={["profesor"]}>
-      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <div>
           <header className="mb-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
-              KickStamp · Profesor
+            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+              PROFESOR
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Alumnos
@@ -54,8 +49,7 @@ export default function AlumnosProfesorPage() {
 
           {/* puedeGestionar=false (por defecto): oculta editar/eliminar */}
           <AlumnoTabla alumnos={alumnosFiltrados} />
-        </div>
-      </main>
+      </div>
     </RoleGuard>
   );
 }

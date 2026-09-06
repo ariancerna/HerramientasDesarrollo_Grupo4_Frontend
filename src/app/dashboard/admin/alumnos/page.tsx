@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
@@ -15,17 +15,13 @@ import {
 } from "@/store/alumnos-store";
 
 export default function AlumnosAdminPage() {
-  const [alumnos, setAlumnos] = useState<Student[]>([]);
+  const [alumnos, setAlumnos] = useState<Student[]>(obtenerAlumnos);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alumnoAEditar, setAlumnoAEditar] = useState<Student | null>(null);
-
-  useEffect(() => {
-    setAlumnos(obtenerAlumnos());
-  }, []);
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos, { texto, categoria, estado }),
@@ -64,11 +60,10 @@ export default function AlumnosAdminPage() {
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
-      <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <div>
           <header className="mb-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">
-              KickStamp · Administración
+            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+              ADMINISTRACIÓN
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Gestión de alumnos
@@ -99,14 +94,15 @@ export default function AlumnosAdminPage() {
             onEliminar={handleEliminar}
           />
 
-          <AlumnoForm
-            isOpen={isModalOpen}
-            alumnoAEditar={alumnoAEditar}
-            onClose={() => setIsModalOpen(false)}
-            onGuardar={handleGuardar}
-          />
-        </div>
-      </main>
+          {isModalOpen && (
+            <AlumnoForm
+              key={alumnoAEditar?.id ?? "nuevo"}
+              alumnoAEditar={alumnoAEditar}
+              onClose={() => setIsModalOpen(false)}
+              onGuardar={handleGuardar}
+            />
+          )}
+      </div>
     </RoleGuard>
   );
 }

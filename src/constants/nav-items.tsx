@@ -1,0 +1,105 @@
+import type { Role } from "@/types";
+
+export type IconName = "home" | "students" | "attendance" | "tag" | "chart" | "settings";
+
+export interface NavItem {
+    label: string;
+    shortLabel: string;
+    href: string;
+    icon: IconName;
+}
+
+export const NAV_ITEMS: Record<Role, NavItem[]> = {
+    administrador: [
+        { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/admin", icon: "home" },
+        { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/admin/alumnos", icon: "students" },
+        { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
+        { label: "Categorías", shortLabel: "Categorías", href: "/dashboard/admin/categorias", icon: "tag" },
+        { label: "Reportes", shortLabel: "Reportes", href: "/dashboard/admin/reportes", icon: "chart" },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/admin/configuracion", icon: "settings" },
+    ],
+    profesor: [
+        { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/profesor", icon: "home" },
+        { label: "Registrar asistencia", shortLabel: "Asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance" },
+        { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/profesor/alumnos", icon: "students" },
+    ],
+    alumno: [
+        { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/alumno", icon: "home" },
+        { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance" },
+    ],
+};
+
+export const ROLE_LABELS: Record<Role, string> = {
+    administrador: "Administrador",
+    profesor: "Profesor",
+    alumno: "Alumno",
+};
+
+export function NavIcon({ name, className }: { name: IconName; className?: string }) {
+    const cls = className ?? "h-5 w-5 shrink-0";
+    if (name === "home")
+        return (
+            <Icon className={cls}>
+                <path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6" />
+            </Icon>
+        );
+    if (name === "students")
+        return (
+            <Icon className={cls}>
+                <circle cx="9" cy="8" r="3" />
+                <path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" />
+            </Icon>
+        );
+    if (name === "attendance")
+        return (
+            <Icon className={cls}>
+                <path d="M7 3v3M17 3v3M4 9h16" />
+                <rect x="4" y="5" width="16" height="16" rx="3" />
+                <path d="m8.5 15 2 2 4.5-5" />
+            </Icon>
+        );
+    if (name === "tag")
+        return (
+            <Icon className={cls}>
+                <path d="M11.5 3H5a2 2 0 0 0-2 2v6.5l8.6 8.6a2 2 0 0 0 2.8 0l5.7-5.7a2 2 0 0 0 0-2.8Z" />
+                <circle cx="8" cy="8" r="1.4" />
+            </Icon>
+        );
+    if (name === "chart")
+        return (
+            <Icon className={cls}>
+                <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+            </Icon>
+        );
+    return (
+        <Icon className={cls}>
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" />
+        </Icon>
+    );
+}
+export function RoleAvatar({ rol, nombre }: { rol?: Role; nombre?: string }) {
+    const inicial = nombre?.charAt(0).toUpperCase() ?? "?";
+    const colorByRole: Record<Role, string> = {
+        administrador: "bg-primary text-white",
+        profesor: "bg-info text-white",
+        alumno: "bg-warning text-white",
+    };
+    const colorClass = rol ? colorByRole[rol] : "bg-muted text-white";
+
+    return (
+        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-bold ${colorClass}`}>
+            {inicial}
+        </span>
+    );
+}
+
+function Icon({ children, className }: { children: React.ReactNode; className: string }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+            <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                {children}
+            </g>
+        </svg>
+    );
+}
