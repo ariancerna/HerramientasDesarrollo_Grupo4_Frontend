@@ -12,6 +12,7 @@ export default function ForgotPasswordPage() {
           alt="Entrenamiento de El Golazo Club"
           fill
           priority
+          sizes="(min-width: 768px) 50vw, 0px"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-contrast/85 via-contrast/55 to-contrast/90" />
