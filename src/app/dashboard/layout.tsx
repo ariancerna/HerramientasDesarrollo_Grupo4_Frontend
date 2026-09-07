@@ -21,10 +21,7 @@ export default function DashboardLayout({
       <div data-theme={dataTheme} className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
         <div className="min-w-0 lg:pl-72">
-          <Navbar
-            isMenuOpen={isMenuOpen}
-            onMenuToggle={() => setIsMenuOpen((current) => !current)}
-          />
+          <Navbar />
           <main className="mx-auto min-w-0 max-w-7xl px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
             {children}
           </main>

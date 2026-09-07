@@ -10,49 +10,48 @@ export default function MobileBottomNav() {
   const { session } = useAuth();
   const items = session ? NAV_ITEMS[session.usuario.rol] : [];
 
-  // Máximo 5 accesos directos abajo; si hay más módulos, los demás quedan solo en el sidebar/menú.
-  const visibleItems = items.slice(0, 5);
-
-  if (visibleItems.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900 lg:hidden"
       aria-label="Navegación móvil"
     >
-      {visibleItems.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== visibleItems[0]?.href && pathname.startsWith(`${item.href}/`));
+      <div className="flex overflow-x-auto scrollbar-hide">
+        {items.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            (item.href !== items[0]?.href && pathname.startsWith(`${item.href}/`));
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={isActive ? "page" : undefined}
-            className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition"
-          >
-            <span
-              className={`grid h-9 w-9 place-items-center rounded-full transition ${
-                isActive
-                  ? "bg-primary-light text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400"
-                  : "text-muted dark:text-slate-500"
-              }`}
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className="flex min-w-[76px] flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition"
             >
-              <NavIcon name={item.icon} className="h-5 w-5" />
-            </span>
-            <span
-              className={
-                isActive
-                  ? "text-primary-dark dark:text-emerald-400"
-                  : "text-muted dark:text-slate-500"
-              }
-            >
-              {item.shortLabel}
-            </span>
-          </Link>
-        );
-      })}
+              <span
+                className={`grid h-9 w-9 place-items-center rounded-full transition ${
+                  isActive
+                    ? "bg-primary-light text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400"
+                    : "text-muted dark:text-slate-500"
+                }`}
+              >
+                <NavIcon name={item.icon} className="h-5 w-5" />
+              </span>
+              <span
+                className={`whitespace-nowrap ${
+                  isActive
+                    ? "text-primary-dark dark:text-emerald-400"
+                    : "text-muted dark:text-slate-500"
+                }`}
+              >
+                {item.shortLabel}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }
