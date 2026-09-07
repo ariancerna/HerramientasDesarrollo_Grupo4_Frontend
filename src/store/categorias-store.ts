@@ -98,6 +98,27 @@ export function eliminarCategoria(id: string): boolean {
   return true;
 }
 
+/** Sincroniza las categorías asignadas a un profesor. */
+export function asignarCategoriasAProfesor(profesorId: string, categoriaIds: string[]) {
+  const idsSeleccionados = new Set(categoriaIds);
+  const categoriasActualizadas = obtenerCategorias().map((categoria) => {
+    const idsActuales = categoria.profesorIds ?? [];
+    const yaAsignado = idsActuales.includes(profesorId);
+    const debeEstarAsignado = idsSeleccionados.has(categoria.id);
+
+    if (yaAsignado === debeEstarAsignado) return categoria;
+
+    return {
+      ...categoria,
+      profesorIds: debeEstarAsignado
+        ? [...idsActuales, profesorId]
+        : idsActuales.filter((id) => id !== profesorId),
+    };
+  });
+
+  guardarCategorias(categoriasActualizadas);
+}
+
 function guardarCategorias(categorias: Categoria[]) {
   if (isBrowser()) {
     categoriasCache = categorias;

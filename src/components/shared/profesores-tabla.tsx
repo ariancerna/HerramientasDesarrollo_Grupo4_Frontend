@@ -1,10 +1,11 @@
 "use client";
 
-import { Profesor, Sede } from "@/types";
+import { Categoria, Profesor, Sede } from "@/types";
 
 interface ProfesoresTablaProps {
   profesores: Profesor[];
   sedes: Sede[];
+  categorias: Categoria[];
   onEditar?: (profesor: Profesor) => void;
   onEliminar?: (profesor: Profesor) => void;
 }
@@ -12,10 +13,14 @@ interface ProfesoresTablaProps {
 export default function ProfesoresTabla({
   profesores,
   sedes,
+  categorias,
   onEditar,
   onEliminar,
 }: ProfesoresTablaProps) {
   const nombreSede = (sedeId: string) => sedes.find((s) => s.id === sedeId)?.nombre ?? "—";
+
+  const categoriasDelProfesor = (profesorId: string) =>
+    categorias.filter((categoria) => categoria.profesorIds?.includes(profesorId));
 
   if (profesores.length === 0) {
     return (
@@ -27,12 +32,13 @@ export default function ProfesoresTabla({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
-      <table className="w-full min-w-[600px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
+      <table className="w-full min-w-[720px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>
             <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Nombre</th>
             <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Usuario</th>
             <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Sede</th>
+            <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Categorías</th>
             <th className="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">Acciones</th>
           </tr>
         </thead>
@@ -45,6 +51,19 @@ export default function ProfesoresTabla({
                 <span className="inline-flex rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-500/15 dark:text-blue-300">
                   {nombreSede(profesor.sedeId)}
                 </span>
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex flex-wrap gap-1">
+                  {categoriasDelProfesor(profesor.id).length > 0 ? (
+                    categoriasDelProfesor(profesor.id).map((categoria) => (
+                      <span key={categoria.id} className="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300">
+                        {categoria.nombre}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-slate-400 dark:text-slate-500">Sin asignar</span>
+                  )}
+                </div>
               </td>
               <td className="px-4 py-3 text-right">
                 <button

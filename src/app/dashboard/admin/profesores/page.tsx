@@ -16,6 +16,12 @@ import {
   filtrarProfesores,
 } from "@/store/profesores-store";
 import { obtenerSedes, obtenerSedesIniciales, suscribirSedes } from "@/store/sedes-store";
+import {
+  asignarCategoriasAProfesor,
+  obtenerCategorias,
+  obtenerCategoriasIniciales,
+  suscribirCategorias,
+} from "@/store/categorias-store";
 
 export default function ProfesoresPage() {
   const profesores = useSyncExternalStore(
@@ -24,6 +30,11 @@ export default function ProfesoresPage() {
     obtenerProfesoresIniciales,
   );
   const sedes = useSyncExternalStore(suscribirSedes, obtenerSedes, obtenerSedesIniciales);
+  const categorias = useSyncExternalStore(
+    suscribirCategorias,
+    obtenerCategorias,
+    obtenerCategoriasIniciales,
+  );
   const [texto, setTexto] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [profesorAEditar, setProfesorAEditar] = useState<Profesor | null>(null);
@@ -52,12 +63,14 @@ export default function ProfesoresPage() {
     setMostrarFormulario(true);
   };
 
-  const handleGuardar = (data: Omit<Profesor, "id">, id?: string) => {
+  const handleGuardar = (data: Omit<Profesor, "id">, categoriaIds: string[], id?: string) => {
     if (id) {
       actualizarProfesor(id, data);
+      asignarCategoriasAProfesor(id, categoriaIds);
       setMensajeExito(`Profesor "${data.nombre}" actualizado correctamente`);
     } else {
-      crearProfesor(data);
+      const profesor = crearProfesor(data);
+      asignarCategoriasAProfesor(profesor.id, categoriaIds);
       setMensajeExito(`Profesor "${data.nombre}" creado correctamente`);
     }
     setMostrarFormulario(false);
@@ -80,6 +93,7 @@ export default function ProfesoresPage() {
     if (!confirmado) return;
 
     eliminarProfesor(profesor.id);
+    asignarCategoriasAProfesor(profesor.id, []);
     setMensajeExito(`Profesor "${profesor.nombre}" eliminado correctamente`);
   };
 
@@ -126,6 +140,7 @@ export default function ProfesoresPage() {
         <ProfesoresTabla
           profesores={profesoresFiltrados}
           sedes={sedes}
+          categorias={categorias}
           onEditar={handleEditar}
           onEliminar={handleEliminar}
         />
@@ -135,6 +150,7 @@ export default function ProfesoresPage() {
             key={profesorAEditar?.id ?? "nuevo"}
             profesorAEditar={profesorAEditar}
             sedes={sedes}
+            categorias={categorias}
             onClose={() => setMostrarFormulario(false)}
             onGuardar={handleGuardar}
           />

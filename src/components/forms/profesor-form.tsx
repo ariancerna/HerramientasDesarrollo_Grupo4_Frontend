@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Profesor, Sede } from "@/types";
+import { Categoria, Profesor, Sede } from "@/types";
 import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
 import { usuarioProfesorDisponible } from "@/store/profesores-store";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -16,8 +16,9 @@ interface ProfesorFormData {
 interface ProfesorFormProps {
   profesorAEditar: Profesor | null;
   sedes: Sede[];
+  categorias: Categoria[];
   onClose: () => void;
-  onGuardar: (data: Omit<Profesor, "id">, id?: string) => void;
+  onGuardar: (data: Omit<Profesor, "id">, categoriaIds: string[], id?: string) => void;
 }
 
 type Errores = Partial<Record<keyof ProfesorFormData, string>>;
@@ -25,6 +26,7 @@ type Errores = Partial<Record<keyof ProfesorFormData, string>>;
 export default function ProfesorForm({
   profesorAEditar,
   sedes,
+  categorias,
   onClose,
   onGuardar,
 }: ProfesorFormProps) {
@@ -40,6 +42,13 @@ export default function ProfesorForm({
     };
   });
   const [errores, setErrores] = useState<Errores>({});
+  const [categoriaIds, setCategoriaIds] = useState<string[]>(() =>
+    profesorAEditar
+      ? categorias
+          .filter((categoria) => categoria.profesorIds?.includes(profesorAEditar.id))
+          .map((categoria) => categoria.id)
+      : [],
+  );
   const { confirm, dialog } = useConfirm();
 
   const validar = (): boolean => {
@@ -104,7 +113,13 @@ export default function ProfesorForm({
       password: form.password ? form.password : profesorAEditar?.password ?? "",
       sedeId: form.sedeId,
     };
-    onGuardar(datos, profesorAEditar?.id);
+    onGuardar(datos, categoriaIds, profesorAEditar?.id);
+  };
+
+  const alternarCategoria = (categoriaId: string) => {
+    setCategoriaIds((ids) =>
+      ids.includes(categoriaId) ? ids.filter((id) => id !== categoriaId) : [...ids, categoriaId],
+    );
   };
 
   return (
@@ -184,6 +199,31 @@ export default function ProfesorForm({
             </select>
             {errores.sedeId && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.sedeId}</p>}
           </label>
+
+          <fieldset className="sm:col-span-2">
+            <legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+              Categorías asignadas
+            </legend>
+            {categorias.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-slate-300 p-3 text-sm text-slate-500 dark:border-slate-600 dark:text-slate-400">
+                No hay categorías disponibles para asignar.
+              </p>
+            ) : (
+              <div className="grid gap-2 rounded-lg border border-slate-200 p-3 sm:grid-cols-2 dark:border-slate-700">
+                {categorias.map((categoria) => (
+                  <label key={categoria.id} className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={categoriaIds.includes(categoria.id)}
+                      onChange={() => alternarCategoria(categoria.id)}
+                      className="h-4 w-4 rounded border-slate-300 text-[#16794C] focus:ring-[#16794C]"
+                    />
+                    {categoria.nombre}
+                  </label>
+                ))}
+              </div>
+            )}
+          </fieldset>
 
           <div className="mt-2 flex justify-end gap-3 sm:col-span-2">
             <button
