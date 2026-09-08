@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
@@ -52,14 +51,7 @@ export default function HistorialAlumnoPage() {
   return (
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
-          <Link
-            href="/dashboard/alumno"
-            className="inline-flex items-center text-sm font-semibold text-slate-600 transition hover:text-[#16794C] dark:text-slate-400 dark:hover:text-emerald-400"
-          >
-            ← Volver al inicio
-          </Link>
-
-          <header className="mt-5 mb-6">
+          <header className="mb-6">
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
               MI ESPACIO
             </p>
