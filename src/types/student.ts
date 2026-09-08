@@ -8,6 +8,8 @@ export interface Student {
   nombres: string;
   apellidos: string;
   email: string;
+  telefono?: string;
+  fotoUrl?: string;
   categoria: string;
   carrera?: string;
   ciclo?: number;
@@ -24,4 +26,12 @@ export interface StudentFormData {
   carrera?: string;
   ciclo?: number;
   estado: EstadoEstudiante;
+}
+
+export interface StudentProfileData {
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono?: string;
+  fotoUrl?: string;
 }

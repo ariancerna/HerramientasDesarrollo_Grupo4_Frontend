@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import UserAvatar from "@/components/shared/user-avatar";
 import type { Session } from "@/types";
 import { ROLE_LABELS } from "@/constants/nav-items";
+import { obtenerAlumnoPorId } from "@/store/alumnos-store";
 
 interface ProfileMenuProps {
   session: Session | null;
@@ -30,7 +33,9 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
     };
   }, []);
 
-  const inicial = session?.usuario.nombre.charAt(0).toUpperCase() ?? "?";
+  const alumno = session?.usuario.estudianteId
+    ? obtenerAlumnoPorId(session.usuario.estudianteId)
+    : undefined;
 
   return (
     <div ref={containerRef} className="relative">
@@ -49,9 +54,11 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
             {session ? ROLE_LABELS[session.usuario.rol] : ""}
           </span>
         </span>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#16794C] text-sm font-bold text-white">
-          {inicial}
-        </span>
+        <UserAvatar
+          nombre={session?.usuario.nombre}
+          fotoUrl={alumno?.fotoUrl}
+          className="h-9 w-9 bg-[#16794C] text-sm font-bold text-white"
+        />
       </button>
 
       {isOpen && (
@@ -64,6 +71,16 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
               {session ? ROLE_LABELS[session.usuario.rol] : ""}
             </p>
           </div>
+          {session?.usuario.rol === "alumno" && (
+            <Link
+              href="/dashboard/alumno/perfil"
+              onClick={() => setIsOpen(false)}
+              className="mt-1 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
+              <ProfileIcon />
+              Mi perfil
+            </Link>
+          )}
           <button
             type="button"
             onClick={onLogout}
@@ -75,6 +92,15 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
         </div>
       )}
     </div>
+  );
+}
+
+function ProfileIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden="true">
+      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
   );
 }
 

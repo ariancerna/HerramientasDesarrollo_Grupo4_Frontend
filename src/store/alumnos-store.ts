@@ -1,4 +1,8 @@
-import { Student, StudentFormData } from "@/types/student";
+import {
+  Student,
+  StudentFormData,
+  StudentProfileData,
+} from "@/types/student";
 import { MOCK_ALUMNOS } from "@/lib/mock/alumnos.mock";
 
 const STORAGE_KEY = "kickstamp-alumnos";
@@ -35,6 +39,10 @@ export function obtenerAlumnos(): Student[] {
   }
 }
 
+export function obtenerAlumnoPorId(id: string): Student | undefined {
+  return obtenerAlumnos().find((alumno) => alumno.id === id);
+}
+
 function guardarAlumnos(alumnos: Student[]) {
   if (isBrowser()) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(alumnos));
@@ -57,10 +65,35 @@ export function actualizarAlumno(
   const index = alumnos.findIndex((a) => a.id === id);
   if (index === -1) return null;
 
-  const actualizado: Student = { ...data, id };
+  const actualizado: Student = { ...alumnos[index], ...data, id };
   const nuevaLista = [...alumnos];
   nuevaLista[index] = actualizado;
   guardarAlumnos(nuevaLista);
+  return actualizado;
+}
+
+/** Actualiza únicamente los datos que el alumno puede gestionar desde su perfil. */
+export function actualizarPerfilAlumno(
+  id: string,
+  data: StudentProfileData,
+): Student | null {
+  const alumnos = obtenerAlumnos();
+  const index = alumnos.findIndex((alumno) => alumno.id === id);
+
+  if (index === -1) return null;
+
+  const actualizado: Student = {
+    ...alumnos[index],
+    nombres: data.nombres.trim(),
+    apellidos: data.apellidos.trim(),
+    email: data.email.trim(),
+    telefono: data.telefono?.trim() || undefined,
+    fotoUrl: data.fotoUrl || undefined,
+  };
+  const nuevaLista = [...alumnos];
+  nuevaLista[index] = actualizado;
+  guardarAlumnos(nuevaLista);
+
   return actualizado;
 }
 

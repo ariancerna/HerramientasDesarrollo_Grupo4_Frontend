@@ -2,6 +2,7 @@ import type { Role } from "@/types";
 
 export type IconName =
     | "home"
+    | "profile"
     | "students"
     | "attendance"
     | "tag"
@@ -44,6 +45,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
     ],
     alumno: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/alumno", icon: "home" },
+        { label: "Mi perfil", shortLabel: "Perfil", href: "/dashboard/alumno/perfil", icon: "profile" },
         { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance" },
         { label: "Mis pagos", shortLabel: "Pagos", href: "/dashboard/alumno/pagos", icon: "payments" },
         { label: "Calendario", shortLabel: "Agenda", href: "/dashboard/alumno/calendario", icon: "calendar" },
@@ -63,6 +65,13 @@ export function NavIcon({ name, className }: { name: IconName; className?: strin
         return (
             <Icon className={cls}>
                 <path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6" />
+            </Icon>
+        );
+    if (name === "profile")
+        return (
+            <Icon className={cls}>
+                <circle cx="12" cy="8" r="3" />
+                <path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" />
             </Icon>
         );
     if (name === "students")

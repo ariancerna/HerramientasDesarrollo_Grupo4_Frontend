@@ -81,6 +81,26 @@ export function touchSession(): Session | null {
   return session;
 }
 
+export function actualizarUsuarioSesion(
+  cambios: Partial<Pick<Usuario, "nombre">>,
+): Session | null {
+  const session = getSession();
+  if (!session) return null;
+
+  const actualizada: Session = {
+    ...session,
+    usuario: { ...session.usuario, ...cambios },
+    lastActivity: Date.now(),
+  };
+
+  if (isBrowser()) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(actualizada));
+    notifySessionChange();
+  }
+
+  return actualizada;
+}
+
 export function clearSession(): void {
   if (isBrowser()) {
     localStorage.removeItem(SESSION_KEY);

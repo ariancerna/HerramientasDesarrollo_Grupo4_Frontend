@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
+import { obtenerAlumnoPorId } from "@/store/alumnos-store";
 import { obtenerProfesores } from "@/store/profesores-store";
 import {
+  actualizarUsuarioSesion,
   clearSession,
   getSessionSnapshot,
   isSessionExpired,
@@ -63,7 +65,14 @@ export function useAuth() {
     const usuarioSinPassword = {
       id: match.id,
       usuario: match.usuario,
-      nombre: match.nombre,
+      nombre: match.estudianteId
+        ? (() => {
+            const alumno = obtenerAlumnoPorId(match.estudianteId);
+            return alumno
+              ? `${alumno.nombres} ${alumno.apellidos}`
+              : match.nombre;
+          })()
+        : match.nombre,
       rol: match.rol,
       estudianteId: match.estudianteId,
     };
@@ -73,6 +82,10 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     clearSession();
+  }, []);
+
+  const actualizarUsuarioActual = useCallback((nombre: string) => {
+    actualizarUsuarioSesion({ nombre });
   }, []);
 
   // Reinicia el contador de inactividad ante actividad del usuario
@@ -106,5 +119,5 @@ export function useAuth() {
     return () => clearInterval(interval);
   }, [session]);
 
-  return { session, isLoading, login, logout };
+  return { session, isLoading, login, logout, actualizarUsuarioActual };
 }

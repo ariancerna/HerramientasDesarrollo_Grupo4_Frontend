@@ -33,7 +33,14 @@ export default function AlumnoDashboardPage() {
           </div>
         </section>
 
-        <section className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <ModuloCard
+            href="/dashboard/alumno/perfil"
+            titulo="Mi perfil"
+            descripcion="Actualiza tus datos personales y consulta tu categoría asignada."
+            enlace="Ver mi perfil"
+            icono={<ProfileIcon />}
+          />
           <ModuloCard
             href="/dashboard/alumno/historial"
             titulo="Mi historial"
@@ -87,6 +94,7 @@ function ModuloCard({ href, titulo, descripcion, enlace, detalle, icono }: { hre
 }
 
 function HistoryIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><path d="M3 3v5h5M3.05 13a9 9 0 1 0 2.13-7.14L3 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function ProfileIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>; }
 function PaymentsIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.8"/><path d="M3 9h18M7 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>; }
 function CalendarIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 3v4M16 3v4M4 10h16M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>; }
 function ArrowIcon() { return <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>; }

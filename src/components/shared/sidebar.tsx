@@ -5,11 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { NAV_ITEMS, ROLE_LABELS, NavIcon } from "@/constants/nav-items";
+import { obtenerAlumnoPorId } from "@/store/alumnos-store";
+import UserAvatar from "@/components/shared/user-avatar";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { session } = useAuth();
   const items = session ? NAV_ITEMS[session.usuario.rol] : [];
+  const alumno = session?.usuario.estudianteId
+    ? obtenerAlumnoPorId(session.usuario.estudianteId)
+    : undefined;
 
   return (
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-72 flex-col border-r border-slate-800 bg-[#0B132B] text-slate-300 lg:flex">
@@ -40,7 +45,11 @@ export default function Sidebar() {
 
       <div className="border-t border-slate-800/80 px-4 py-4">
         <div className="flex items-center gap-3 rounded-xl bg-slate-900/50 p-2.5">
-          <SidebarAvatar nombre={session?.usuario.nombre} />
+          <UserAvatar
+            nombre={session?.usuario.nombre}
+            fotoUrl={alumno?.fotoUrl}
+            className="h-9 w-9 border border-slate-700 bg-slate-800 text-sm font-bold text-white"
+          />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">{session?.usuario.nombre}</p>
             {session && <p className="truncate text-xs capitalize text-slate-400">{ROLE_LABELS[session.usuario.rol]}</p>}
@@ -49,8 +58,4 @@ export default function Sidebar() {
       </div>
     </aside>
   );
-}
-
-function SidebarAvatar({ nombre }: { nombre?: string }) {
-  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-slate-700 bg-slate-800 text-sm font-bold text-white">{nombre?.charAt(0).toUpperCase() ?? "?"}</span>;
 }
