@@ -60,6 +60,32 @@ export function suscribirEventos(onStoreChange: () => void) {
     window.removeEventListener(EVENTOS_CHANGE_EVENT, handleChange);
   };
 }
+// CREAR — "programar horario/evento" (módulo de Calendario del admin)
+export function crearEvento(evento: Omit<EventoClub, "id">): EventoClub {
+  const nuevo: EventoClub = { ...evento, id: crypto.randomUUID() };
+  guardarEventos([...obtenerEventos(), nuevo]);
+  return nuevo;
+}
+
+// ACTUALIZAR
+export function actualizarEvento(id: string, cambios: Partial<EventoClub>): EventoClub | null {
+  const eventos = obtenerEventos();
+  const index = eventos.findIndex((e) => e.id === id);
+  if (index === -1) return null;
+
+  const actualizado = { ...eventos[index], ...cambios };
+  guardarEventos(eventos.map((evento, i) => (i === index ? actualizado : evento)));
+  return actualizado;
+}
+
+function guardarEventos(eventos: EventoClub[]) {
+  if (isBrowser()) {
+    eventosCache = eventos;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(eventos));
+    window.dispatchEvent(new Event(EVENTOS_CHANGE_EVENT));
+  }
+}
+
 const INDICE_DIA: Record<Horario["dia"], number> = {
   domingo: 0,
   lunes: 1,
