@@ -158,3 +158,36 @@ export function obtenerProximasActividades(
     )
     .slice(0, limite);
 }
+
+// ELIMINAR
+export function eliminarEvento(id: string): boolean {
+  const eventos = obtenerEventos();
+  const nuevos = eventos.filter((e) => e.id !== id);
+  if (nuevos.length === eventos.length) return false;
+
+  guardarEventos(nuevos);
+  return true;
+}
+
+export function obtenerProximasActividadesTodas(
+  fechaReferencia = new Date(),
+  limite = 30,
+): ActividadCalendario[] {
+  const categorias = obtenerCategorias();
+  const actividadesPorCategoria = categorias.flatMap((categoria) =>
+    obtenerProximasActividades(categoria.nombre, fechaReferencia, limite),
+  );
+
+  const vistos = new Set<string>();
+  const combinadas = actividadesPorCategoria.filter((actividad) => {
+    if (vistos.has(actividad.id)) return false;
+    vistos.add(actividad.id);
+    return true;
+  });
+
+  return combinadas
+    .sort((a, b) =>
+      fechaHoraComparable(a).localeCompare(fechaHoraComparable(b)),
+    )
+    .slice(0, limite);
+}
