@@ -1,8 +1,65 @@
 import { MOCK_EVENTOS_CLUB } from "@/lib/mock/eventos.mock";
 import { obtenerCategorias } from "@/store/categorias-store";
-import type { ActividadCalendario } from "@/types/calendario";
+import type { ActividadCalendario, EventoClub } from "@/types/calendario";
 import type { Horario } from "@/types";
 
+const STORAGE_KEY = "kickstamp-eventos";
+const EVENTOS_CHANGE_EVENT = "kickstamp:eventos-change";
+
+let eventosCache: EventoClub[] | null = null;
+
+function isBrowser() {
+  return typeof window !== "undefined";
+}
+
+export function obtenerEventosIniciales(): EventoClub[] {
+  return MOCK_EVENTOS_CLUB;
+}
+
+function restaurarEventos(): EventoClub[] {
+  const eventos = [...MOCK_EVENTOS_CLUB];
+  eventosCache = eventos;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(eventos));
+  return eventos;
+}
+
+// LEER
+export function obtenerEventos(): EventoClub[] {
+  if (!isBrowser()) return obtenerEventosIniciales();
+  if (eventosCache) return eventosCache;
+
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return restaurarEventos();
+
+  try {
+    const eventos: unknown = JSON.parse(raw);
+    if (!Array.isArray(eventos)) return restaurarEventos();
+    eventosCache = eventos as EventoClub[];
+    return eventosCache;
+  } catch {
+    return restaurarEventos();
+  }
+}
+
+export function suscribirEventos(onStoreChange: () => void) {
+  if (!isBrowser()) return () => undefined;
+
+  const handleChange = () => {
+    eventosCache = null;
+    onStoreChange();
+  };
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY) handleChange();
+  };
+
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(EVENTOS_CHANGE_EVENT, handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(EVENTOS_CHANGE_EVENT, handleChange);
+  };
+}
 const INDICE_DIA: Record<Horario["dia"], number> = {
   domingo: 0,
   lunes: 1,
@@ -63,7 +120,7 @@ export function obtenerProximasActividades(
     }
   }
 
-  const eventos: ActividadCalendario[] = MOCK_EVENTOS_CLUB.filter(
+  const eventos: ActividadCalendario[] = obtenerEventos().filter(
     (evento) => !evento.categoria || evento.categoria === categoriaNombre,
   )
     .filter((evento) => evento.fecha >= fechaLocal(hoy))
