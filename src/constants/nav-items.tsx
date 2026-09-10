@@ -29,6 +29,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
         { label: "Profesores", shortLabel: "Profesores", href: "/dashboard/admin/profesores", icon: "teacher" },
         { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
         { label: "Pagos", shortLabel: "Pagos", href: "/dashboard/admin/pagos", icon: "payments" },
+        { label: "Calendario", shortLabel: "Calendario", href: "/dashboard/admin/calendario", icon: "calendar" },
         { label: "Categorías", shortLabel: "Categorías", href: "/dashboard/admin/categorias", icon: "tag" },
         { label: "Sedes", shortLabel: "Sedes", href: "/dashboard/admin/sedes", icon: "location" },
         { label: "Reportes", shortLabel: "Reportes", href: "/dashboard/admin/reportes", icon: "chart" },
