@@ -19,7 +19,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+    <header className="sticky top-0 z-30 border-b border-border bg-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
       <div className="flex h-16 min-w-0 items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-ink dark:text-white sm:text-base">
