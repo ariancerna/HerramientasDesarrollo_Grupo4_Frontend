@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
 import { obtenerMensualidadActual } from "@/store/pagos-store";
+import { obtenerProximasActividades } from "@/store/calendario-store";
 
 export default function AlumnoDashboardPage() {
   const { session } = useAuth();
@@ -14,26 +15,59 @@ export default function AlumnoDashboardPage() {
   const alumno = estudianteId ? obtenerAlumnos().find((item) => item.id === estudianteId) : undefined;
   const asistencias = estudianteId ? obtenerAsistenciasPorEstudiante(estudianteId) : [];
   const mensualidad = estudianteId ? obtenerMensualidadActual(estudianteId) : undefined;
+  const actividades = alumno ? obtenerProximasActividades(alumno.categoria, new Date(), 3) : [];
+  const proximaActividad = actividades[0];
+  const asistenciaPorcentaje = asistencias.length ? Math.min(100, asistencias.length * 10) : 0;
 
   return (
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
-        <section className="relative overflow-hidden rounded-xl bg-[#0A1628] px-6 py-8 text-white sm:px-9 sm:py-10">
-          <div className="absolute inset-y-0 left-0 w-1.5 bg-[#6FCF3A]" aria-hidden="true" />
-          <div className="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
+        <section className="relative px-0 py-1">
+          <div className="relative">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-[0.1em] text-[#9adf76]">MI ESPACIO</p>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Hola, {primerNombre}</h1>
-              <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">Consulta tu asistencia, mensualidades y próximas actividades en un solo lugar.</p>
+              <p className="text-xs font-bold tracking-[0.14em] text-[#16794C] dark:text-emerald-400">MI ESPACIO</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">Consulta tu asistencia, mensualidades y próximas actividades en un solo lugar.</p>
             </div>
-            <dl className="rounded-lg border border-white/15 bg-white/5 px-6 py-4 text-center">
-              <dt className="text-xs text-slate-300">Asistencias registradas</dt>
-              <dd className="mt-1 text-3xl font-bold text-white">{asistencias.length}</dd>
-            </dl>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-xs text-slate-500 dark:text-slate-400">Asistencias</dt><dd className="mt-1 text-3xl font-bold text-slate-950 dark:text-white">{asistencias.length}</dd></dl>
+              <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-xs text-slate-500 dark:text-slate-400">Estado de pago</dt><dd className="mt-1 text-lg font-bold text-slate-950 dark:text-white">{mensualidad?.estado === "pagado" ? "Al día" : "Pendiente"}</dd></dl>
+              <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-xs text-slate-500 dark:text-slate-400">Próxima actividad</dt><dd className="mt-1 text-lg font-bold text-slate-950 dark:text-white">{proximaActividad?.horaInicio ?? "Sin agenda"}</dd></dl>
+              <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-xs text-slate-500 dark:text-slate-400">Categoría</dt><dd className="mt-1 truncate text-lg font-bold text-slate-950 dark:text-white">{alumno?.categoria ?? "Por asignar"}</dd></dl>
+            </div>
           </div>
         </section>
 
-        <section className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mt-6 grid gap-4 xl:grid-cols-[1.55fr_0.8fr_0.8fr]">
+          <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#16794C] to-[#0f5134] p-6 text-white shadow-sm sm:p-7">
+            <div className="absolute -right-9 -top-10 h-40 w-40 rounded-full border-[26px] border-white/10" aria-hidden="true" />
+            <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-emerald-100">Tu siguiente actividad</p>
+            {proximaActividad ? <>
+              <h2 className="relative mt-3 text-2xl font-bold">{proximaActividad.titulo}</h2>
+              <p className="relative mt-2 text-sm text-emerald-50">{proximaActividad.categoria} · {proximaActividad.ubicacion}</p>
+              <div className="relative mt-6 flex items-end justify-between gap-4">
+                <p className="text-sm font-semibold">{formatearActividad(proximaActividad.fecha, proximaActividad.horaInicio)}</p>
+                <Link href="/dashboard/alumno/calendario" className="rounded-lg bg-white px-3 py-2 text-xs font-bold text-[#12613D] transition hover:bg-emerald-50">Ver agenda</Link>
+              </div>
+            </> : <p className="relative mt-3 text-sm text-emerald-50">No tienes actividades programadas por ahora.</p>}
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Asistencia</p>
+            <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{asistenciaPorcentaje}%</p>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"><div className="h-full rounded-full bg-[#6FCF3A]" style={{ width: `${asistenciaPorcentaje}%` }} /></div>
+            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver historial →</Link>
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Mensualidad</p>
+            <p className="mt-2 text-lg font-bold text-slate-950 dark:text-white">{mensualidad?.estado === "pagado" ? "Al día" : mensualidad?.estado === "vencido" ? "Pago vencido" : "Pago pendiente"}</p>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{mensualidad ? `Vence el ${formatearFechaCorta(mensualidad.vencimiento)}` : "Sin mensualidad registrada"}</p>
+            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver detalle →</Link>
+          </article>
+        </section>
+
+        <section className="mt-9">
+          <div className="mb-4 flex items-end justify-between gap-4"><div><h2 className="text-xl font-bold text-[#0A1628] dark:text-white">Tu espacio</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestiona tu información y revisa tus avances.</p></div><Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-[#16794C] dark:text-emerald-400 sm:block">Agenda completa →</Link></div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <ModuloCard
             href="/dashboard/alumno/perfil"
             titulo="Mi perfil"
@@ -63,15 +97,8 @@ export default function AlumnoDashboardPage() {
             enlace="Ver calendario"
             icono={<CalendarIcon />}
           />
-        </section>
+        </div></section>
 
-        <aside className="mt-5 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-900">
-          <div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Categoría asignada</p>
-            <p className="mt-1 text-lg font-bold text-[#16794C] dark:text-emerald-400">{alumno?.categoria ?? "Sin categoría"}</p>
-          </div>
-          <p className="max-w-lg text-sm leading-6 text-slate-500 sm:text-right dark:text-slate-400">Tu agenda y registros se muestran de acuerdo con la categoría asignada.</p>
-        </aside>
       </div>
     </RoleGuard>
   );
@@ -98,3 +125,5 @@ function ProfileIcon() { return <svg viewBox="0 0 24 24" fill="none" className="
 function PaymentsIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.8"/><path d="M3 9h18M7 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>; }
 function CalendarIcon() { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M8 3v4M16 3v4M4 10h16M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>; }
 function ArrowIcon() { return <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function formatearActividad(fecha: string, hora: string) { return `${new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`))} · ${hora}`; }
+function formatearFechaCorta(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }

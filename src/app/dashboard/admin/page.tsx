@@ -6,6 +6,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
+import { obtenerProximasActividadesTodas } from "@/store/calendario-store";
 
 interface SeccionAdmin {
   titulo: string;
@@ -33,26 +34,36 @@ export default function AdminDashboardPage() {
   const alumnos = obtenerAlumnos();
   const asistencias = obtenerRegistrosAsistencia();
   const activos = alumnos.filter((alumno) => alumno.estado === "activo").length;
+  const pendientes = alumnos.length - activos;
+  const proximaActividad = obtenerProximasActividadesTodas(new Date(), 1)[0];
+  const recientes = asistencias.slice(0, 3);
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
-        <section className="relative overflow-hidden rounded-xl bg-[#0A1628] px-6 py-8 text-white sm:px-9 sm:py-10">
-          <div className="absolute inset-y-0 left-0 w-1.5 bg-[#6FCF3A]" aria-hidden="true" />
-          <div className="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
+        <section className="relative px-0 py-1">
+          <div className="relative">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-[0.1em] text-[#9adf76]">ADMINISTRACIÓN</p>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Hola, {primerNombre}</h1>
-              <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+              <p className="text-xs font-bold tracking-[0.14em] text-[#16794C] dark:text-emerald-400">ADMINISTRACIÓN</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
                 Gestiona la operación diaria del club desde un solo lugar.
               </p>
             </div>
-            <dl className="grid grid-cols-3 divide-x divide-white/15 rounded-lg border border-white/15 bg-white/5">
+            <dl className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:divide-x-0">
               <Metric label="Alumnos" value={alumnos.length} />
               <Metric label="Activos" value={activos} />
               <Metric label="Registros" value={asistencias.length} />
             </dl>
           </div>
+        </section>
+
+        <section className="mt-6 grid gap-4 xl:grid-cols-[1.25fr_0.9fr]">
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#16794C] dark:text-emerald-400">Requiere atención</p><h2 className="mt-2 text-xl font-bold text-slate-950 dark:text-white">{pendientes} alumno(s) con pago pendiente</h2><p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Revisa el estado de mensualidad y registra los pagos recibidos.</p></div><Link href="/dashboard/admin/pagos" className="rounded-lg bg-[#16794C] px-3 py-2 text-xs font-bold text-white hover:bg-[#12613D]">Gestionar pagos</Link></div>
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-5 dark:border-slate-800"><MiniMetric label="Asistencia registrada" value={asistencias.length} /><MiniMetric label="Próxima actividad" value={proximaActividad ? formatearFecha(proximaActividad.fecha) : "Sin agenda"} /></div>
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900"><div className="flex items-center justify-between"><h2 className="font-bold text-slate-950 dark:text-white">Actividad reciente</h2><Link href="/dashboard/admin/asistencia" className="text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver todo →</Link></div><div className="mt-4 space-y-3">{recientes.length ? recientes.map((registro) => <div key={registro.id} className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{registro.estudiante}</p><p className="text-xs text-slate-500 dark:text-slate-400">{registro.categoria}</p></div><span className="whitespace-nowrap text-xs text-slate-400">{new Date(registro.fechaHora).toLocaleDateString("es-PE")}</span></div>) : <p className="text-sm text-slate-500">Sin registros recientes.</p>}</div></article>
         </section>
 
         <section className="mt-9" aria-labelledby="admin-actions-title">
@@ -61,7 +72,7 @@ export default function AdminDashboardPage() {
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Selecciona el área que deseas administrar.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {SECCIONES.map((seccion) => {
+            {SECCIONES.slice(0, 6).map((seccion) => {
               const Icon = seccion.icono;
               return (
                 <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
@@ -84,8 +95,10 @@ export default function AdminDashboardPage() {
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
-  return <div className="min-w-20 px-3 py-3 text-center sm:px-5"><dt className="text-xs text-slate-300">{label}</dt><dd className="mt-1 text-xl font-bold text-white">{value}</dd></div>;
+  return <div className="min-w-20 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</dt><dd className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">{value}</dd><p className="mt-1 text-xs font-medium text-[#16794C] dark:text-emerald-400">Actualizado hoy</p></div>;
 }
+function MiniMetric({ label, value }: { label: string; value: string | number }) { return <div><p className="text-xs text-slate-500 dark:text-slate-400">{label}</p><p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">{value}</p></div>; }
+function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
 
 function IconFrame({ children }: { children: React.ReactNode }) { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">{children}</svg>; }
 function StudentsIcon() { return <IconFrame><circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
