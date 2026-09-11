@@ -34,8 +34,11 @@ export default function CalendarioAdminPage() {
   const { confirm, dialog } = useConfirm();
 
   const proximasActividades = useMemo(
-    () => obtenerProximasActividadesTodas(new Date(), 20),
-    // eventos/categorias son dependencias indirectas: recalculamos cuando cambian
+    () => {
+      void eventos;
+      void categorias;
+      return obtenerProximasActividadesTodas(new Date(), 20);
+    },
     [eventos, categorias],
   );
 

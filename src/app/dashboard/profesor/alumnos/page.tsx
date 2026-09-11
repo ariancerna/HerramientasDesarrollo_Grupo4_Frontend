@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { useAuth } from "@/hooks/use-auth";
+import { obtenerCategorias } from "@/store/categorias-store";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
 import AlumnoForm from "@/components/forms/alumno-form";
@@ -15,6 +17,11 @@ import {
 } from "@/store/alumnos-store";
 
 export default function AlumnosProfesorPage() {
+  const { session } = useAuth();
+  const [categoriasAsignadas] = useState(() =>
+    obtenerCategorias().filter((categoria) => categoria.profesorIds?.includes(session?.usuario.id ?? "")),
+  );
+  const nombresCategoriasAsignadas = categoriasAsignadas.map((categoria) => categoria.nombre);
   const [alumnos, setAlumnos] = useState<Student[]>(obtenerAlumnos);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
@@ -24,8 +31,8 @@ export default function AlumnosProfesorPage() {
   const [alumnoAEliminar, setAlumnoAEliminar] = useState<Student | null>(null);
 
   const alumnosFiltrados = useMemo(
-    () => filtrarAlumnos(alumnos, { texto, categoria, estado }),
-    [alumnos, texto, categoria, estado],
+    () => filtrarAlumnos(alumnos.filter((alumno) => nombresCategoriasAsignadas.includes(alumno.categoria)), { texto, categoria, estado }),
+    [alumnos, texto, categoria, estado, nombresCategoriasAsignadas],
   );
 
   const abrirNuevoAlumno = () => {
@@ -104,6 +111,7 @@ export default function AlumnosProfesorPage() {
             onCategoriaChange={setCategoria}
             estado={estado}
             onEstadoChange={setEstado}
+            categorias={nombresCategoriasAsignadas}
           />
 
         <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
@@ -121,6 +129,7 @@ export default function AlumnosProfesorPage() {
           <AlumnoForm
             key={alumnoAEditar?.id ?? "nuevo"}
             alumnoAEditar={alumnoAEditar}
+            categoriasDisponibles={nombresCategoriasAsignadas}
             onClose={cerrarFormulario}
             onGuardar={guardarAlumno}
           />

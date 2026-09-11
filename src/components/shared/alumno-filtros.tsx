@@ -11,6 +11,7 @@ interface AlumnoFiltrosProps {
   estado: Student["estado"] | "todos";
   onEstadoChange: (value: Student["estado"] | "todos") => void;
   onNuevoAlumno?: () => void;
+  categorias?: string[];
 }
 
 export default function AlumnoFiltros({
@@ -21,6 +22,7 @@ export default function AlumnoFiltros({
   estado,
   onEstadoChange,
   onNuevoAlumno,
+  categorias = NOMBRES_CATEGORIAS,
 }: AlumnoFiltrosProps) {
   return (
     <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center lg:justify-between">
@@ -38,7 +40,7 @@ export default function AlumnoFiltros({
           className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-52"
         >
           <option value="todas">Todas las categorías</option>
-          {NOMBRES_CATEGORIAS.map((c) => (
+          {categorias.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>

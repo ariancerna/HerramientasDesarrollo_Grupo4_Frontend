@@ -7,6 +7,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 interface AlumnoFormProps {
   alumnoAEditar: Student | null;
+  categoriasDisponibles?: string[];
   onClose: () => void;
   onGuardar: (data: StudentFormData, id?: string) => void;
 }
@@ -27,11 +28,13 @@ type Errores = Partial<Record<keyof StudentFormData, string>>;
 
 export default function AlumnoForm({
   alumnoAEditar,
+  categoriasDisponibles,
   onClose,
   onGuardar,
 }: AlumnoFormProps) {
+  const categorias = categoriasDisponibles?.length ? categoriasDisponibles : NOMBRES_CATEGORIAS;
   const [form, setForm] = useState<StudentFormData>(() => {
-    if (!alumnoAEditar) return formularioVacio;
+    if (!alumnoAEditar) return { ...formularioVacio, categoria: categorias[0] };
 
     return {
       dni: alumnoAEditar.dni,
@@ -194,7 +197,7 @@ export default function AlumnoForm({
               onChange={(e) => setForm({ ...form, categoria: e.target.value })}
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
-              {NOMBRES_CATEGORIAS.map((c) => (
+              {categorias.map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>

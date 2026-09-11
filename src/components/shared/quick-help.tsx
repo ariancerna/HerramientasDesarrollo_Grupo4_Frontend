@@ -5,6 +5,23 @@ import Link from "next/link";
 import { NAV_ITEMS, NavIcon } from "@/constants/nav-items";
 import { useAuth } from "@/hooks/use-auth";
 
+const HELP_DESCRIPTIONS: Record<string, string> = {
+  Alumnos: "Gestiona y consulta a tus alumnos.",
+  Profesores: "Crea cuentas y asigna categorías.",
+  Asistencia: "Registra y revisa asistencias.",
+  Pagos: "Consulta pagos y mensualidades.",
+  Calendario: "Revisa actividades y horarios.",
+  Categorías: "Administra categorías y horarios.",
+  Sedes: "Gestiona las sedes del club.",
+  Reportes: "Genera reportes de asistencia.",
+  "Mi perfil": "Actualiza tus datos personales.",
+  "Mi historial": "Consulta tus asistencias.",
+  "Mi horario": "Consulta tus entrenamientos.",
+  Evaluaciones: "Registra el rendimiento de alumnos.",
+  Anuncios: "Envía avisos a tus alumnos.",
+  Configuración: "Ajusta las preferencias del panel.",
+};
+
 export default function QuickHelp() {
   const { session } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,7 +82,12 @@ export default function QuickHelp() {
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   <NavIcon name={item.icon} className="h-4 w-4 text-[#16794C] dark:text-emerald-400" />
-                  {item.label}
+                  <span>
+                    <span className="block">{item.label}</span>
+                    <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-400">
+                      {HELP_DESCRIPTIONS[item.label] ?? "Accede a este módulo."}
+                    </span>
+                  </span>
                 </Link>
               </li>
             ))}

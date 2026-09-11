@@ -24,6 +24,8 @@ export default function AnunciosProfesorPage() {
   const profesorId = session?.usuario.id ?? "";
   const [alumnos] = useState<Student[]>(obtenerAlumnos);
   const [categorias] = useState<Categoria[]>(obtenerCategorias);
+  const categoriasAsignadas = categorias.filter((categoria) => categoria.profesorIds?.includes(profesorId));
+  const alumnosAsignados = alumnos.filter((alumno) => categoriasAsignadas.some((categoria) => categoria.nombre === alumno.categoria));
   const [anuncios, setAnuncios] = useState<Anuncio[]>(() => obtenerAnunciosPorProfesor(profesorId));
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [anuncioAEditar, setAnuncioAEditar] = useState<Anuncio | null>(null);
@@ -95,8 +97,8 @@ export default function AnunciosProfesorPage() {
         {mostrarFormulario && (
           <AnuncioForm
             key={anuncioAEditar?.id ?? "nuevo"}
-            alumnos={alumnos}
-            categorias={categorias}
+            alumnos={alumnosAsignados}
+            categorias={categoriasAsignadas}
             anuncioAEditar={anuncioAEditar}
             onClose={() => { setMostrarFormulario(false); setAnuncioAEditar(null); }}
             onGuardar={guardar}
