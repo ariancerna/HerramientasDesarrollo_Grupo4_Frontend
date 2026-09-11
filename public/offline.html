@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sin conexión | KickStamp</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #061a2e;
+        color: #fff;
+        text-align: center;
+        padding: 24px;
+      }
+      h1 { font-size: 1.25rem; margin: 0; }
+      p { margin: 0; color: #94a3b8; max-width: 320px; }
+      button {
+        margin-top: 12px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        background: #008f3c;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sin conexión</h1>
+    <p>No se pudo cargar esta página. Revisa tu conexión a internet e inténtalo de nuevo.</p>
+    <button onclick="location.reload()">Reintentar</button>
+  </body>
+</html>

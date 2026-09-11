@@ -75,49 +75,47 @@ export default function AlumnosAdminPage() {
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
-          <header className="mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              ADMINISTRACIÓN
-            </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
-              Gestión de alumnos
-            </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              Busca, filtra, crea, edita y elimina alumnos del club.
-            </p>
-          </header>
+        <header className="mb-6">
 
-          <AlumnoFiltros
-            texto={texto}
-            onTextoChange={setTexto}
-            categoria={categoria}
-            onCategoriaChange={setCategoria}
-            estado={estado}
-            onEstadoChange={setEstado}
-            onNuevoAlumno={handleNuevo}
-          />
-
-          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
-            {alumnosFiltrados.length} alumno(s) encontrado(s)
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+            Gestión de alumnos
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Busca, filtra, crea, edita y elimina alumnos del club.
           </p>
+        </header>
 
-          <AlumnoTabla
-            alumnos={alumnosFiltrados}
-            puedeGestionar
-            onEditar={handleEditar}
-            onEliminar={handleEliminar}
+        <AlumnoFiltros
+          texto={texto}
+          onTextoChange={setTexto}
+          categoria={categoria}
+          onCategoriaChange={setCategoria}
+          estado={estado}
+          onEstadoChange={setEstado}
+          onNuevoAlumno={handleNuevo}
+        />
+
+        <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
+          {alumnosFiltrados.length} alumno(s) encontrado(s)
+        </p>
+
+        <AlumnoTabla
+          alumnos={alumnosFiltrados}
+          puedeGestionar
+          onEditar={handleEditar}
+          onEliminar={handleEliminar}
+        />
+
+        {isModalOpen && (
+          <AlumnoForm
+            key={alumnoAEditar?.id ?? "nuevo"}
+            alumnoAEditar={alumnoAEditar}
+            onClose={() => setIsModalOpen(false)}
+            onGuardar={handleGuardar}
           />
+        )}
 
-          {isModalOpen && (
-            <AlumnoForm
-              key={alumnoAEditar?.id ?? "nuevo"}
-              alumnoAEditar={alumnoAEditar}
-              onClose={() => setIsModalOpen(false)}
-              onGuardar={handleGuardar}
-            />
-          )}
-
-          {dialog}
+        {dialog}
       </div>
     </RoleGuard>
   );
