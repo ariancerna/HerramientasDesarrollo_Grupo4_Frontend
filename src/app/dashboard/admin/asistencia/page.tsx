@@ -54,7 +54,7 @@ export default function AsistenciaAdminPage() {
           </header>
 
           <section className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 md:flex-row md:items-end">
-            <label className="flex-1">
+            <label className="block min-w-0 flex-1">
               <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Buscar estudiante o DNI
               </span>
@@ -62,18 +62,18 @@ export default function AsistenciaAdminPage() {
                 value={texto}
                 onChange={(event) => setTexto(event.target.value)}
                 placeholder="Nombre o DNI..."
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               />
             </label>
 
-            <label className="md:w-52">
+            <label className="block min-w-0 md:w-52">
               <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Categoría
               </span>
               <select
                 value={categoria}
                 onChange={(event) => setCategoria(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               >
                 <option value="todas">Todas las categorías</option>
                 {NOMBRES_CATEGORIAS.map((nombre) => (
@@ -84,7 +84,7 @@ export default function AsistenciaAdminPage() {
               </select>
             </label>
 
-            <label className="md:w-48">
+            <label className="block min-w-0 md:w-48">
               <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Fecha
               </span>
@@ -92,7 +92,7 @@ export default function AsistenciaAdminPage() {
                 type="date"
                 value={fecha}
                 onChange={(event) => setFecha(event.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               />
             </label>
           </section>
