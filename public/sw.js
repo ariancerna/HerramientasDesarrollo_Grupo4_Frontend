@@ -1,4 +1,4 @@
-const CACHE_VERSION = "kickstamp-v1";
+const CACHE_VERSION = "kickstamp-v2";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE_ASSETS = [
   "/",
