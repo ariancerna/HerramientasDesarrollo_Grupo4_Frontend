@@ -96,7 +96,7 @@ export default function GlobalSearch() {
       )}
 
       {isMobileOpen && (
-        <div className="fixed inset-x-0 top-16 z-40 border-b border-slate-200 bg-white p-3 shadow-md dark:border-slate-700 dark:bg-slate-900 sm:hidden">
+        <div className="fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4rem)] z-40 border-b border-slate-200 bg-white p-3 shadow-md dark:border-slate-700 dark:bg-slate-900 sm:hidden">
           <form onSubmit={handleSubmit} className="relative">
             <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input

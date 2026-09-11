@@ -6,7 +6,7 @@ import { ROUTES } from "@/constants/routes";
 
 export default function LoginPage() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+    <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-black">
       {/* =========================================================
           FONDO COMPLETO
       ========================================================= */}
@@ -28,7 +28,7 @@ export default function LoginPage() {
       {/* =========================================================
           CONTENIDO PRINCIPAL
       ========================================================= */}
-      <div className="relative z-10 flex min-h-screen w-full flex-col lg:flex-row">
+      <div className="relative z-10 flex min-h-screen min-h-dvh w-full flex-col lg:flex-row">
         
         {/* =======================================================
             PANEL IZQUIERDO

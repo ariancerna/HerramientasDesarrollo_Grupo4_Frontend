@@ -22,7 +22,7 @@ export default function MobileBottomNav() {
     <>
       {isMoreOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/45 lg:hidden" onClick={() => setIsMoreOpen(false)}>
-          <section id="mobile-more-options" role="dialog" aria-modal="true" aria-label="Más opciones de navegación" className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-surface px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-3 shadow-2xl dark:bg-slate-900" onClick={(event) => event.stopPropagation()}>
+          <section id="mobile-more-options" role="dialog" aria-modal="true" aria-label="Más opciones de navegación" className="absolute inset-x-0 bottom-0 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-3xl bg-surface px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-3 shadow-2xl dark:bg-slate-900" onClick={(event) => event.stopPropagation()}>
             <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-slate-300 dark:bg-slate-700" />
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-base font-extrabold text-ink dark:text-white">Más opciones</h2>

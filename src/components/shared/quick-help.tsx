@@ -67,7 +67,7 @@ export default function QuickHelp() {
         <section
           id="quick-help-menu"
           aria-label="Ayuda rápida"
-          className="fixed inset-x-4 top-16 z-40 max-h-[70vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72"
+          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+4rem)] z-40 max-h-[70vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72"
         >
           <div className="px-2 py-2.5">
             <p className="text-sm font-bold text-slate-900 dark:text-white">Ayuda rápida</p>
