@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
 import type { Role } from "@/types";
@@ -10,6 +11,7 @@ interface NotificationItem {
   title: string;
   description: string;
   time: string;
+  href: string;
 }
 
 const NOTIFICACIONES_POR_ROL: Record<Role, NotificationItem[]> = {
@@ -19,18 +21,21 @@ const NOTIFICACIONES_POR_ROL: Record<Role, NotificationItem[]> = {
       title: "Nuevo alumno registrado",
       description: "Se agregó un alumno nuevo al padrón del club.",
       time: "Hace 2 h",
+      href: "/dashboard/admin/alumnos",
     },
     {
       id: "adm-2",
       title: "Categoría sin horarios",
       description: "Revisa las categorías que aún no tienen horarios configurados.",
       time: "Hace 5 h",
+      href: "/dashboard/admin/categorias",
     },
     {
       id: "adm-3",
       title: "Reporte semanal disponible",
       description: "Ya puedes generar el reporte de asistencia de esta semana.",
       time: "Ayer",
+      href: "/dashboard/admin/reportes",
     },
   ],
   profesor: [
@@ -39,12 +44,14 @@ const NOTIFICACIONES_POR_ROL: Record<Role, NotificationItem[]> = {
       title: "Registra la asistencia de hoy",
       description: "Aún no hay registros de asistencia para el entrenamiento de hoy.",
       time: "Hace 1 h",
+      href: "/dashboard/profesor/asistencia",
     },
     {
       id: "prof-2",
       title: "Nuevo alumno en tu categoría",
       description: "Se incorporó un alumno nuevo a uno de tus grupos.",
       time: "Ayer",
+      href: "/dashboard/profesor/alumnos",
     },
   ],
   alumno: [
@@ -53,12 +60,14 @@ const NOTIFICACIONES_POR_ROL: Record<Role, NotificationItem[]> = {
       title: "Próximo entrenamiento",
       description: "Tu próxima clase está programada según tu categoría.",
       time: "Hace 3 h",
+      href: "/dashboard/alumno/calendario",
     },
     {
       id: "alu-2",
       title: "Asistencia registrada",
       description: "Se registró tu asistencia del último entrenamiento.",
       time: "Ayer",
+      href: "/dashboard/alumno/historial",
     },
   ],
 };
@@ -158,9 +167,12 @@ export default function NotificationBell() {
                 const isUnread = !readIds.has(notification.id);
                 return (
                   <li key={notification.id}>
-                    <button
-                      type="button"
-                      onClick={() => marcarLeida(notification.id)}
+                    <Link
+                      href={notification.href}
+                      onClick={() => {
+                        marcarLeida(notification.id);
+                        setIsOpen(false);
+                      }}
                       className="flex w-full items-start gap-2.5 px-4 py-3 text-left transition hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     >
                       <span
@@ -178,7 +190,7 @@ export default function NotificationBell() {
                         </p>
                         <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{notification.time}</p>
                       </div>
-                    </button>
+                    </Link>
                   </li>
                 );
               })}

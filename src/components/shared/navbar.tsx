@@ -6,6 +6,7 @@ import { ROLE_LABELS } from "@/constants/nav-items";
 import { useAuth } from "@/hooks/use-auth";
 import GlobalSearch from "./global-search";
 import NotificationBell from "./notification-bell";
+import QuickHelp from "./quick-help";
 import ProfileMenu from "./profile-menu";
 
 export default function Navbar() {
@@ -31,6 +32,7 @@ export default function Navbar() {
 
         <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
           <GlobalSearch />
+          <QuickHelp />
           <NotificationBell />
           <ProfileMenu session={session} onLogout={handleLogout} />
         </div>
