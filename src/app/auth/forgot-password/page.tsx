@@ -131,7 +131,7 @@ export default function ForgotPasswordPage() {
                   alt="WhatsApp"
                   width={18}
                   height={18}
-                  className="h-[18px] w-[18px] object-contain brightness-0 invert"
+                  className="h-[18px] w-[18px] object-contain [filter:invert(48%)_sepia(18%)_saturate(1561%)_hue-rotate(67deg)_brightness(91%)_contrast(88%)]"
                 />
                 994 796 381
               </a>
