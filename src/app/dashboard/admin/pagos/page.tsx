@@ -96,6 +96,6 @@ export default function PagosAdminPage() {
 }
 
 function Resumen({ label, valor, tono = "azul" }: { label: string; valor: number; tono?: "azul" | "verde" | "rojo" }) {
-  const colores = { azul: "border-slate-200 text-slate-950", verde: "border-emerald-200 text-emerald-700", rojo: "border-red-200 text-red-700" };
+  const colores = { azul: "border-slate-200 text-slate-950 dark:border-slate-700 dark:text-white", verde: "border-emerald-200 text-emerald-700", rojo: "border-red-200 text-red-700" };
   return <div className={`rounded-lg border bg-white p-4 shadow-sm dark:bg-slate-900 ${colores[tono]}`}><dt className="text-sm text-slate-500 dark:text-slate-400">{label}</dt><dd className="mt-1 text-2xl font-bold">{valor}</dd></div>;
 }

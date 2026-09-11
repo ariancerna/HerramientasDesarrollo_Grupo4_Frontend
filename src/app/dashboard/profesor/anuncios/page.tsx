@@ -69,14 +69,14 @@ export default function AnunciosProfesorPage() {
         <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">PROFESOR</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">Anuncios</h1>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Anuncios</h1>
             <p className="mt-1 text-sm text-slate-500">Envía avisos a tus alumnos y administra tus borradores.</p>
           </div>
           <button type="button" onClick={abrirNuevo} className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#12613D]">Nuevo anuncio</button>
         </header>
 
         {anuncios.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">No tienes anuncios registrados.</div>
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">No tienes anuncios registrados.</div>
         ) : (
           <section className="grid gap-4 md:grid-cols-2" aria-label="Anuncios del profesor">
             {anuncios.map((anuncio) => (

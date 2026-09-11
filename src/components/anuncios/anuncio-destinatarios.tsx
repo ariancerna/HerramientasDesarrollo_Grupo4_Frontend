@@ -36,14 +36,14 @@ export default function AnuncioDestinatarios({
 
   return (
     <fieldset className="space-y-3">
-      <legend className="mb-1.5 text-sm font-medium text-slate-700">Destinatarios</legend>
+      <legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">Destinatarios</legend>
       <div className="grid gap-2 sm:grid-cols-3">
         {([
           ["todos", "Todos los alumnos"],
           ["categoria", "Una categoría"],
           ["seleccionados", "Alumnos específicos"],
         ] as const).map(([valor, etiqueta]) => (
-          <label key={valor} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm text-slate-700 hover:bg-slate-50">
+          <label key={valor} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
             <input
               type="radio"
               name="modo-destinatarios"
@@ -61,7 +61,7 @@ export default function AnuncioDestinatarios({
         <select
           value={categoriaId}
           onChange={(event) => onCategoriaChange(event.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30"
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((categoria) => (
@@ -73,9 +73,9 @@ export default function AnuncioDestinatarios({
       )}
 
       {modo === "seleccionados" && (
-        <div className="max-h-44 space-y-2 overflow-y-auto rounded-lg border border-slate-200 p-3">
+        <div className="max-h-44 space-y-2 overflow-y-auto rounded-lg border border-slate-200 p-3 dark:border-slate-700">
           {alumnos.map((alumno) => (
-            <label key={alumno.id} className="flex items-center gap-2 text-sm text-slate-700">
+            <label key={alumno.id} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={seleccionados.includes(alumno.id)}

@@ -45,10 +45,10 @@ export default function HorarioProfesorPage() {
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
               PROFESOR
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
               Mi horario
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Consulta los entrenamientos asignados a tus categorías.
             </p>
           </div>
@@ -57,11 +57,11 @@ export default function HorarioProfesorPage() {
         </header>
 
         {horariosFiltrados.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-            <h2 className="text-lg font-bold text-slate-900">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               No tienes entrenamientos asignados
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               Cuando administración te asigne una categoría, sus horarios aparecerán aquí.
             </p>
           </div>

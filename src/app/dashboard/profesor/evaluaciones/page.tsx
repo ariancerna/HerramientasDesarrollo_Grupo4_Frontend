@@ -85,7 +85,7 @@ export default function EvaluacionesProfesorPage() {
         <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">PROFESOR</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">Evaluaciones</h1>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Evaluaciones</h1>
             <p className="mt-1 text-sm text-slate-500">Registra el rendimiento y las observaciones de tus alumnos.</p>
           </div>
           <button type="button" onClick={abrirNuevaEvaluacion} disabled={alumnos.length === 0} className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#12613D] disabled:cursor-not-allowed disabled:opacity-50">

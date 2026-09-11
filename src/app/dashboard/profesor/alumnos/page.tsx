@@ -132,15 +132,15 @@ export default function AlumnosProfesorPage() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="confirmar-eliminacion-title"
-              className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
+              className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-900"
             >
               <h2
                 id="confirmar-eliminacion-title"
-                className="text-lg font-bold text-slate-950"
+                className="text-lg font-bold text-slate-950 dark:text-white"
               >
                 ¿Eliminar alumno?
               </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
                 Se eliminará a {alumnoAEliminar.nombres} {alumnoAEliminar.apellidos}.
                 Esta acción no se puede deshacer.
               </p>
@@ -148,7 +148,7 @@ export default function AlumnosProfesorPage() {
                 <button
                   type="button"
                   onClick={() => setAlumnoAEliminar(null)}
-                  className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Cancelar
                 </button>
