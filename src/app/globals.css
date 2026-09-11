@@ -23,24 +23,41 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== Paleta exclusiva para Welcome / Login / Registro / Recuperar contraseña ===== */
+/* ===== Paleta institucional EL GOLAZO CLUB =====
+   Usada por Welcome / Login / Registro / Recuperar contraseña y,
+   a través de --color-ink / --color-body / --color-surface / --color-border,
+   también por el shell del dashboard (sidebar, navbar, tarjetas). */
 :root {
-  --color-primary: #15803d;
-  --color-primary-hover: #166534;
-  --color-primary-dark: #14532d;
-  --color-primary-light: #dcfce7;
-  --color-primary-soft: #f0fdf4;
+  /* Verde deportivo (acciones, énfasis, estados activos) */
+  --color-primary: #008f3c;        /* verde institucional oscuro (botones) */
+  --color-primary-hover: #00732f;  /* hover del botón principal */
+  --color-primary-dark: #008f3c;   /* enlaces y textos destacados sobre blanco */
+  --color-primary-light: #00c853;  /* verde deportivo principal (acentos sobre navy) */
+  --color-primary-soft: #e6f9ec;   /* fondo suave para chips/íconos */
 
-  --color-ink: #111827;
-  --color-body: #4b5563;
-  --color-muted: #9ca3af;
-  --color-border: #e5e7eb;
-  --color-surface: #ffffff;
-  --color-bg-auth: #f7f8fa;
-  --color-contrast: #0f172a;
+  /* Tipografía y superficies */
+  --color-ink: #10233f;            /* texto principal */
+  --color-body: #64748b;           /* texto secundario */
+  --color-muted: #94a3b8;          /* placeholders / iconos inactivos */
+  --color-border: #e2e8f0;         /* bordes de tarjetas e inputs */
+  --color-surface: #ffffff;        /* tarjetas */
+  --color-bg-auth: #f5f7fa;        /* fondo general */
+  --color-contrast: #061a2e;       /* navy institucional (overlay foto login) */
 
+  /* Estados */
   --color-danger: #dc2626;
   --color-danger-light: #fef2f2;
+  --color-info: #2563eb;
+  --color-warning: #f59e0b;
+
+  /* Navy del shell de dashboard (sidebar / navbar) */
+  --color-navy: #061a2e;
+  --color-navy-dark: #041426;
+
+  /* Colores fijos de gráficos de rendimiento */
+  --color-chart-win: #16a34a;
+  --color-chart-draw: #2563eb;
+  --color-chart-loss: #94a3b8;
 
   --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
   --shadow-popover: 0 12px 24px -6px rgb(15 23 42 / 0.12), 0 4px 8px -4px rgb(15 23 42 / 0.06);
@@ -61,4 +78,11 @@ body {
   --color-contrast: var(--color-contrast);
   --color-danger: var(--color-danger);
   --color-danger-light: var(--color-danger-light);
+  --color-info: var(--color-info);
+  --color-warning: var(--color-warning);
+  --color-navy: var(--color-navy);
+  --color-navy-dark: var(--color-navy-dark);
+  --color-chart-win: var(--color-chart-win);
+  --color-chart-draw: var(--color-chart-draw);
+  --color-chart-loss: var(--color-chart-loss);
 }

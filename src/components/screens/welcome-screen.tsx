@@ -3,33 +3,37 @@ import Link from "next/link";
 import { ROUTES } from "@/constants/routes";
 
 const FEATURES = [
-  { icon: AttendanceIcon, label: "Asistencia", desc: "Registro claro y rápido" },
-  { icon: CategoryIcon, label: "Categorías", desc: "Organización por edades" },
-  { icon: HistoryIcon, label: "Historial", desc: "Seguimiento centralizado" },
+  { icon: AttendanceIcon, label: "Asistencia", desc: "Registro rápido" },
+  { icon: HistoryIcon, label: "Historial", desc: "Consulta tu actividad" },
+  { icon: CategoryIcon, label: "Categorías", desc: "Organización deportiva" },
 ];
 
 export function WelcomeScreen() {
   return (
-    <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center gap-6 overflow-hidden px-4 py-6 sm:gap-8 lg:py-8">
+    <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center gap-8 overflow-hidden px-4 py-10 sm:gap-10">
+      {/* Fondo: cancha de vóley */}
       <Image
-        src="/login-fondo.png"
-        alt="Entrenamiento de El Golazo Club"
+        src="/fondo-welcome.png"
+        alt="Cancha de vóley El Golazo Club"
         fill
         priority
         sizes="100vw"
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-contrast/85 via-primary-dark/45 to-contrast/90" />
 
-      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-5 text-center sm:gap-6">
-        <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg sm:h-28 sm:w-28">
+      {/* Overlay para legibilidad, coherente con el navy + verde institucional */}
+      <div className="absolute inset-0 bg-gradient-to-b from-contrast/80 via-contrast/55 to-contrast/90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+
+      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-6 text-center">
+        <div className="relative h-28 w-28 sm:h-32 sm:w-32">
           <Image
-            src="/logo-el-golazo-club.jpg"
+            src="/logo-voley.png"
             alt="El Golazo Club"
-            width={112}
-            height={112}
+            fill
             priority
-            className="h-full w-full object-cover"
+            sizes="128px"
+            className="object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]"
           />
         </div>
 
@@ -38,12 +42,12 @@ export function WelcomeScreen() {
         </span>
 
         <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-md sm:text-5xl lg:text-6xl">
-          Tu pasión, <span className="text-primary-light">nuestro compromiso</span>
+          Bienvenido a tu <span className="text-primary-light">portal deportivo</span>
         </h1>
 
         <p className="max-w-lg text-base leading-relaxed text-white/80 sm:text-lg">
-          Registra tu asistencia, consulta tu historial y sigue tu progreso deportivo desde un
-          solo lugar.
+          Gestiona tu asistencia, consulta tu historial y mantente al día con tu actividad
+          deportiva, todo desde un solo lugar.
         </p>
 
         <Link
@@ -73,6 +77,8 @@ export function WelcomeScreen() {
           </div>
         ))}
       </div>
+
+      <p className="relative z-10 text-xs text-white/50">© El Golazo Club</p>
     </div>
   );
 }

@@ -17,8 +17,8 @@ export default function Sidebar() {
     : undefined;
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-72 flex-col border-r border-slate-800 bg-[#0B132B] text-slate-300 lg:flex">
-      <div className="flex items-center gap-3 border-b border-slate-800/80 px-6 py-5">
+    <aside className="fixed inset-y-0 left-0 z-50 hidden w-72 flex-col border-r border-white/5 bg-navy-dark text-slate-300 lg:flex">
+      <div className="flex items-center gap-3 border-b border-white/10 px-6 py-5">
         <Image src="/logo-el-golazo-club.jpg" alt="El Golazo Club" width={40} height={40} priority className="h-10 w-10 shrink-0 rounded-full object-cover" />
         <div className="min-w-0">
           <p className="truncate text-base font-extrabold tracking-wide text-white">EL GOLAZO</p>
@@ -33,7 +33,7 @@ export default function Sidebar() {
             const isActive = pathname === item.href || (item.href !== items[0]?.href && pathname.startsWith(`${item.href}/`));
             return (
               <li key={item.href}>
-                <Link href={item.href} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${isActive ? "bg-[#65D43B] font-bold text-slate-950" : "text-slate-300 hover:bg-slate-800/60 hover:text-white"}`}>
+                <Link href={item.href} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${isActive ? "bg-primary-light font-bold text-white shadow-[0_4px_14px_rgba(0,200,83,0.35)]" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}>
                   <NavIcon name={item.icon} />
                   <span>{item.label}</span>
                 </Link>
@@ -43,12 +43,12 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <div className="border-t border-slate-800/80 px-4 py-4">
-        <div className="flex items-center gap-3 rounded-xl bg-slate-900/50 p-2.5">
+      <div className="border-t border-white/10 px-4 py-4">
+        <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5">
           <UserAvatar
             nombre={session?.usuario.nombre}
             fotoUrl={alumno?.fotoUrl}
-            className="h-9 w-9 border border-slate-700 bg-slate-800 text-sm font-bold text-white"
+            className="h-9 w-9 border border-white/10 bg-navy text-sm font-bold text-white"
           />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">{session?.usuario.nombre}</p>

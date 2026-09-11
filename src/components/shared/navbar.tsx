@@ -19,13 +19,13 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+    <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
       <div className="flex h-16 min-w-0 items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-[#0A1628] dark:text-white sm:text-base">
+          <p className="truncate text-sm font-bold text-ink dark:text-white sm:text-base">
             Panel de {session ? ROLE_LABELS[session.usuario.rol].toLowerCase() : "usuario"}
           </p>
-          <p className="hidden truncate text-xs text-slate-500 dark:text-slate-400 sm:block">
+          <p className="hidden truncate text-xs text-body dark:text-slate-400 sm:block">
             El Golazo Club
           </p>
         </div>

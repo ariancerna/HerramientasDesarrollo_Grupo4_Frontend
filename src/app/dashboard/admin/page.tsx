@@ -44,9 +44,9 @@ export default function AdminDashboardPage() {
         <section className="relative px-0 py-1">
           <div className="relative">
             <div className="max-w-xl">
-              <p className="text-xs font-bold tracking-[0.14em] text-[#16794C] dark:text-emerald-400">ADMINISTRACIÓN</p>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+              <p className="text-xs font-bold tracking-[0.14em] text-primary-dark dark:text-emerald-400">ADMINISTRACIÓN</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
+              <p className="mt-2 text-sm leading-6 text-body dark:text-slate-400 sm:text-base">
                 Gestiona la operación diaria del club desde un solo lugar.
               </p>
             </div>
@@ -59,31 +59,31 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-[1.25fr_0.9fr]">
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-            <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#16794C] dark:text-emerald-400">Requiere atención</p><h2 className="mt-2 text-xl font-bold text-slate-950 dark:text-white">{pendientes} alumno(s) con pago pendiente</h2><p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Revisa el estado de mensualidad y registra los pagos recibidos.</p></div><Link href="/dashboard/admin/pagos" className="rounded-lg bg-[#16794C] px-3 py-2 text-xs font-bold text-white hover:bg-[#12613D]">Gestionar pagos</Link></div>
-            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-5 dark:border-slate-800"><MiniMetric label="Asistencia registrada" value={asistencias.length} /><MiniMetric label="Próxima actividad" value={proximaActividad ? formatearFecha(proximaActividad.fecha) : "Sin agenda"} /></div>
+          <article className="rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-dark dark:text-emerald-400">Requiere atención</p><h2 className="mt-2 text-xl font-bold text-ink dark:text-white">{pendientes} alumno(s) con pago pendiente</h2><p className="mt-2 text-sm text-body dark:text-slate-400">Revisa el estado de mensualidad y registra los pagos recibidos.</p></div><Link href="/dashboard/admin/pagos" className="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white hover:bg-primary-hover">Gestionar pagos</Link></div>
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-5 dark:border-slate-800"><MiniMetric label="Asistencia registrada" value={asistencias.length} /><MiniMetric label="Próxima actividad" value={proximaActividad ? formatearFecha(proximaActividad.fecha) : "Sin agenda"} /></div>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900"><div className="flex items-center justify-between"><h2 className="font-bold text-slate-950 dark:text-white">Actividad reciente</h2><Link href="/dashboard/admin/asistencia" className="text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver todo →</Link></div><div className="mt-4 space-y-3">{recientes.length ? recientes.map((registro) => <div key={registro.id} className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{registro.estudiante}</p><p className="text-xs text-slate-500 dark:text-slate-400">{registro.categoria}</p></div><span className="whitespace-nowrap text-xs text-slate-400">{new Date(registro.fechaHora).toLocaleDateString("es-PE")}</span></div>) : <p className="text-sm text-slate-500">Sin registros recientes.</p>}</div></article>
+          <article className="rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900"><div className="flex items-center justify-between"><h2 className="font-bold text-ink dark:text-white">Actividad reciente</h2><Link href="/dashboard/admin/asistencia" className="text-xs font-bold text-primary-dark dark:text-emerald-400">Ver todo →</Link></div><div className="mt-4 space-y-3">{recientes.length ? recientes.map((registro) => <div key={registro.id} className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-semibold text-ink dark:text-slate-100">{registro.estudiante}</p><p className="text-xs text-body dark:text-slate-400">{registro.categoria}</p></div><span className="whitespace-nowrap text-xs text-muted">{new Date(registro.fechaHora).toLocaleDateString("es-PE")}</span></div>) : <p className="text-sm text-body">Sin registros recientes.</p>}</div></article>
         </section>
 
         <section className="mt-9" aria-labelledby="admin-actions-title">
           <div className="mb-4">
-            <h2 id="admin-actions-title" className="text-xl font-bold text-[#0A1628] dark:text-white">Gestión del club</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Selecciona el área que deseas administrar.</p>
+            <h2 id="admin-actions-title" className="text-xl font-bold text-ink dark:text-white">Gestión del club</h2>
+            <p className="mt-1 text-sm text-body dark:text-slate-400">Selecciona el área que deseas administrar.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {SECCIONES.slice(0, 6).map((seccion) => {
               const Icon = seccion.icono;
               return (
-                <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
+                <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary-light/60 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
                   <div className="flex items-start gap-4">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400"><Icon /></span>
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400"><Icon /></span>
                     <div>
-                      <h3 className="text-lg font-bold text-[#0A1628] dark:text-white">{seccion.titulo}</h3>
-                      <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">{seccion.descripcion}</p>
+                      <h3 className="text-lg font-bold text-ink dark:text-white">{seccion.titulo}</h3>
+                      <p className="mt-1.5 text-sm leading-6 text-body dark:text-slate-400">{seccion.descripcion}</p>
                     </div>
                   </div>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">{seccion.etiqueta}<ArrowIcon /></span>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-primary-dark dark:text-emerald-400">{seccion.etiqueta}<ArrowIcon /></span>
                 </Link>
               );
             })}
@@ -95,9 +95,9 @@ export default function AdminDashboardPage() {
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
-  return <div className="min-w-20 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</dt><dd className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">{value}</dd><p className="mt-1 text-xs font-medium text-[#16794C] dark:text-emerald-400">Actualizado hoy</p></div>;
+  return <div className="min-w-20 rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"><dt className="text-sm font-medium text-body dark:text-slate-400">{label}</dt><dd className="mt-2 text-3xl font-bold tracking-tight text-ink dark:text-white">{value}</dd><p className="mt-1 text-xs font-medium text-primary-dark dark:text-emerald-400">Actualizado hoy</p></div>;
 }
-function MiniMetric({ label, value }: { label: string; value: string | number }) { return <div><p className="text-xs text-slate-500 dark:text-slate-400">{label}</p><p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">{value}</p></div>; }
+function MiniMetric({ label, value }: { label: string; value: string | number }) { return <div><p className="text-xs text-body dark:text-slate-400">{label}</p><p className="mt-1 text-sm font-bold text-ink dark:text-white">{value}</p></div>; }
 function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
 
 function IconFrame({ children }: { children: React.ReactNode }) { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">{children}</svg>; }
