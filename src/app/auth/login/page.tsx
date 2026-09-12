@@ -29,12 +29,12 @@ export default function LoginPage() {
           CONTENIDO PRINCIPAL
       ========================================================= */}
       <div className="relative z-10 flex min-h-screen min-h-dvh w-full flex-col lg:flex-row">
-        
+
         {/* =======================================================
             PANEL IZQUIERDO
         ======================================================= */}
         <section className="hidden w-full flex-1 flex-col justify-between px-6 py-8 text-white sm:px-10 lg:flex lg:px-12 xl:px-16">
-          
+
           {/* LOGO + NOMBRE */}
           <div className="flex items-center gap-4">
             <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-white shadow-2xl">
@@ -167,13 +167,13 @@ export default function LoginPage() {
         {/* =======================================================
             PANEL DERECHO / LOGIN
         ======================================================= */}
-        <main className="flex w-full items-center justify-center px-5 py-8 sm:px-8 lg:w-[48%] lg:px-10 xl:w-[46%]">
-          
-          <div className="w-full max-w-[550px] rounded-[28px] border border-white/70 bg-white/95 p-7 shadow-2xl backdrop-blur-md sm:p-9 lg:p-10">
-            
+        <main className="flex w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-8 lg:w-[48%] lg:px-10 xl:w-[46%]">
+
+          <div className="w-full max-w-[400px] rounded-2xl border border-white/70 bg-white/95 p-5 shadow-2xl backdrop-blur-md sm:max-w-[550px] sm:rounded-[28px] sm:p-9 lg:p-10">
+
             {/* LOGO DEL LOGIN */}
-            <div className="mb-6 text-center">
-              <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-white shadow-md">
+            <div className="mb-4 text-center sm:mb-6">
+              <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white shadow-md sm:mb-3 sm:h-20 sm:w-20">
                 <Image
                   src="/logo-el-golazo-club.jpg"
                   alt="El Golazo Club"
@@ -195,12 +195,12 @@ export default function LoginPage() {
             </div>
 
             {/* TÍTULO */}
-            <div className="mb-7 text-center">
-              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            <div className="mb-4 text-center sm:mb-7">
+              <h2 className="text-xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
                 Bienvenido
               </h2>
 
-              <p className="mt-1.5 text-sm text-slate-500">
+              <p className="mt-1 text-xs text-slate-500 sm:mt-1.5 sm:text-sm">
                 Inicia sesión para continuar
               </p>
             </div>
