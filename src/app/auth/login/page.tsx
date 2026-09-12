@@ -33,7 +33,7 @@ export default function LoginPage() {
         {/* =======================================================
             PANEL IZQUIERDO
         ======================================================= */}
-        <section className="flex w-full flex-1 flex-col justify-between px-6 py-8 text-white sm:px-10 lg:px-12 xl:px-16">
+        <section className="hidden w-full flex-1 flex-col justify-between px-6 py-8 text-white sm:px-10 lg:flex lg:px-12 xl:px-16">
           
           {/* LOGO + NOMBRE */}
           <div className="flex items-center gap-4">
