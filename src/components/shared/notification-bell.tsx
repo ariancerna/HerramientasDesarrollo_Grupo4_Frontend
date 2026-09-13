@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
 import type { Role } from "@/types";
+import {
+  getReadNotificationsServerSnapshot,
+  getReadNotificationsSnapshot,
+  parseReadNotificationIds,
+  saveReadNotificationIds,
+  subscribeToReadNotifications,
+} from "@/store/notification-preferences-store";
 
 interface NotificationItem {
   id: string;
@@ -77,7 +91,25 @@ export default function NotificationBell() {
   const { settings } = useSettings();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const userId = session?.usuario.id ?? "";
+  const subscribe = useCallback(
+    (onStoreChange: () => void) =>
+      subscribeToReadNotifications(userId, onStoreChange),
+    [userId],
+  );
+  const getSnapshot = useCallback(
+    () => getReadNotificationsSnapshot(userId),
+    [userId],
+  );
+  const readSnapshot = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getReadNotificationsServerSnapshot,
+  );
+  const readIds = useMemo(
+    () => parseReadNotificationIds(readSnapshot),
+    [readSnapshot],
+  );
 
   const notifications = useMemo(
     () => (session ? NOTIFICACIONES_POR_ROL[session.usuario.rol] : []),
@@ -105,16 +137,12 @@ export default function NotificationBell() {
   }, []);
 
   const marcarTodasLeidas = () => {
-    setReadIds(new Set(notifications.map((item) => item.id)));
+    saveReadNotificationIds(userId, notifications.map((item) => item.id));
   };
 
   const marcarLeida = (id: string) => {
-    setReadIds((current) => {
-      if (current.has(id)) return current;
-      const next = new Set(current);
-      next.add(id);
-      return next;
-    });
+    if (readIds.has(id)) return;
+    saveReadNotificationIds(userId, [...readIds, id]);
   };
 
   if (!session) return null;
