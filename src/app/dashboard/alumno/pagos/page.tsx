@@ -16,7 +16,7 @@ const ESTADO_CONFIG: Record<
   pagado: {
     etiqueta: "Pagado",
     clase:
-      "bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-400/20",
+      "bg-brand-green-soft text-brand-green ring-brand-green/20 dark:bg-brand-green/15 dark:text-brand-lime-light dark:ring-brand-green/20",
     detalle: "Tu mensualidad se encuentra al día.",
   },
   pendiente: {
@@ -44,9 +44,7 @@ export default function PagosAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-            MI ESPACIO
-          </p>
+          {/* ❌ Eliminado: <p>MI ESPACIO</p> */}
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Mis pagos
           </h1>
@@ -61,8 +59,13 @@ export default function PagosAlumnoPage() {
           <MensajeVacio texto="Todavía no hay mensualidades registradas para este alumno." />
         ) : (
           <>
-            <section className="relative overflow-hidden rounded-2xl bg-[#0A1628] p-6 text-white shadow-sm sm:p-8">
-              <div className="absolute right-0 top-0 h-48 w-48 translate-x-16 -translate-y-20 rounded-full bg-[#6FCF3A]/15" aria-hidden="true" />
+            {/* 🎨 CAMBIO: bg-[#0A1628] → bg-navy */}
+            <section className="relative overflow-hidden rounded-2xl bg-navy p-6 text-white shadow-sm sm:p-8">
+              {/* 🎨 CAMBIO: bg-[#6FCF3A]/15 → bg-brand-lime/15 */}
+              <div
+                className="absolute right-0 top-0 h-48 w-48 translate-x-16 -translate-y-20 rounded-full bg-brand-lime/15"
+                aria-hidden="true"
+              />
               <div className="relative grid gap-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">

@@ -26,9 +26,7 @@ export default function PerfilAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-            MI ESPACIO
-          </p>
+          {/* ❌ Eliminado: <p>MI ESPACIO</p> */}
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Mi perfil
           </h1>
@@ -177,19 +175,23 @@ function PerfilForm({
           nombre={`${form.nombres} ${form.apellidos}`}
           fotoUrl={form.fotoUrl}
           imageAlt={`Foto de perfil de ${form.nombres}`}
-          className="mx-auto h-36 w-36 bg-[#16794C] text-4xl font-bold text-white ring-4 ring-[#edf8e8] dark:ring-emerald-500/20"
+          /* 🎨 CAMBIO: bg-[#16794C] ring-[#edf8e8] → bg-brand-green ring-brand-green-soft */
+          className="mx-auto h-36 w-36 bg-brand-green text-4xl font-bold text-white ring-4 ring-brand-green-soft dark:ring-emerald-500/20"
         />
-        <h2 className="mt-5 text-xl font-bold text-[#0A1628] dark:text-white">
+        {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
+        <h2 className="mt-5 text-xl font-bold text-navy dark:text-white">
           {form.nombres} {form.apellidos}
         </h2>
-        <span className="mt-2 inline-flex rounded-full bg-[#edf8e8] px-3 py-1 text-xs font-bold text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-300">
+        {/* 🎨 CAMBIO: bg-[#edf8e8] text-[#16794C] → bg-brand-green-soft text-brand-green */}
+        <span className="mt-2 inline-flex rounded-full bg-brand-green-soft px-3 py-1 text-xs font-bold text-brand-green dark:bg-emerald-500/15 dark:text-emerald-300">
           {alumno.categoria}
         </span>
 
         <div className="mt-5 flex flex-col gap-2">
+          {/* 🎨 CAMBIO: border-[#16794C] text-[#16794C] hover:bg-[#edf8e8] → border-brand-green text-brand-green hover:bg-brand-green-soft */}
           <label
             htmlFor="foto-perfil"
-            className="cursor-pointer rounded-lg border border-[#16794C] px-4 py-2.5 text-sm font-bold text-[#16794C] transition hover:bg-[#edf8e8] dark:border-emerald-500 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+            className="cursor-pointer rounded-lg border border-brand-green px-4 py-2.5 text-sm font-bold text-brand-green transition hover:bg-brand-green-soft dark:border-emerald-500 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
           >
             {form.fotoUrl ? "Cambiar foto" : "Agregar foto"}
           </label>
@@ -228,7 +230,8 @@ function PerfilForm({
 
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <div>
-          <h2 className="font-bold text-[#0A1628] dark:text-white">
+          {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
+          <h2 className="font-bold text-navy dark:text-white">
             Datos personales
           </h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -304,10 +307,11 @@ function PerfilForm({
             >
               Descartar cambios
             </button>
+            {/* 🎨 CAMBIO: bg-[#16794C] hover:bg-[#12613D] focus:ring-[#16794C] → bg-brand-green hover:bg-brand-green-dark focus:ring-brand-green */}
             <button
               type="submit"
               disabled={!hayCambios}
-              className="rounded-lg bg-[#16794C] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 dark:focus:ring-offset-slate-900"
+              className="rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 dark:focus:ring-offset-slate-900"
             >
               Guardar cambios
             </button>
@@ -382,7 +386,8 @@ function Campo({
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
-        className={`h-11 w-full rounded-lg border bg-white px-3 text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#16794C]/15 dark:bg-slate-950 dark:text-white ${
+        /* 🎨 CAMBIO: focus:border-[#16794C] focus:ring-[#16794C]/15 → focus:border-brand-green focus:ring-brand-green/15 */
+        className={`h-11 w-full rounded-lg border bg-white px-3 text-slate-900 outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/15 dark:bg-slate-950 dark:text-white ${
           error
             ? "border-red-400 dark:border-red-500"
             : "border-slate-300 dark:border-slate-700"

@@ -60,7 +60,7 @@ export default function AlumnoTabla({
                 <span
                   className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     alumno.estado === "activo"
-                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                      ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
                       : "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
                   }`}
                 >
@@ -71,7 +71,7 @@ export default function AlumnoTabla({
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => onEditar?.(alumno)}
-                    className="mr-3 font-semibold text-[#16794C] hover:text-[#12613D] dark:text-emerald-400 dark:hover:text-emerald-300"
+                    className="mr-3 font-semibold text-brand-green hover:text-brand-green-dark dark:text-brand-lime-light dark:hover:text-brand-lime"
                   >
                     Editar
                   </button>

@@ -70,7 +70,7 @@ export default function CategoriasTabla({
                     {categoria.horarios.map((horario) => (
                       <span
                         key={horario.id}
-                        className="inline-flex rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800 dark:bg-blue-500/15 dark:text-blue-300"
+                        className="inline-flex rounded-full bg-brand-green-soft px-2.5 py-1 text-xs font-medium text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
                       >
                         {DIAS_CORTOS[horario.dia]} {horario.horaInicio}–{horario.horaFin}
                       </span>
@@ -86,7 +86,7 @@ export default function CategoriasTabla({
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => onEditar?.(categoria)}
-                      className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
+                      className="inline-flex items-center gap-1 rounded-md bg-brand-green-soft px-3 py-1.5 text-xs font-medium text-brand-green hover:bg-brand-green/20 transition dark:bg-brand-green/10 dark:text-brand-lime-light dark:hover:bg-brand-green/20"
                     >
                       <EditIcon />
                       Editar

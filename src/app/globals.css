@@ -4,6 +4,9 @@
    layout del dashboard: las pantallas de auth mantienen su paleta fija. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* ============================================
+   BASE
+   ============================================ */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -36,47 +39,72 @@ input[type="number"] {
   max-width: 100%;
 }
 
-/* ===== Paleta institucional EL GOLAZO CLUB =====
-   Usada por Welcome / Login / Registro / Recuperar contraseña y,
-   a través de --color-ink / --color-body / --color-surface / --color-border,
-   también por el shell del dashboard (sidebar, navbar, tarjetas). */
+/* ============================================
+   PALETA INSTITUCIONAL EL GOLAZO CLUB
+   ============================================ */
 :root {
-  /* Verde deportivo (acciones, énfasis, estados activos) */
-  --color-primary: #008f3c;        /* verde institucional oscuro (botones) */
-  --color-primary-hover: #00732f;  /* hover del botón principal */
-  --color-primary-dark: #008f3c;   /* enlaces y textos destacados sobre blanco */
-  --color-primary-light: #00c853;  /* verde deportivo principal (acentos sobre navy) */
-  --color-primary-soft: #e6f9ec;   /* fondo suave para chips/íconos */
+  /* --- AUTH (NO TOCAR) --- */
+  --color-primary: #008f3c;
+  --color-primary-hover: #00732f;
+  --color-primary-dark: #008f3c;
+  --color-primary-light: #00c853;
+  --color-primary-soft: #e6f9ec;
 
-  /* Tipografía y superficies */
-  --color-ink: #10233f;            /* texto principal */
-  --color-body: #64748b;           /* texto secundario */
-  --color-muted: #94a3b8;          /* placeholders / iconos inactivos */
-  --color-border: #e2e8f0;         /* bordes de tarjetas e inputs */
-  --color-surface: #ffffff;        /* tarjetas */
-  --color-bg-auth: #f5f7fa;        /* fondo general */
-  --color-contrast: #061a2e;       /* navy institucional (overlay foto login) */
+  /* --- Superficies --- */
+  --color-ink: #10233f;
+  --color-body: #64748b;
+  --color-muted: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-surface: #ffffff;
+  --color-bg-auth: #f5f7fa;
+  --color-contrast: #061a2e;
 
-  /* Estados */
+  /* --- Estados --- */
   --color-danger: #dc2626;
   --color-danger-light: #fef2f2;
   --color-info: #2563eb;
   --color-warning: #f59e0b;
 
-  /* Navy del shell de dashboard (sidebar / navbar) */
+  /* --- Navy del shell --- */
   --color-navy: #061a2e;
   --color-navy-dark: #041426;
+  --color-navy-shell: #061a2e;
 
-  /* Colores fijos de gráficos de rendimiento */
+  /* --- Charts --- */
   --color-chart-win: #16a34a;
   --color-chart-draw: #2563eb;
   --color-chart-loss: #94a3b8;
 
-  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
-  --shadow-popover: 0 12px 24px -6px rgb(15 23 42 / 0.12), 0 4px 8px -4px rgb(15 23 42 / 0.06);
+  /* ============================================
+     DASHBOARD - AZUL ADAPTATIVO
+     - Modo claro: azul oscuro (sobrio)
+     - Modo oscuro: azul brillante (sobrescribe abajo)
+     ============================================ */
+
+  /* Fondo del área principal */
+  --color-bg-app: #f3f8fd;              /* Claro: blanco con tinte celeste */
+  --color-bg-app-dark: #0a1628;         /* Oscuro: navy profundo */
+
+  /* 🎨 Modo CLARO: azul oscuro elegante */
+  --color-brand-green: #1e3a8a;         /* Azul marino oscuro (botones, activos) */
+  --color-brand-green-dark: #172554;    /* Hover - aún más oscuro */
+  --color-brand-green-soft: #dbeafe;    /* Fondo suave azul claro */
+  --color-brand-lime: #2563eb;          /* Azul medio (barras de progreso) */
+  --color-brand-lime-light: #93c5fd;    /* Azul cielo claro (textos sobre oscuro) */
+}
+
+/* 🎨 Modo OSCURO: sobrescribimos el azul a uno MÁS BRILLANTE
+   para que resalte sobre el fondo navy. */
+[data-theme="dark"] {
+  --color-brand-green: #2563eb;         /* Azul brillante */
+  --color-brand-green-dark: #1d4ed8;    /* Hover - un poco más oscuro */
+  --color-brand-green-soft: #1e3a8a;    /* Fondo suave (en oscuro es navy) */
+  --color-brand-lime: #3b82f6;          /* Azul medio brillante */
+  --color-brand-lime-light: #93c5fd;    /* Azul cielo claro */
 }
 
 @theme inline {
+  /* Mapeo Auth (NO TOCAR) */
   --color-primary: var(--color-primary);
   --color-primary-hover: var(--color-primary-hover);
   --color-primary-dark: var(--color-primary-dark);
@@ -95,7 +123,17 @@ input[type="number"] {
   --color-warning: var(--color-warning);
   --color-navy: var(--color-navy);
   --color-navy-dark: var(--color-navy-dark);
+  --color-navy-shell: var(--color-navy-shell);
   --color-chart-win: var(--color-chart-win);
   --color-chart-draw: var(--color-chart-draw);
   --color-chart-loss: var(--color-chart-loss);
+
+  /* Mapeo Dashboard */
+  --color-bg-app: var(--color-bg-app);
+  --color-bg-app-dark: var(--color-bg-app-dark);
+  --color-brand-green: var(--color-brand-green);
+  --color-brand-green-dark: var(--color-brand-green-dark);
+  --color-brand-green-soft: var(--color-brand-green-soft);
+  --color-brand-lime: var(--color-brand-lime);
+  --color-brand-lime-light: var(--color-brand-lime-light);
 }

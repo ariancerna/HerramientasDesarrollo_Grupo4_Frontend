@@ -31,7 +31,7 @@ export default function MobileBottomNav() {
             <div className="grid gap-2">
               {moreItems.map((item) => {
                 const isActive = isCurrentRoute(pathname, item.href, item.href === items[0]?.href);
-                return <Link key={item.href} href={item.href} onClick={() => setIsMoreOpen(false)} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-bold transition ${isActive ? "bg-primary-light text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400" : "text-ink hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"}`}><NavIcon name={item.icon} className="h-5 w-5" />{item.label}</Link>;
+                return <Link key={item.href} href={item.href} onClick={() => setIsMoreOpen(false)} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-bold transition ${isActive ? "bg-brand-green-soft text-brand-green dark:bg-emerald-500/15 dark:text-emerald-400" : "text-ink hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"}`}><NavIcon name={item.icon} className="h-5 w-5" />{item.label}</Link>;
               })}
             </div>
           </section>
@@ -41,11 +41,11 @@ export default function MobileBottomNav() {
       <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900 lg:hidden" aria-label="Navegación móvil">
         {visibleItems.map((item) => {
           const isActive = isCurrentRoute(pathname, item.href, item.href === items[0]?.href);
-          return <Link key={item.href} href={item.href} aria-current={isActive ? "page" : undefined} className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition"><span className={`grid h-9 w-9 place-items-center rounded-full transition ${isActive ? "bg-primary-light text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}><NavIcon name={item.icon} className="h-5 w-5" /></span><span className={isActive ? "text-primary-dark dark:text-emerald-400" : "text-muted dark:text-slate-500"}>{item.shortLabel}</span></Link>;
+          return <Link key={item.href} href={item.href} aria-current={isActive ? "page" : undefined} className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition"><span className={`grid h-9 w-9 place-items-center rounded-full transition ${isActive ? "bg-brand-green-soft text-brand-green dark:bg-emerald-500/15 dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}><NavIcon name={item.icon} className="h-5 w-5" /></span><span className={isActive ? "text-brand-green dark:text-emerald-400" : "text-muted dark:text-slate-500"}>{item.shortLabel}</span></Link>;
         })}
         {hasMoreItems && (
-          <button type="button" onClick={() => setIsMoreOpen(true)} aria-expanded={isMoreOpen} aria-controls="mobile-more-options" className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition ${isMoreActive ? "text-primary-dark dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}>
-            <span className={`grid h-9 w-9 place-items-center rounded-full transition ${isMoreActive ? "bg-primary-light text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}><MoreIcon /></span>
+          <button type="button" onClick={() => setIsMoreOpen(true)} aria-expanded={isMoreOpen} aria-controls="mobile-more-options" className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition ${isMoreActive ? "text-brand-green dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}>
+            <span className={`grid h-9 w-9 place-items-center rounded-full transition ${isMoreActive ? "bg-brand-green-soft text-brand-green dark:bg-emerald-500/15 dark:text-emerald-400" : "text-muted dark:text-slate-500"}`}><MoreIcon /></span>
             <span>Más</span>
           </button>
         )}

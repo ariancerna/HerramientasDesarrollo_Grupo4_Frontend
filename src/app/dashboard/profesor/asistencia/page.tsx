@@ -170,7 +170,7 @@ export default function AsistenciaProfesorPage() {
   return (
     <div>
       <div className="mx-auto max-w-4xl">
-        <header className="mb-6 flex items-center gap-4 rounded-lg bg-[#0A1628] px-5 py-4 shadow-sm sm:gap-6 sm:px-7">
+        <header className="mb-6 flex items-center gap-4 rounded-lg bg-navy px-5 py-4 shadow-sm sm:gap-6 sm:px-7">
           <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
             <Image
               src="/logo-voley.png"
@@ -182,9 +182,7 @@ export default function AsistenciaProfesorPage() {
             />
           </div>
           <div>
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#9adf76]">
-              PROFESOR
-            </p>
+            
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
               Registro de asistencia
             </h1>
@@ -206,7 +204,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("ESCANEO")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "ESCANEO"
-                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                ? "bg-white text-brand-green shadow-sm dark:bg-slate-900 dark:text-brand-lime-light"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
@@ -219,7 +217,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("MANUAL")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "MANUAL"
-                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                ? "bg-white text-brand-green shadow-sm dark:bg-slate-900 dark:text-brand-lime-light"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
@@ -259,7 +257,7 @@ export default function AsistenciaProfesorPage() {
                     autoComplete="off"
                     placeholder="8 dígitos"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
@@ -272,7 +270,7 @@ export default function AsistenciaProfesorPage() {
                     value={fechaManual}
                     onChange={(event) => setFechaManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
@@ -285,14 +283,14 @@ export default function AsistenciaProfesorPage() {
                     value={horaManual}
                     onChange={(event) => setHoraManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
                 <div className="sm:col-span-2">
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-[#16794C] px-4 py-3 font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+                    className="w-full rounded-lg bg-brand-green px-4 py-3 font-bold text-white shadow-sm transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
                   >
                     Registrar asistencia manual
                   </button>
@@ -307,8 +305,8 @@ export default function AsistenciaProfesorPage() {
         </p>
 
         {estudianteEscaneado && (
-          <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/30 dark:bg-emerald-500/10">
-            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+          <section className="mt-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-5 dark:border-brand-green/30 dark:bg-brand-green/10">
+            <p className="text-sm font-semibold text-brand-green dark:text-brand-lime-light">
               Estudiante identificado
             </p>
             <h2 className="mt-1 text-xl font-bold text-slate-950 dark:text-white">
@@ -328,7 +326,7 @@ export default function AsistenciaProfesorPage() {
               <button
                 type="button"
                 onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
-                className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+                className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
               >
                 Registrar asistencia
               </button>
@@ -354,13 +352,13 @@ export default function AsistenciaProfesorPage() {
 
         {ultimoRegistro && (
           <div
-            className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+            className="mt-5 rounded-xl border border-brand-green/20 bg-brand-green-soft p-4 dark:border-brand-green/30 dark:bg-brand-green/10"
             role="status"
           >
-            <p className="font-semibold text-emerald-900 dark:text-emerald-300">
+            <p className="font-semibold text-brand-green dark:text-brand-lime-light">
               Asistencia registrada correctamente
             </p>
-            <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-300">
+            <p className="mt-1 text-sm text-brand-green dark:text-brand-lime-light">
               {ultimoRegistro.estudiante} · {ultimoRegistro.dni} ·{" "}
               {new Intl.DateTimeFormat("es-PE", {
                 dateStyle: "medium",

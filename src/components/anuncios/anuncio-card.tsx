@@ -27,7 +27,7 @@ export default function AnuncioCard({
           <h2 className="text-lg font-bold text-slate-950 dark:text-white">{anuncio.titulo}</h2>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{fecha}</p>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${anuncio.estado === "enviado" ? "bg-[#edf8e8] text-[#16794C]" : "bg-amber-100 text-amber-700"}`}>
+        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${anuncio.estado === "enviado" ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light" : "bg-amber-100 text-amber-700"}`}>
           {anuncio.estado === "enviado" ? "Enviado" : "Borrador"}
         </span>
       </div>
@@ -36,7 +36,7 @@ export default function AnuncioCard({
         Destinatarios: {nombreCategoria ?? `${nombresDestinatarios.length} alumno(s)`}
       </p>
       <div className="mt-4 flex justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-        <button type="button" onClick={() => onEditar(anuncio)} className="text-sm font-semibold text-[#16794C] hover:text-[#12613D]">Editar</button>
+        <button type="button" onClick={() => onEditar(anuncio)} className="text-sm font-semibold text-brand-green hover:text-brand-green-dark">Editar</button>
         <button type="button" onClick={() => onEliminar(anuncio)} className="text-sm font-medium text-red-600 hover:text-red-800">Eliminar</button>
       </div>
     </article>

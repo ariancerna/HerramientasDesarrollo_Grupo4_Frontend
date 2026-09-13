@@ -42,9 +42,6 @@ export default function AsistenciaAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
           <header className="mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              ADMINISTRACIÓN
-            </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
               Corrección de asistencia
             </h1>
@@ -62,7 +59,7 @@ export default function AsistenciaAdminPage() {
                 value={texto}
                 onChange={(event) => setTexto(event.target.value)}
                 placeholder="Nombre o DNI..."
-                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               />
             </label>
 
@@ -73,7 +70,7 @@ export default function AsistenciaAdminPage() {
               <select
                 value={categoria}
                 onChange={(event) => setCategoria(event.target.value)}
-                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               >
                 <option value="todas">Todas las categorías</option>
                 {NOMBRES_CATEGORIAS.map((nombre) => (
@@ -92,7 +89,7 @@ export default function AsistenciaAdminPage() {
                 type="date"
                 value={fecha}
                 onChange={(event) => setFecha(event.target.value)}
-                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               />
             </label>
           </section>
@@ -100,7 +97,7 @@ export default function AsistenciaAdminPage() {
           {mensajeExito && (
             <div
               role="status"
-              className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
+              className="mb-5 rounded-xl border border-brand-green/20 bg-brand-green-soft p-4 text-sm font-medium text-brand-green dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light"
             >
               {mensajeExito}
             </div>

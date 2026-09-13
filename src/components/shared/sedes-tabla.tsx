@@ -47,7 +47,7 @@ export default function SedesTabla({
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => onEditar?.(sede)}
-                      className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
+                      className="inline-flex items-center gap-1 rounded-md bg-brand-green-soft px-3 py-1.5 text-xs font-medium text-brand-green hover:bg-brand-green/20 transition dark:bg-brand-green/10 dark:text-brand-lime-light dark:hover:bg-brand-green/20"
                     >
                       <EditIcon />
                       Editar

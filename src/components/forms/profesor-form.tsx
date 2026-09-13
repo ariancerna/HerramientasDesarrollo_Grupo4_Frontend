@@ -146,7 +146,7 @@ export default function ProfesorForm({
             <input
               value={form.nombre}
               onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.nombre && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.nombre}</p>}
           </label>
@@ -159,7 +159,7 @@ export default function ProfesorForm({
               value={form.usuario}
               onChange={(e) => setForm({ ...form, usuario: e.target.value })}
               autoComplete="off"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.usuario && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.usuario}</p>}
           </label>
@@ -176,7 +176,7 @@ export default function ProfesorForm({
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               autoComplete="new-password"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.password && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.password}</p>}
           </label>
@@ -188,7 +188,7 @@ export default function ProfesorForm({
             <select
               value={form.sedeId}
               onChange={(e) => setForm({ ...form, sedeId: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
               <option value="">Selecciona una sede</option>
               {sedes.map((sede) => (
@@ -216,7 +216,7 @@ export default function ProfesorForm({
                       type="checkbox"
                       checked={categoriaIds.includes(categoria.id)}
                       onChange={() => alternarCategoria(categoria.id)}
-                      className="h-4 w-4 rounded border-slate-300 text-[#16794C] focus:ring-[#16794C]"
+                      className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green"
                     />
                     {categoria.nombre}
                   </label>
@@ -236,7 +236,7 @@ export default function ProfesorForm({
             <button
               type="submit"
               disabled={sedes.length === 0}
-              className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Guardar
             </button>

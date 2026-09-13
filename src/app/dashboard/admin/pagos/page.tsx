@@ -118,7 +118,6 @@ export default function PagosAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">ADMINISTRACIÓN</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Pagos</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Registra los pagos y consulta las deudas pendientes de los alumnos. Periodo actual:{" "}
@@ -127,7 +126,7 @@ export default function PagosAdminPage() {
         </header>
 
         {mensaje && (
-          <div className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
+          <div className="mb-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
             {mensaje}
           </div>
         )}
@@ -143,12 +142,12 @@ export default function PagosAdminPage() {
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder="Buscar por nombre, DNI o código..."
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
           />
           <select
             value={filtro}
             onChange={(e) => setFiltro(e.target.value as FiltroPago)}
-            className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] dark:border-slate-600 dark:bg-slate-800 dark:text-white sm:w-48"
+            className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green dark:border-slate-600 dark:bg-slate-800 dark:text-white sm:w-48"
           >
             <option value="todos">Todos los estados</option>
             <option value="pagados">Pagos al día</option>
@@ -197,7 +196,7 @@ export default function PagosAdminPage() {
                       <span
                         className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                           pagado
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                            ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
                             : pago?.estado === "vencido"
                               ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
                               : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
@@ -217,7 +216,7 @@ export default function PagosAdminPage() {
                       ) : (
                         <button
                           onClick={() => abrirModalRegistro(alumno)}
-                          className="rounded-lg bg-[#16794C] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#12613D]"
+                          className="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white transition hover:bg-brand-green-dark"
                         >
                           Registrar pago
                         </button>
@@ -246,7 +245,7 @@ export default function PagosAdminPage() {
                 <select
                   value={metodoSeleccionado}
                   onChange={(e) => setMetodoSeleccionado(e.target.value as typeof metodoSeleccionado)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 >
                   {METODOS_PAGO.map((metodo) => (
                     <option key={metodo} value={metodo}>
@@ -264,7 +263,7 @@ export default function PagosAdminPage() {
                   value={codigoOperacion}
                   onChange={(e) => setCodigoOperacion(e.target.value)}
                   placeholder="Ej. YP-840215"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
               </label>
 
@@ -277,7 +276,7 @@ export default function PagosAdminPage() {
                 </button>
                 <button
                   onClick={confirmarRegistroPago}
-                  className="rounded-lg bg-[#16794C] px-4 py-2 text-sm font-bold text-white hover:bg-[#12613D]"
+                  className="rounded-lg bg-brand-green px-4 py-2 text-sm font-bold text-white hover:bg-brand-green-dark"
                 >
                   Confirmar pago
                 </button>
@@ -293,7 +292,7 @@ export default function PagosAdminPage() {
 function Resumen({ label, valor, tono = "azul" }: { label: string; valor: number; tono?: "azul" | "verde" | "rojo" }) {
   const colores = {
     azul: "border-slate-200 text-slate-950",
-    verde: "border-emerald-200 text-emerald-700",
+    verde: "border-brand-green/20 text-brand-green",
     rojo: "border-red-200 text-red-700",
   };
   return (

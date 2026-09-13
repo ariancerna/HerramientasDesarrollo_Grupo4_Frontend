@@ -43,9 +43,6 @@ export default function CalendarioAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-            MI ESPACIO
-          </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Calendario
           </h1>
@@ -61,9 +58,12 @@ export default function CalendarioAlumnoPage() {
         ) : (
           <>
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(17rem,0.7fr)]">
-              <div className="relative overflow-hidden rounded-2xl bg-[#0A1628] p-6 text-white shadow-sm sm:p-8">
-                <div className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[32px] border-[#6FCF3A]/10" aria-hidden="true" />
-                <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-[#9adf76]">
+              <div className="relative overflow-hidden rounded-2xl bg-navy p-6 text-white shadow-sm sm:p-8">
+                <div
+                  className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[32px] border-brand-lime/10"
+                  aria-hidden="true"
+                />
+                <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-brand-lime-light">
                   Próxima actividad
                 </p>
                 {siguienteActividad ? (
@@ -86,7 +86,7 @@ export default function CalendarioAlumnoPage() {
                       <p className="text-sm font-bold text-white first-letter:uppercase">
                         {formatearFechaLarga(siguienteActividad.fecha)}
                       </p>
-                      <p className="mt-1 text-sm text-[#9adf76]">
+                      <p className="mt-1 text-sm text-brand-lime-light">
                         {formatearHorario(siguienteActividad)}
                       </p>
                     </div>
@@ -142,7 +142,7 @@ export default function CalendarioAlumnoPage() {
                       aria-pressed={filtro === item.valor}
                       className={`flex-1 rounded-lg px-3 py-2 text-xs font-bold transition sm:flex-none ${
                         filtro === item.valor
-                          ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-700 dark:text-emerald-300"
+                          ? "bg-white text-brand-green shadow-sm dark:bg-slate-700 dark:text-brand-lime-light"
                           : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
                       }`}
                     >
@@ -179,7 +179,7 @@ function ActividadCard({ actividad }: { actividad: ActividadCalendario }) {
     .replace(".", "");
 
   return (
-    <article className="group grid gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#86c966] hover:shadow-md sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-center sm:p-5 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
+    <article className="group grid gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-lime hover:shadow-md sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-center sm:p-5 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60">
       <div className="flex h-16 w-16 flex-col items-center justify-center rounded-xl bg-slate-100 text-center dark:bg-slate-800">
         <span className="text-xl font-extrabold leading-none text-slate-950 dark:text-white">{dia}</span>
         <span className="mt-1 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{mes}</span>
@@ -212,10 +212,10 @@ function ActividadCard({ actividad }: { actividad: ActividadCalendario }) {
 function TipoBadge({ tipo, oscuro = false }: { tipo: TipoActividad; oscuro?: boolean }) {
   const clase = oscuro
     ? tipo === "entrenamiento"
-      ? "bg-[#6FCF3A]/15 text-[#a8e887] ring-[#6FCF3A]/30"
+      ? "bg-brand-lime/15 text-brand-lime-light ring-brand-lime/30"
       : "bg-sky-400/15 text-sky-200 ring-sky-300/30"
     : tipo === "entrenamiento"
-      ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/15 dark:text-emerald-300"
+      ? "bg-brand-green-soft text-brand-green ring-brand-green/20 dark:bg-brand-green/15 dark:text-brand-lime-light"
       : "bg-sky-50 text-sky-700 ring-sky-600/20 dark:bg-sky-500/15 dark:text-sky-300";
 
   return (
@@ -227,8 +227,8 @@ function TipoBadge({ tipo, oscuro = false }: { tipo: TipoActividad; oscuro?: boo
 
 function ResumenAgenda({ etiqueta, valor, color }: { etiqueta: string; valor: number; color: "verde" | "azul" }) {
   return (
-    <div className={`rounded-xl p-4 ${color === "verde" ? "bg-emerald-50 dark:bg-emerald-500/10" : "bg-sky-50 dark:bg-sky-500/10"}`}>
-      <p className={`text-2xl font-extrabold ${color === "verde" ? "text-emerald-700 dark:text-emerald-300" : "text-sky-700 dark:text-sky-300"}`}>{valor}</p>
+    <div className={`rounded-xl p-4 ${color === "verde" ? "bg-brand-green-soft dark:bg-brand-green/10" : "bg-sky-50 dark:bg-sky-500/10"}`}>
+      <p className={`text-2xl font-extrabold ${color === "verde" ? "text-brand-green dark:text-brand-lime-light" : "text-sky-700 dark:text-sky-300"}`}>{valor}</p>
       <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-400">{etiqueta}</p>
     </div>
   );

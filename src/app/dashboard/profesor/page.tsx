@@ -7,12 +7,6 @@ import { obtenerCategorias } from "@/store/categorias-store";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerProximasActividades } from "@/store/calendario-store";
 
-const fechaActual = new Intl.DateTimeFormat("es-PE", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-}).format(new Date());
-
 const ACCESOS = [
   {
     titulo: "Registrar asistencia",
@@ -43,10 +37,8 @@ export default function ProfesorDashboardPage() {
           <section className="relative px-0 py-1">
             <div className="relative flex max-w-none flex-col justify-between gap-5 sm:flex-row sm:items-end">
               <div>
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#16794C] dark:text-emerald-400">
-                {fechaActual}
-              </p>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+              {/* ❌ Eliminada la fecha (texto redundante) */}
+              <h1 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
                 Buenos días, {primerNombre}
               </h1>
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
@@ -56,7 +48,7 @@ export default function ProfesorDashboardPage() {
               </div>
               <Link
                 href="/dashboard/profesor/asistencia"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C]/30"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green/30"
               >
                 Registrar asistencia
                 <ArrowIcon />
@@ -65,9 +57,19 @@ export default function ProfesorDashboardPage() {
           </section>
 
           <section className="mt-6 grid gap-4 xl:grid-cols-[1.45fr_0.8fr_0.8fr]">
-            <article className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm dark:border-emerald-500/25 dark:bg-slate-900">
-              <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#16794C] dark:text-emerald-400">Próxima sesión</p><h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{proximaSesion?.categoria ?? "Sin sesión asignada"}</h2><p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{proximaSesion ? `${proximaSesion.ubicacion} · ${proximaSesion.horaInicio} – ${proximaSesion.horaFin}` : "Revisa tu horario o consulta a administración."}</p></div><span className="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400"><AttendanceIcon /></span></div>
-              <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800"><span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{proximaSesion ? formatearFecha(proximaSesion.fecha) : ""}</span><Link href="/dashboard/profesor/asistencia" className="rounded-lg bg-[#16794C] px-3 py-2 text-xs font-bold text-white hover:bg-[#12613D]">Tomar asistencia</Link></div>
+            <article className="relative overflow-hidden rounded-2xl border border-brand-green/20 bg-white p-6 shadow-sm dark:border-brand-green/30 dark:bg-slate-900">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-green dark:text-brand-lime-light">Próxima sesión</p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{proximaSesion?.categoria ?? "Sin sesión asignada"}</h2>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{proximaSesion ? `${proximaSesion.ubicacion} · ${proximaSesion.horaInicio} – ${proximaSesion.horaFin}` : "Revisa tu horario o consulta a administración."}</p>
+                </div>
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"><AttendanceIcon /></span>
+              </div>
+              <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{proximaSesion ? formatearFecha(proximaSesion.fecha) : ""}</span>
+                <Link href="/dashboard/profesor/asistencia" className="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white hover:bg-brand-green-dark">Tomar asistencia</Link>
+              </div>
             </article>
             <MetricCard label="Alumnos asignados" value={alumnos.length} detail={`${categorias.length} categorías activas`} href="/dashboard/profesor/alumnos" />
             <MetricCard label="Pendiente hoy" value="2" detail="Evaluaciones por registrar" href="/dashboard/profesor/evaluaciones" />
@@ -75,7 +77,7 @@ export default function ProfesorDashboardPage() {
 
           <section className="mt-9" aria-labelledby="accesos-title">
             <div className="mb-4">
-              <h2 id="accesos-title" className="text-xl font-bold text-[#0A1628] dark:text-white">
+              <h2 id="accesos-title" className="text-xl font-bold text-navy dark:text-white">
                 Herramientas de trabajo
               </h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -91,14 +93,14 @@ export default function ProfesorDashboardPage() {
                   <Link
                     key={acceso.href}
                     href={acceso.href}
-                    className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60"
+                    className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60"
                   >
                     <div className="flex items-start gap-4">
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
                         <Icon />
                       </span>
                       <div>
-                        <h3 className="text-lg font-bold text-[#0A1628] dark:text-white">
+                        <h3 className="text-lg font-bold text-navy dark:text-white">
                           {acceso.titulo}
                         </h3>
                         <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">
@@ -106,7 +108,7 @@ export default function ProfesorDashboardPage() {
                         </p>
                       </div>
                     </div>
-                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">
+                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-brand-lime-light">
                       {acceso.etiqueta}
                       <ArrowIcon />
                     </span>
@@ -149,7 +151,14 @@ function ArrowIcon() {
 }
 
 function MetricCard({ label, value, detail, href }: { label: string; value: string | number; detail: string; href: string }) {
-  return <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"><p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p><p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{value}</p><p className="mt-3 text-xs text-slate-500 dark:text-slate-400">{detail}</p><span className="mt-4 block text-xs font-bold text-[#16794C] dark:text-emerald-400">Abrir módulo →</span></Link>;
+  return (
+    <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
+      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{value}</p>
+      <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">{detail}</p>
+      <span className="mt-4 block text-xs font-bold text-brand-green dark:text-brand-lime-light">Abrir módulo →</span>
+    </Link>
+  );
 }
 
 function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }

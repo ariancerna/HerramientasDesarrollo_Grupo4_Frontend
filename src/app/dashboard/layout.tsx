@@ -16,7 +16,8 @@ export default function DashboardLayout({
 
   return (
     <RoleGuard>
-      <div data-theme={dataTheme} className="min-h-screen min-h-dvh bg-slate-50 dark:bg-slate-950">
+      {/* 🎨 CAMBIO: bg-slate-50 dark:bg-slate-950 → bg-bg-app dark:bg-bg-app-dark */}
+      <div data-theme={dataTheme} className="min-h-screen min-h-dvh bg-bg-app dark:bg-bg-app-dark">
         <Sidebar />
         <div className="min-w-0 lg:pl-72">
           <Navbar />

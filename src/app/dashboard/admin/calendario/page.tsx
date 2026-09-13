@@ -93,7 +93,6 @@ export default function CalendarioAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">ADMINISTRACIÓN</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Calendario
           </h1>
@@ -103,7 +102,7 @@ export default function CalendarioAdminPage() {
         </header>
 
         {mensajeExito && (
-          <div className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
+          <div className="mb-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
@@ -111,7 +110,7 @@ export default function CalendarioAdminPage() {
         <div className="mb-6 flex justify-end">
           <button
             onClick={handleNuevo}
-            className="whitespace-nowrap rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+            className="whitespace-nowrap rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
           >
             + Programar evento
           </button>
@@ -143,7 +142,7 @@ export default function CalendarioAdminPage() {
                         <span
                           className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold capitalize ${
                             actividad.tipo === "entrenamiento"
-                              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                              ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
                               : "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300"
                           }`}
                         >
@@ -191,7 +190,7 @@ export default function CalendarioAdminPage() {
                     <div className="mt-3 flex gap-3 text-xs font-semibold">
                       <button
                         onClick={() => handleEditar(evento)}
-                        className="text-[#16794C] hover:text-[#12613D] dark:text-emerald-400"
+                        className="text-brand-green hover:text-brand-green-dark dark:text-brand-lime-light"
                       >
                         Editar
                       </button>

@@ -19,7 +19,7 @@ export default function ConfiguracionScreen() {
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">AJUSTES</p>
+        {/* ❌ Eliminado: <p>AJUSTES</p> */}
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
           Configuración
         </h1>
@@ -87,7 +87,8 @@ function SettingsCard({
 }) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-      <h2 className="font-bold text-[#0A1628] dark:text-white">{title}</h2>
+      {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
+      <h2 className="font-bold text-navy dark:text-white">{title}</h2>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
       <div className="mt-5 border-t border-slate-100 pt-5 dark:border-slate-800">{children}</div>
     </section>
@@ -117,8 +118,9 @@ function ToggleRow({
         aria-checked={checked}
         aria-label={label}
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
-          checked ? "bg-[#16794C]" : "bg-slate-300 dark:bg-slate-600"
+        /* 🎨 CAMBIO: focus:ring-[#16794C] → focus:ring-brand-green, bg-[#16794C] → bg-brand-green */
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
+          checked ? "bg-brand-green" : "bg-slate-300 dark:bg-slate-600"
         }`}
       >
         <span

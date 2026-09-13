@@ -77,9 +77,6 @@ export default function ReportesPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-            ADMINISTRACIÓN
-          </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Reportes de asistencia
           </h1>
@@ -93,11 +90,11 @@ export default function ReportesPage() {
           className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
         >
           <div className="mb-4 flex items-start gap-3">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
               <FilterIcon />
             </span>
             <div>
-              <h2 className="font-bold text-[#0A1628] dark:text-white">Configurar reporte</h2>
+              <h2 className="font-bold text-navy dark:text-white">Configurar reporte</h2>
               <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Deja los campos sin seleccionar para incluir todos los registros.
               </p>
@@ -183,7 +180,7 @@ export default function ReportesPage() {
             </button>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#16794C] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#6FCF3A] focus:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2"
             >
               <ChartIcon />
               Generar reporte
@@ -209,8 +206,8 @@ export default function ReportesPage() {
               )}
               <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[#16794C]">RESULTADO</p>
-                  <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-[#0A1628] dark:text-white">
+                  <p className="text-sm font-semibold text-brand-green">RESULTADO</p>
+                  <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-navy dark:text-white">
                     {registros.length} registro{registros.length === 1 ? "" : "s"} encontrado{registros.length === 1 ? "" : "s"}
                   </h2>
                 </div>
@@ -220,7 +217,7 @@ export default function ReportesPage() {
                     type="button"
                     onClick={handleExportar}
                     disabled={registros.length === 0}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[#16794C] bg-white px-4 py-2.5 text-sm font-bold text-[#16794C] transition hover:bg-[#edf8e8] focus:outline-none focus:ring-2 focus:ring-[#6FCF3A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-800 dark:disabled:border-slate-700 dark:disabled:text-slate-600 dark:disabled:hover:bg-slate-900"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-brand-green bg-white px-4 py-2.5 text-sm font-bold text-brand-green transition hover:bg-brand-green-soft focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-800 dark:disabled:border-slate-700 dark:disabled:text-slate-600 dark:disabled:hover:bg-slate-900"
                   >
                     <DownloadIcon />
                     Exportar CSV
@@ -230,7 +227,7 @@ export default function ReportesPage() {
               {mensajeExportacion && (
                 <p
                   role="status"
-                  className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
+                  className="mb-4 rounded-lg border border-brand-green/20 bg-brand-green-soft px-4 py-3 text-sm font-medium text-brand-green dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light"
                 >
                   {mensajeExportacion}
                 </p>
@@ -245,7 +242,7 @@ export default function ReportesPage() {
 }
 
 const INPUT_CLASS =
-  "w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white";
+  "w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white";
 
 function CampoFiltro({
   etiqueta,

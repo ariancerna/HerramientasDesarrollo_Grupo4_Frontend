@@ -30,7 +30,6 @@ export default function CategoriasPage() {
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
-  // Ocultar mensaje de éxito después de 3 segundos
   useEffect(() => {
     if (mensajeExito) {
       const timer = setTimeout(() => setMensajeExito(null), 3000);
@@ -54,11 +53,9 @@ export default function CategoriasPage() {
   ) => {
     try {
       if (id) {
-        // Actualizar categoría existente
         actualizarCategoria(id, data);
         setMensajeExito(`Categoría "${data.nombre}" actualizada correctamente`);
       } else {
-        // Crear nueva categoría
         crearCategoria(data);
         setMensajeExito(`Categoría "${data.nombre}" creada correctamente`);
       }
@@ -102,32 +99,29 @@ export default function CategoriasPage() {
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Categorías</h1>
-            <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
+            <h1 className="text-2xl font-bold text-slate-950 dark:text-white sm:text-3xl">Categorías</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Gestiona las categorías y horarios de entrenamiento del club
             </p>
           </div>
           <button
             onClick={handleAbrirFormularioNuevo}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-green px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-green-dark transition focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 sm:w-auto"
           >
             <PlusIcon />
             Nueva Categoría
           </button>
         </div>
 
-        {/* Toast de éxito */}
         {mensajeExito && (
-          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm animate-in fade-in dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
+          <div className="rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm animate-in fade-in dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
 
-        {/* Tabla de categorías */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <CategoriasTabla
             categorias={categorias}
             puedeGestionar={isAdmin}
@@ -138,7 +132,6 @@ export default function CategoriasPage() {
 
       </div>
 
-      {/* Modal del formulario */}
       {mostrarFormulario && (
         <CategoriaForm
           categoriaAEditar={categoriaAEditar}

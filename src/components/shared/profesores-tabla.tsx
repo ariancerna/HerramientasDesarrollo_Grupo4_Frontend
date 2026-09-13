@@ -48,7 +48,7 @@ export default function ProfesoresTabla({
               <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">{profesor.nombre}</td>
               <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{profesor.usuario}</td>
               <td className="px-4 py-3">
-                <span className="inline-flex rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-500/15 dark:text-blue-300">
+                <span className="inline-flex rounded-full bg-brand-green-soft px-2.5 py-0.5 text-xs font-medium text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
                   {nombreSede(profesor.sedeId)}
                 </span>
               </td>
@@ -56,7 +56,7 @@ export default function ProfesoresTabla({
                 <div className="flex flex-wrap gap-1">
                   {categoriasDelProfesor(profesor.id).length > 0 ? (
                     categoriasDelProfesor(profesor.id).map((categoria) => (
-                      <span key={categoria.id} className="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300">
+                      <span key={categoria.id} className="inline-flex rounded-full bg-brand-green-soft px-2.5 py-0.5 text-xs font-medium text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
                         {categoria.nombre}
                       </span>
                     ))
@@ -68,7 +68,7 @@ export default function ProfesoresTabla({
               <td className="px-4 py-3 text-right">
                 <button
                   onClick={() => onEditar?.(profesor)}
-                  className="mr-3 font-semibold text-[#16794C] hover:text-[#12613D] dark:text-emerald-400 dark:hover:text-emerald-300"
+                  className="mr-3 font-semibold text-brand-green hover:text-brand-green-dark dark:text-brand-lime-light dark:hover:text-brand-lime"
                 >
                   Editar
                 </button>

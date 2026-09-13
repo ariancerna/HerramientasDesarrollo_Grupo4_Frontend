@@ -80,9 +80,6 @@ export default function SedesPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
-              ADMINISTRACIÓN
-            </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
               Sedes
             </h1>
@@ -93,7 +90,7 @@ export default function SedesPage() {
           </div>
           <button
             onClick={handleAbrirFormularioNuevo}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#16794C] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#12613D] transition focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-green px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-green-dark transition focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 sm:w-auto"
           >
             <PlusIcon />
             Nueva sede
@@ -101,12 +98,12 @@ export default function SedesPage() {
         </div>
 
         {mensajeExito && (
-          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
+          <div className="rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <SedesTabla
             sedes={sedes}
             puedeGestionar
