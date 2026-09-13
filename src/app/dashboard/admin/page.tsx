@@ -41,21 +41,33 @@ export default function AdminDashboardPage() {
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
-        <section className="relative px-0 py-1">
-          <div className="relative">
-            <div className="max-w-xl">
-              {/* ❌ Eliminado: <p>ADMINISTRACIÓN</p> */}
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-navy dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                Gestiona la operación diaria del club desde un solo lugar.
+        <section className="relative mt-2 overflow-hidden rounded-2xl bg-navy shadow-lg">
+          <div className="absolute inset-0">
+            {/* Usamos una de las imágenes existentes en la carpeta public */}
+            <img src="/fondo-welcome.png" alt="Volleyball" className="h-full w-full object-cover object-[center_30%] opacity-20 sm:opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-transparent"></div>
+          </div>
+          <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-12 max-w-xl">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              ¡Hola, {primerNombre}!
+            </h1>
+            <p className="mt-3 text-base leading-6 text-slate-200">
+              Bienvenido al panel de administración del Club de Vóley El Golazo.
+            </p>
+            <div className="mt-6 border-l-2 border-brand-lime pl-4">
+              <p className="text-sm font-medium italic text-brand-lime-light">
+                "El trabajo en equipo hace la diferencia"
               </p>
             </div>
-            <dl className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:divide-x-0">
-              <Metric label="Alumnos" value={alumnos.length} />
-              <Metric label="Activos" value={activos} />
-              <Metric label="Registros" value={asistencias.length} />
-            </dl>
           </div>
+        </section>
+
+        <section className="mt-6">
+          <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:divide-x-0">
+            <Metric label="Alumnos registrados" value={alumnos.length} />
+            <Metric label="Alumnos activos" value={activos} />
+            <Metric label="Asistencias hoy" value={asistencias.length} />
+          </dl>
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-[1.25fr_0.9fr]">

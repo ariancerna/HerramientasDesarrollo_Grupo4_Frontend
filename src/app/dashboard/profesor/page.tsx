@@ -34,27 +34,34 @@ export default function ProfesorDashboardPage() {
   return (
     <RoleGuard allowedRoles={["profesor"]}>
       <div>
-          <section className="relative px-0 py-1">
-            <div className="relative flex max-w-none flex-col justify-between gap-5 sm:flex-row sm:items-end">
-              <div>
-              {/* ❌ Eliminada la fecha (texto redundante) */}
-              <h1 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
-                Buenos días, {primerNombre}
+        <section className="relative mt-2 overflow-hidden rounded-2xl bg-navy shadow-lg">
+          <div className="absolute inset-0">
+            <img src="/login-fondo1.png" alt="Volleyball" className="h-full w-full object-cover object-[center_30%] opacity-20 sm:opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-transparent"></div>
+          </div>
+          <div className="relative z-10 flex flex-col justify-between gap-6 px-6 py-10 sm:flex-row sm:items-end sm:px-10 sm:py-12">
+            <div className="max-w-xl">
+              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                ¡Hola, {primerNombre}!
               </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                Desde aquí puedes registrar la asistencia del entrenamiento y consultar
-                la información de tus alumnos.
+              <p className="mt-3 text-base leading-6 text-slate-200">
+                Desde aquí puedes registrar la asistencia del entrenamiento y consultar la información de tus alumnos.
               </p>
+              <div className="mt-6 border-l-2 border-brand-lime pl-4">
+                <p className="text-sm font-medium italic text-brand-lime-light">
+                  "Inspirando el talento y la dedicación en cada saque."
+                </p>
               </div>
-              <Link
-                href="/dashboard/profesor/asistencia"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green/30"
-              >
-                Registrar asistencia
-                <ArrowIcon />
-              </Link>
             </div>
-          </section>
+            <Link
+              href="/dashboard/profesor/asistencia"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-green px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-brand-green-dark hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-green-light"
+            >
+              Registrar asistencia
+              <ArrowIcon />
+            </Link>
+          </div>
+        </section>
 
           <section className="mt-6 grid gap-4 xl:grid-cols-[1.45fr_0.8fr_0.8fr]">
             <article className="relative overflow-hidden rounded-2xl border border-brand-green/20 bg-white p-6 shadow-sm dark:border-brand-green/30 dark:bg-slate-900">

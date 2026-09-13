@@ -43,12 +43,12 @@ input[type="number"] {
    PALETA INSTITUCIONAL EL GOLAZO CLUB
    ============================================ */
 :root {
-  /* --- AUTH (NO TOCAR) --- */
-  --color-primary: #008f3c;
-  --color-primary-hover: #00732f;
-  --color-primary-dark: #008f3c;
-  --color-primary-light: #00c853;
-  --color-primary-soft: #e6f9ec;
+  /* --- AUTH --- */
+  --color-primary: #1e3a8a;
+  --color-primary-hover: #172554;
+  --color-primary-dark: #172554;
+  --color-primary-light: #2563eb;
+  --color-primary-soft: #dbeafe;
 
   /* --- Superficies --- */
   --color-ink: #10233f;

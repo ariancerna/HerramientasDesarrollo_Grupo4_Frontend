@@ -22,17 +22,27 @@ export default function AlumnoDashboardPage() {
   return (
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
-        <section className="relative px-0 py-1">
-          <div className="relative">
-            <div className="max-w-xl">
-              {/* ❌ Eliminado: <p>MI ESPACIO</p> */}
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
-                Buenos días, {primerNombre}
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                Consulta tu asistencia, mensualidades y próximas actividades en un solo lugar.
+        <section className="relative mt-2 overflow-hidden rounded-2xl bg-brand-green shadow-lg">
+          <div className="absolute inset-0">
+            <img src="/login-fondo.png" alt="Volleyball" className="h-full w-full object-cover object-[center_20%] opacity-20 sm:opacity-40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-green via-brand-green/90 to-transparent"></div>
+          </div>
+          <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-12 max-w-xl">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              ¡Hola, {primerNombre}!
+            </h1>
+            <p className="mt-3 text-base leading-6 text-brand-lime-light">
+              Consulta tu asistencia, mensualidades y próximas actividades.
+            </p>
+            <div className="mt-6 border-l-2 border-brand-lime pl-4">
+              <p className="text-sm font-medium italic text-white">
+                "Disciplina, trabajo en equipo y grandes resultados."
               </p>
             </div>
+          </div>
+        </section>
+        
+        <section className="mt-6">
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <dt className="text-xs text-slate-500 dark:text-slate-400">Asistencias</dt>
@@ -57,18 +67,17 @@ export default function AlumnoDashboardPage() {
                 </dd>
               </dl>
             </div>
-          </div>
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-[1.55fr_0.8fr_0.8fr]">
-          {/* 🎨 CAMBIO: from-[#16794C] to-[#0f5134] → from-brand-green to-brand-green-dark */}
+          {/* 🎨 CAMBIO: de brand-blue inexistente al verdadero token azul (brand-green) */}
           <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-green to-brand-green-dark p-6 text-white shadow-sm sm:p-7">
             <div className="absolute -right-9 -top-10 h-40 w-40 rounded-full border-[26px] border-white/10" aria-hidden="true" />
-            <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-emerald-100">Tu siguiente actividad</p>
+            <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-brand-lime-light">Tu siguiente actividad</p>
             {proximaActividad ? (
               <>
                 <h2 className="relative mt-3 text-2xl font-bold">{proximaActividad.titulo}</h2>
-                <p className="relative mt-2 text-sm text-emerald-50">
+                <p className="relative mt-2 text-sm text-blue-50">
                   {proximaActividad.categoria} · {proximaActividad.ubicacion}
                 </p>
                 <div className="relative mt-6 flex items-end justify-between gap-4">
@@ -78,14 +87,14 @@ export default function AlumnoDashboardPage() {
                   {/* 🎨 CAMBIO: text-[#12613D] → text-brand-green-dark */}
                   <Link
                     href="/dashboard/alumno/calendario"
-                    className="rounded-lg bg-white px-3 py-2 text-xs font-bold text-brand-green-dark transition hover:bg-emerald-50"
+                    className="rounded-lg bg-white px-3 py-2 text-xs font-bold text-brand-green-dark transition hover:bg-blue-50"
                   >
                     Ver agenda
                   </Link>
                 </div>
               </>
             ) : (
-              <p className="relative mt-3 text-sm text-emerald-50">No tienes actividades programadas por ahora.</p>
+              <p className="relative mt-3 text-sm text-blue-50">No tienes actividades programadas por ahora.</p>
             )}
           </article>
 
@@ -97,7 +106,7 @@ export default function AlumnoDashboardPage() {
               <div className="h-full rounded-full bg-brand-lime" style={{ width: `${asistenciaPorcentaje}%` }} />
             </div>
             {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-green">
+            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-lime-light">
               Ver historial →
             </Link>
           </article>
@@ -111,7 +120,7 @@ export default function AlumnoDashboardPage() {
               {mensualidad ? `Vence el ${formatearFechaCorta(mensualidad.vencimiento)}` : "Sin mensualidad registrada"}
             </p>
             {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-emerald-400">
+            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-lime-light">
               Ver detalle →
             </Link>
           </article>
@@ -125,7 +134,7 @@ export default function AlumnoDashboardPage() {
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestiona tu información y revisa tus avances.</p>
             </div>
             {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-            <Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-brand-green dark:text-emerald-400 sm:block">
+            <Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-brand-green dark:text-brand-lime-light sm:block">
               Agenda completa →
             </Link>
           </div>
@@ -171,12 +180,12 @@ function ModuloCard({ href, titulo, descripcion, enlace, detalle, icono }: { hre
     // 🎨 CAMBIO: hover:border-[#86c966] → hover:border-brand-lime
     <Link
       href={href}
-      className="group flex min-h-52 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60"
+      className="group flex min-h-52 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60"
     >
       <div>
         <div className="flex items-start justify-between gap-3">
           {/* 🎨 CAMBIO: bg-[#edf8e8] text-[#16794C] → bg-brand-green-soft text-brand-green */}
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-emerald-500/15 dark:text-emerald-400">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
             {icono}
           </span>
           {detalle && (
@@ -190,7 +199,7 @@ function ModuloCard({ href, titulo, descripcion, enlace, detalle, icono }: { hre
         <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{descripcion}</p>
       </div>
       {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-      <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-emerald-400">
+      <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-brand-lime-light">
         {enlace}
         <ArrowIcon />
       </span>
