@@ -6,6 +6,7 @@ import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { Button } from "@/components/ui/button";
 import { CONTROL_CLASS } from "@/components/ui/control-styles";
+import { Pagination } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/toast-provider";
 import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
@@ -34,6 +35,8 @@ export default function ReportesPage() {
   const [busquedaResultados, setBusquedaResultados] = useState("");
   const [ordenResultados, setOrdenResultados] =
     useState<OrdenReporte>("fecha-desc");
+  const [pagina, setPagina] = useState(1);
+  const [tamanoPagina, setTamanoPagina] = useState(10);
   const { notify } = useToast();
   const indicadores = registros
     ? calcularIndicadoresAsistencia(registros)
@@ -49,6 +52,10 @@ export default function ReportesPage() {
         : [],
     [busquedaResultados, ordenResultados, registros],
   );
+  const resultadosPaginados = useMemo(() => {
+    const inicio = (pagina - 1) * tamanoPagina;
+    return resultadosVisibles.slice(inicio, inicio + tamanoPagina);
+  }, [pagina, resultadosVisibles, tamanoPagina]);
 
   const actualizarFiltro = <K extends keyof FiltrosReporteAsistencia>(
     campo: K,
@@ -76,6 +83,7 @@ export default function ReportesPage() {
     setError("");
     setBusquedaResultados("");
     setOrdenResultados("fecha-desc");
+    setPagina(1);
   };
 
   const aplicarPeriodoRapido = (periodo: PeriodoRapido) => {
@@ -86,6 +94,7 @@ export default function ReportesPage() {
     setError("");
     setBusquedaResultados("");
     setOrdenResultados("fecha-desc");
+    setPagina(1);
   };
 
   const handleLimpiar = () => {
@@ -95,6 +104,7 @@ export default function ReportesPage() {
     setError("");
     setBusquedaResultados("");
     setOrdenResultados("fecha-desc");
+    setPagina(1);
   };
 
   const handleExportar = () => {
@@ -288,7 +298,10 @@ export default function ReportesPage() {
                   <input
                     type="search"
                     value={busquedaResultados}
-                    onChange={(event) => setBusquedaResultados(event.target.value)}
+                    onChange={(event) => {
+                      setBusquedaResultados(event.target.value);
+                      setPagina(1);
+                    }}
                     placeholder="Nombre, DNI o categoría"
                     className={CONTROL_CLASS}
                   />
@@ -300,7 +313,10 @@ export default function ReportesPage() {
                   <select
                     value={ordenResultados}
                     onChange={(event) =>
-                      setOrdenResultados(event.target.value as OrdenReporte)
+                      {
+                        setOrdenResultados(event.target.value as OrdenReporte);
+                        setPagina(1);
+                      }
                     }
                     className={CONTROL_CLASS}
                   >
@@ -311,7 +327,17 @@ export default function ReportesPage() {
                   </select>
                 </label>
               </div>
-              <AsistenciaTabla registros={resultadosVisibles} />
+              <AsistenciaTabla registros={resultadosPaginados} />
+              <Pagination
+                page={pagina}
+                pageSize={tamanoPagina}
+                totalItems={resultadosVisibles.length}
+                onPageChange={setPagina}
+                onPageSizeChange={(size) => {
+                  setTamanoPagina(size);
+                  setPagina(1);
+                }}
+              />
             </>
           )}
         </section>
