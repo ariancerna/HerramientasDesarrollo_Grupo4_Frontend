@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
+import { DniBarcode } from "@/components/shared/dni-barcode";
 import { RoleGuard } from "@/components/shared/role-guard";
 import UserAvatar from "@/components/shared/user-avatar";
 import { useAuth } from "@/hooks/use-auth";
@@ -224,6 +225,9 @@ function PerfilForm({
           <DatoSoloLectura etiqueta="DNI" valor={alumno.dni} />
           <DatoSoloLectura etiqueta="Estado" valor={alumno.estado} capitalizar />
         </dl>
+        <div className="mt-6">
+          <DniBarcode dni={alumno.dni} />
+        </div>
       </aside>
 
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
