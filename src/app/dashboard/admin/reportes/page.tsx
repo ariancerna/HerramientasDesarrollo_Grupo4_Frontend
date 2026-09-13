@@ -4,6 +4,8 @@ import { FormEvent, useState } from "react";
 import IndicadoresAsistenciaPanel from "@/components/reportes/indicadores-asistencia";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { Button } from "@/components/ui/button";
+import { CONTROL_CLASS } from "@/components/ui/control-styles";
 import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import {
@@ -174,20 +176,20 @@ export default function ReportesPage() {
           )}
 
           <div className="mt-5 flex flex-col-reverse gap-3 border-t border-slate-100 pt-4 dark:border-slate-800 sm:flex-row sm:justify-end">
-            <button
+            <Button
               type="button"
               onClick={handleLimpiar}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              variant="secondary"
             >
               Limpiar filtros
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2"
+              className="px-5"
             >
               <ChartIcon />
               Generar reporte
-            </button>
+            </Button>
           </div>
         </form>
 
@@ -216,15 +218,16 @@ export default function ReportesPage() {
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   {filtrosAplicados && <ResumenFiltros filtros={filtrosAplicados} />}
-                  <button
+                  <Button
                     type="button"
                     onClick={handleExportar}
                     disabled={registros.length === 0}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-primary bg-white px-4 py-2.5 text-sm font-bold text-primary-dark transition hover:bg-primary-soft focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-800 dark:disabled:border-slate-700 dark:disabled:text-slate-600 dark:disabled:hover:bg-slate-900"
+                    variant="secondary"
+                    className="shrink-0 border-primary text-primary-dark hover:bg-primary-soft disabled:border-slate-300 disabled:text-slate-400 dark:disabled:border-slate-700 dark:disabled:text-slate-600"
                   >
                     <DownloadIcon />
                     Exportar CSV
-                  </button>
+                  </Button>
                 </div>
               </div>
               {mensajeExportacion && (
@@ -244,8 +247,7 @@ export default function ReportesPage() {
   );
 }
 
-const INPUT_CLASS =
-  "w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white";
+const INPUT_CLASS = CONTROL_CLASS;
 
 function CampoFiltro({
   etiqueta,

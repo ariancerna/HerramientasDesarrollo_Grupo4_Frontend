@@ -2,6 +2,8 @@
 
 import { Student } from "@/types/student";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { Button } from "@/components/ui/button";
+import { CONTROL_CLASS } from "@/components/ui/control-styles";
 
 interface AlumnoFiltrosProps {
   texto: string;
@@ -31,13 +33,13 @@ export default function AlumnoFiltros({
           value={texto}
           onChange={(e) => onTextoChange(e.target.value)}
           placeholder="Buscar por nombre, apellido, DNI o código..."
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-72"
+          className={`${CONTROL_CLASS} lg:w-72`}
         />
 
         <select
           value={categoria}
           onChange={(e) => onCategoriaChange(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-52"
+          className={`${CONTROL_CLASS} lg:w-52`}
         >
           <option value="todas">Todas las categorías</option>
           {categorias.map((c) => (
@@ -52,7 +54,7 @@ export default function AlumnoFiltros({
           onChange={(e) =>
             onEstadoChange(e.target.value as Student["estado"] | "todos")
           }
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-40"
+          className={`${CONTROL_CLASS} lg:w-40`}
         >
           <option value="todos">Todos los estados</option>
           <option value="activo">Activo</option>
@@ -61,12 +63,12 @@ export default function AlumnoFiltros({
       </div>
 
       {onNuevoAlumno && (
-        <button
+        <Button
           onClick={onNuevoAlumno}
-          className="whitespace-nowrap rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          className="whitespace-nowrap"
         >
           + Nuevo alumno
-        </button>
+        </Button>
       )}
     </div>
   );
