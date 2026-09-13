@@ -22,6 +22,8 @@ export interface IndicadoresAsistencia {
   porFecha: DistribucionAsistencia[];
 }
 
+export type PeriodoRapido = "hoy" | "semana" | "mes" | "ultimos-30-dias";
+
 export const FILTROS_REPORTE_INICIALES: FiltrosReporteAsistencia = {
   categoria: "todas",
   fechaDesde: "",
@@ -35,6 +37,35 @@ function fechaLocal(fechaHora: string) {
   const month = String(fecha.getMonth() + 1).padStart(2, "0");
   const day = String(fecha.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function fechaParaInput(fecha: Date) {
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, "0");
+  const day = String(fecha.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function obtenerPeriodoRapido(
+  periodo: PeriodoRapido,
+  ahora = new Date(),
+): Pick<FiltrosReporteAsistencia, "fechaDesde" | "fechaHasta"> {
+  const hasta = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  const desde = new Date(hasta);
+
+  if (periodo === "semana") {
+    const diaSemana = desde.getDay() || 7;
+    desde.setDate(desde.getDate() - diaSemana + 1);
+  } else if (periodo === "mes") {
+    desde.setDate(1);
+  } else if (periodo === "ultimos-30-dias") {
+    desde.setDate(desde.getDate() - 29);
+  }
+
+  return {
+    fechaDesde: fechaParaInput(desde),
+    fechaHasta: fechaParaInput(hasta),
+  };
 }
 
 export function validarPeriodoReporte(

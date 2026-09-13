@@ -12,8 +12,10 @@ import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import {
   FILTROS_REPORTE_INICIALES,
   FiltrosReporteAsistencia,
+  PeriodoRapido,
   calcularIndicadoresAsistencia,
   generarReporteAsistencia,
+  obtenerPeriodoRapido,
   validarPeriodoReporte,
 } from "@/lib/reportes-asistencia";
 import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
@@ -55,6 +57,14 @@ export default function ReportesPage() {
     );
     setRegistros(nuevosRegistros);
     setFiltrosAplicados({ ...filtros });
+    setError("");
+  };
+
+  const aplicarPeriodoRapido = (periodo: PeriodoRapido) => {
+    setFiltros((actuales) => ({
+      ...actuales,
+      ...obtenerPeriodoRapido(periodo),
+    }));
     setError("");
   };
 
@@ -105,6 +115,24 @@ export default function ReportesPage() {
               </p>
             </div>
           </div>
+
+          <fieldset className="mb-5">
+            <legend className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Periodos rápidos
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {PERIODOS_RAPIDOS.map((periodo) => (
+                <button
+                  key={periodo.value}
+                  type="button"
+                  onClick={() => aplicarPeriodoRapido(periodo.value)}
+                  className="min-h-9 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-soft hover:text-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                >
+                  {periodo.label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <CampoFiltro etiqueta="Desde">
@@ -240,6 +268,13 @@ export default function ReportesPage() {
 }
 
 const INPUT_CLASS = CONTROL_CLASS;
+
+const PERIODOS_RAPIDOS: { value: PeriodoRapido; label: string }[] = [
+  { value: "hoy", label: "Hoy" },
+  { value: "semana", label: "Esta semana" },
+  { value: "mes", label: "Este mes" },
+  { value: "ultimos-30-dias", label: "Últimos 30 días" },
+];
 
 function CampoFiltro({
   etiqueta,
