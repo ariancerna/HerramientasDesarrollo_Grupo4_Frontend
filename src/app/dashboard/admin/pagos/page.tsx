@@ -142,7 +142,7 @@ export default function PagosAdminPage() {
           <input
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
-            placeholder="Buscar por nombre, DNI o código..."
+            placeholder="Buscar por nombre, DNI o código GC-XXXXXXXX..."
             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
           />
           <select

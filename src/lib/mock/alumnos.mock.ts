@@ -4,7 +4,7 @@ export const MOCK_ALUMNOS: Student[] = [
   {
     id: "alu-001",
     dni: "76543210",
-    codigo: "GC-2024-001",
+    codigo: "GC-76543210",
     nombres: "Valentina",
     apellidos: "Rojas Pérez",
     email: "valentina.rojas@golazoclub.pe",
@@ -14,7 +14,7 @@ export const MOCK_ALUMNOS: Student[] = [
   {
     id: "alu-002",
     dni: "71234567",
-    codigo: "GC-2024-002",
+    codigo: "GC-71234567",
     nombres: "Diego",
     apellidos: "Mendoza Ruiz",
     email: "diego.mendoza@golazoclub.pe",
@@ -24,7 +24,7 @@ export const MOCK_ALUMNOS: Student[] = [
   {
     id: "alu-003",
     dni: "70456789",
-    codigo: "GC-2024-003",
+    codigo: "GC-70456789",
     nombres: "Camila",
     apellidos: "Torres Silva",
     email: "camila.torres@golazoclub.pe",
@@ -34,7 +34,7 @@ export const MOCK_ALUMNOS: Student[] = [
   {
     id: "alu-004",
     dni: "73456123",
-    codigo: "GC-2024-004",
+    codigo: "GC-73456123",
     nombres: "Rodrigo",
     apellidos: "Chávez Espinoza",
     email: "rodrigo.chavez@golazoclub.pe",
@@ -44,7 +44,7 @@ export const MOCK_ALUMNOS: Student[] = [
   {
     id: "alu-005",
     dni: "72345678",
-    codigo: "GC-2024-005",
+    codigo: "GC-72345678",
     nombres: "Ariana",
     apellidos: "Cerna López",
     email: "ariana.cerna@golazoclub.pe",

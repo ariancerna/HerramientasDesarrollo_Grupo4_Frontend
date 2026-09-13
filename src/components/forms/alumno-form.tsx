@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DniBarcode } from "@/components/shared/dni-barcode";
 import { Student, StudentFormData } from "@/types/student";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { crearCodigoAlumno } from "@/store/alumnos-store";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface AlumnoFormProps {
@@ -15,7 +16,7 @@ interface AlumnoFormProps {
 
 const formularioVacio: StudentFormData = {
   dni: "",
-  codigo: "",
+  codigo: "GC-",
   nombres: "",
   apellidos: "",
   email: "",
@@ -39,7 +40,7 @@ export default function AlumnoForm({
 
     return {
       dni: alumnoAEditar.dni,
-      codigo: alumnoAEditar.codigo,
+      codigo: crearCodigoAlumno(alumnoAEditar.dni),
       nombres: alumnoAEditar.nombres,
       apellidos: alumnoAEditar.apellidos,
       email: alumnoAEditar.email,
@@ -102,7 +103,7 @@ export default function AlumnoForm({
       if (!confirmado) return;
     }
 
-    onGuardar(form, alumnoAEditar?.id);
+    onGuardar({ ...form, codigo: crearCodigoAlumno(form.dni) }, alumnoAEditar?.id);
   };
 
   return (
@@ -129,7 +130,10 @@ export default function AlumnoForm({
             <input
               value={form.dni}
               onChange={(e) =>
-                setForm({ ...form, dni: e.target.value.replace(/\D/g, "").slice(0, 8) })
+                setForm((actual) => {
+                  const dni = e.target.value.replace(/\D/g, "").slice(0, 8);
+                  return { ...actual, dni, codigo: crearCodigoAlumno(dni) };
+                })
               }
               inputMode="numeric"
               placeholder="8 dígitos"
@@ -144,12 +148,11 @@ export default function AlumnoForm({
             </span>
             <input
               value={form.codigo}
-              onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              readOnly
+              aria-readonly="true"
+              className="w-full cursor-not-allowed rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-slate-600 outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
             />
-            {errores.codigo && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.codigo}</p>
-            )}
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Se genera automáticamente como GC-DNI.</p>
           </label>
 
           <label>

@@ -7,6 +7,10 @@ import { MOCK_ALUMNOS } from "@/lib/mock/alumnos.mock";
 
 const STORAGE_KEY = "kickstamp-alumnos";
 
+export function crearCodigoAlumno(dni: string): string {
+  return `GC-${dni.replace(/\D/g, "")}`;
+}
+
 function isBrowser() {
   return typeof window !== "undefined";
 }
@@ -33,7 +37,17 @@ export function obtenerAlumnos(): Student[] {
 
   try {
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Student[]) : MOCK_ALUMNOS;
+    if (!Array.isArray(parsed)) return MOCK_ALUMNOS;
+
+    const alumnos = (parsed as Student[]).map((alumno) => ({
+      ...alumno,
+      codigo: crearCodigoAlumno(alumno.dni),
+    }));
+    // Migra los códigos creados con el formato anterior al nuevo GC-DNI.
+    if (alumnos.some((alumno, index) => alumno.codigo !== parsed[index].codigo)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(alumnos));
+    }
+    return alumnos;
   } catch {
     return MOCK_ALUMNOS;
   }
@@ -51,7 +65,7 @@ function guardarAlumnos(alumnos: Student[]) {
 
 /** US-04: crea un nuevo alumno. */
 export function crearAlumno(data: StudentFormData): Student {
-  const nuevo: Student = { ...data, id: crearId() };
+  const nuevo: Student = { ...data, codigo: crearCodigoAlumno(data.dni), id: crearId() };
   guardarAlumnos([nuevo, ...obtenerAlumnos()]);
   return nuevo;
 }
@@ -65,7 +79,12 @@ export function actualizarAlumno(
   const index = alumnos.findIndex((a) => a.id === id);
   if (index === -1) return null;
 
-  const actualizado: Student = { ...alumnos[index], ...data, id };
+  const actualizado: Student = {
+    ...alumnos[index],
+    ...data,
+    codigo: crearCodigoAlumno(data.dni),
+    id,
+  };
   const nuevaLista = [...alumnos];
   nuevaLista[index] = actualizado;
   guardarAlumnos(nuevaLista);
