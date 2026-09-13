@@ -23,6 +23,11 @@ export interface IndicadoresAsistencia {
 }
 
 export type PeriodoRapido = "hoy" | "semana" | "mes" | "ultimos-30-dias";
+export type OrdenReporte =
+  | "fecha-desc"
+  | "fecha-asc"
+  | "nombre-asc"
+  | "categoria-asc";
 
 export const FILTROS_REPORTE_INICIALES: FiltrosReporteAsistencia = {
   categoria: "todas",
@@ -104,6 +109,46 @@ export function generarReporteAsistencia(
       coincideFechaDesde &&
       coincideFechaHasta
     );
+  });
+}
+
+function normalizarBusqueda(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+export function procesarResultadosReporte(
+  registros: RegistroAsistencia[],
+  busqueda: string,
+  orden: OrdenReporte,
+) {
+  const termino = normalizarBusqueda(busqueda.trim());
+  const resultado = termino
+    ? registros.filter((registro) =>
+        normalizarBusqueda(
+          `${registro.estudiante} ${registro.dni} ${registro.categoria}`,
+        ).includes(termino),
+      )
+    : [...registros];
+
+  return resultado.sort((a, b) => {
+    if (orden === "fecha-asc") {
+      return a.fechaHora.localeCompare(b.fechaHora);
+    }
+    if (orden === "nombre-asc") {
+      return a.estudiante.localeCompare(b.estudiante, "es", {
+        sensitivity: "base",
+      });
+    }
+    if (orden === "categoria-asc") {
+      return (
+        a.categoria.localeCompare(b.categoria, "es", { sensitivity: "base" }) ||
+        a.estudiante.localeCompare(b.estudiante, "es", { sensitivity: "base" })
+      );
+    }
+    return b.fechaHora.localeCompare(a.fechaHora);
   });
 }
 

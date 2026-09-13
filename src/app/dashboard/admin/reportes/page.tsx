@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import IndicadoresAsistenciaPanel from "@/components/reportes/indicadores-asistencia";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
@@ -13,9 +13,11 @@ import {
   FILTROS_REPORTE_INICIALES,
   FiltrosReporteAsistencia,
   PeriodoRapido,
+  OrdenReporte,
   calcularIndicadoresAsistencia,
   generarReporteAsistencia,
   obtenerPeriodoRapido,
+  procesarResultadosReporte,
   validarPeriodoReporte,
 } from "@/lib/reportes-asistencia";
 import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
@@ -29,10 +31,24 @@ export default function ReportesPage() {
     useState<FiltrosReporteAsistencia | null>(null);
   const [registros, setRegistros] = useState<RegistroAsistencia[] | null>(null);
   const [error, setError] = useState("");
+  const [busquedaResultados, setBusquedaResultados] = useState("");
+  const [ordenResultados, setOrdenResultados] =
+    useState<OrdenReporte>("fecha-desc");
   const { notify } = useToast();
   const indicadores = registros
     ? calcularIndicadoresAsistencia(registros)
     : null;
+  const resultadosVisibles = useMemo(
+    () =>
+      registros
+        ? procesarResultadosReporte(
+            registros,
+            busquedaResultados,
+            ordenResultados,
+          )
+        : [],
+    [busquedaResultados, ordenResultados, registros],
+  );
 
   const actualizarFiltro = <K extends keyof FiltrosReporteAsistencia>(
     campo: K,
@@ -58,6 +74,8 @@ export default function ReportesPage() {
     setRegistros(nuevosRegistros);
     setFiltrosAplicados({ ...filtros });
     setError("");
+    setBusquedaResultados("");
+    setOrdenResultados("fecha-desc");
   };
 
   const aplicarPeriodoRapido = (periodo: PeriodoRapido) => {
@@ -66,6 +84,8 @@ export default function ReportesPage() {
       ...obtenerPeriodoRapido(periodo),
     }));
     setError("");
+    setBusquedaResultados("");
+    setOrdenResultados("fecha-desc");
   };
 
   const handleLimpiar = () => {
@@ -73,15 +93,17 @@ export default function ReportesPage() {
     setFiltrosAplicados(null);
     setRegistros(null);
     setError("");
+    setBusquedaResultados("");
+    setOrdenResultados("fecha-desc");
   };
 
   const handleExportar = () => {
-    if (!registros || registros.length === 0) return;
+    if (resultadosVisibles.length === 0) return;
 
-    descargarCsvReporteAsistencia(registros);
+    descargarCsvReporteAsistencia(resultadosVisibles);
     notify({
       title: "Reporte exportado",
-      description: `Se exportaron ${registros.length} registro${registros.length === 1 ? "" : "s"} correctamente.`,
+      description: `Se exportaron ${resultadosVisibles.length} registro${resultadosVisibles.length === 1 ? "" : "s"} correctamente.`,
     });
   };
 
@@ -241,7 +263,7 @@ export default function ReportesPage() {
                 <div>
                   <p className="text-sm font-semibold text-primary-dark">RESULTADO</p>
                   <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-ink dark:text-white">
-                    {registros.length} registro{registros.length === 1 ? "" : "s"} encontrado{registros.length === 1 ? "" : "s"}
+                    {resultadosVisibles.length} de {registros.length} registro{registros.length === 1 ? "" : "s"}
                   </h2>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -249,7 +271,7 @@ export default function ReportesPage() {
                   <Button
                     type="button"
                     onClick={handleExportar}
-                    disabled={registros.length === 0}
+                    disabled={resultadosVisibles.length === 0}
                     variant="secondary"
                     className="shrink-0 border-primary text-primary-dark hover:bg-primary-soft disabled:border-slate-300 disabled:text-slate-400 dark:disabled:border-slate-700 dark:disabled:text-slate-600"
                   >
@@ -258,7 +280,38 @@ export default function ReportesPage() {
                   </Button>
                 </div>
               </div>
-              <AsistenciaTabla registros={registros} />
+              <div className="mb-4 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-2">
+                <label>
+                  <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Buscar en resultados
+                  </span>
+                  <input
+                    type="search"
+                    value={busquedaResultados}
+                    onChange={(event) => setBusquedaResultados(event.target.value)}
+                    placeholder="Nombre, DNI o categoría"
+                    className={CONTROL_CLASS}
+                  />
+                </label>
+                <label>
+                  <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Ordenar por
+                  </span>
+                  <select
+                    value={ordenResultados}
+                    onChange={(event) =>
+                      setOrdenResultados(event.target.value as OrdenReporte)
+                    }
+                    className={CONTROL_CLASS}
+                  >
+                    <option value="fecha-desc">Fecha más reciente</option>
+                    <option value="fecha-asc">Fecha más antigua</option>
+                    <option value="nombre-asc">Nombre del estudiante</option>
+                    <option value="categoria-asc">Categoría</option>
+                  </select>
+                </label>
+              </div>
+              <AsistenciaTabla registros={resultadosVisibles} />
             </>
           )}
         </section>
