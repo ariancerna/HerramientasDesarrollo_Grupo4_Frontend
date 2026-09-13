@@ -7,9 +7,7 @@ import { ROUTES } from "@/constants/routes";
 export default function RegisterPage() {
   return (
     <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-black">
-      {/* =========================================================
-          FONDO COMPLETO
-      ========================================================= */}
+      {/* FONDO COMPLETO */}
       <Image
         src="/login-fondo1.png"
         alt="El Golazo Club"
@@ -25,16 +23,10 @@ export default function RegisterPage() {
       {/* Degradado adicional en la zona izquierda */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-black/15" />
 
-      {/* =========================================================
-          CONTENIDO PRINCIPAL
-      ========================================================= */}
-      <div className="relative z-10 flex min-h-screen min-h-dvh w-full flex-col lg:flex-row">
-
-        {/* =======================================================
-            PANEL IZQUIERDO (idéntico al login)
-        ======================================================= */}
+      {/* CONTENIDO PRINCIPAL */}
+      <div className="relative z-10 flex min-h-screen min-h-dvh w-full flex-col justify-center lg:flex-row lg:justify-start">
+        {/* PANEL IZQUIERDO */}
         <section className="hidden w-full flex-1 flex-col justify-between px-6 py-8 text-white sm:px-10 lg:flex lg:px-12 xl:px-16">
-
           {/* LOGO + NOMBRE */}
           <div className="flex items-center gap-4">
             <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-white shadow-2xl">
@@ -73,9 +65,8 @@ export default function RegisterPage() {
             </h1>
 
             <p className="mt-6 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">
-              Impulsamos el talento y la pasión deportiva,
-              formando atletas disciplinados a darlo todo
-              dentro y fuera de la cancha.
+              Impulsamos el talento y la pasión deportiva, formando atletas
+              disciplinados a darlo todo dentro y fuera de la cancha.
             </p>
 
             {/* CARACTERÍSTICAS */}
@@ -95,8 +86,7 @@ export default function RegisterPage() {
                 <TrophyIcon className="h-7 w-7 text-primary" />
                 <span>
                   Disciplina
-                  <br />
-                  y Valores
+                  <br />y Valores
                 </span>
               </div>
 
@@ -133,7 +123,7 @@ export default function RegisterPage() {
                   height={18}
                   className="h-[18px] w-[18px] object-contain [filter:invert(48%)_sepia(18%)_saturate(1561%)_hue-rotate(67deg)_brightness(91%)_contrast(88%)]"
                 />
-                994 796 381
+                <span>994 796 381</span>
               </a>
 
               <p className="flex items-center gap-2">
@@ -144,7 +134,7 @@ export default function RegisterPage() {
                   height={18}
                   className="h-[18px] w-[18px] object-contain"
                 />
-                998 678 259
+                <span>998 678 259</span>
               </p>
 
               <p className="flex items-start gap-2">
@@ -155,7 +145,6 @@ export default function RegisterPage() {
                   height={18}
                   className="mt-0.5 h-[18px] w-[18px] object-contain"
                 />
-
                 <span>
                   Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7
                 </span>
@@ -164,15 +153,12 @@ export default function RegisterPage() {
           </div>
         </section>
 
-        {/* =======================================================
-            PANEL DERECHO / CREAR CUENTA
-        ======================================================= */}
-        <main className="flex w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-8 lg:w-[48%] lg:px-10 xl:w-[46%]">
-          <div className="w-full max-w-[400px] rounded-2xl border border-white/70 bg-white/95 p-5 shadow-2xl backdrop-blur-md sm:max-w-[550px] sm:rounded-[28px] sm:p-9 lg:p-10">
-
+        {/* PANEL DERECHO / CREAR CUENTA */}
+        <main className="flex w-full items-center justify-center px-5 py-8 sm:px-8 lg:w-[48%] lg:px-10 xl:w-[46%]">
+          <div className="w-[85%] max-w-[320px] rounded-3xl border border-white/70 bg-white/95 p-6 shadow-2xl backdrop-blur-md sm:w-full sm:max-w-[550px] sm:rounded-[28px] sm:p-9 lg:p-10">
             {/* LOGO */}
-            <div className="mb-4 text-center sm:mb-6">
-              <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white shadow-md sm:mb-3 sm:h-20 sm:w-20">
+            <div className="mb-5 text-center sm:mb-6">
+              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white shadow-md sm:h-20 sm:w-20">
                 <Image
                   src="/logo-el-golazo-club.jpg"
                   alt="El Golazo Club"
@@ -194,12 +180,12 @@ export default function RegisterPage() {
             </div>
 
             {/* TÍTULO */}
-            <div className="mb-4 text-center sm:mb-7">
-              <h2 className="text-xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+            <div className="mb-6 text-center sm:mb-7">
+              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
                 Crear cuenta
               </h2>
 
-              <p className="mt-1 text-xs text-slate-500 sm:mt-1.5 sm:text-sm">
+              <p className="mt-1.5 text-sm text-slate-500">
                 Regístrate para solicitar tu acceso al club
               </p>
             </div>
@@ -224,9 +210,7 @@ export default function RegisterPage() {
   );
 }
 
-/* ===============================================================
-    ICONOS
-=============================================================== */
+/* ICONOS */
 
 function UsersIcon({ className }: { className: string }) {
   return (
