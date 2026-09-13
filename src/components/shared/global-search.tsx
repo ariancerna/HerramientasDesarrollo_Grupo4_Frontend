@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { NAV_ITEMS, NavIcon, type NavItem } from "@/constants/nav-items";
+import { normalizeSearchText } from "@/lib/search";
 
 export default function GlobalSearch() {
   const { session } = useAuth();
@@ -208,14 +209,6 @@ function SearchResultsList({
       ))}
     </ul>
   );
-}
-
-export function normalizeSearchText(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
 }
 
 function SearchIcon({ className }: { className?: string }) {
