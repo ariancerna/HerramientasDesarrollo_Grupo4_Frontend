@@ -12,6 +12,7 @@ export default function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const items = useMemo(
     () => (session ? NAV_ITEMS[session.usuario.rol] : []),
@@ -19,9 +20,14 @@ export default function GlobalSearch() {
   );
 
   const results = useMemo(() => {
-    const term = query.trim().toLowerCase();
+    const term = normalizeSearchText(query);
     if (!term) return [];
-    return items.filter((item) => item.label.toLowerCase().includes(term));
+    return items.filter((item) => {
+      const searchableText = normalizeSearchText(
+        [item.label, item.shortLabel, item.href, ...(item.keywords ?? [])].join(" "),
+      );
+      return searchableText.includes(term);
+    });
   }, [items, query]);
 
   useEffect(() => {
@@ -54,7 +60,21 @@ export default function GlobalSearch() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (results[0]) goTo(results[0].href);
+    if (results[activeIndex]) goTo(results[activeIndex].href);
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (results.length === 0) return;
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((current) => (current + 1) % results.length);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((current) => (current - 1 + results.length) % results.length);
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      goTo(results[activeIndex]?.href ?? results[0].href);
+    }
   };
 
   if (items.length === 0) return null;
@@ -80,10 +100,17 @@ export default function GlobalSearch() {
             onChange={(event) => {
               setQuery(event.target.value);
               setIsOpen(true);
+              setActiveIndex(0);
             }}
             onFocus={() => setIsOpen(true)}
+            onKeyDown={handleSearchKeyDown}
             type="search"
             placeholder="Buscar en el panel..."
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={isOpen && Boolean(query.trim())}
+            aria-controls="desktop-search-results"
+            aria-activedescendant={results[activeIndex] ? `desktop-search-option-${activeIndex}` : undefined}
             className="h-10 w-36 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-800 md:w-52 lg:w-72"
           />
         </label>
@@ -91,7 +118,13 @@ export default function GlobalSearch() {
 
       {isOpen && query.trim() && (
         <div className="absolute right-0 top-full z-40 mt-2 hidden w-72 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:block">
-          <SearchResultsList results={results} onSelect={goTo} />
+          <SearchResultsList
+            id="desktop-search-results"
+            results={results}
+            activeIndex={activeIndex}
+            onActiveChange={setActiveIndex}
+            onSelect={goTo}
+          />
         </div>
       )}
 
@@ -102,15 +135,30 @@ export default function GlobalSearch() {
             <input
               autoFocus
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setActiveIndex(0);
+              }}
+              onKeyDown={handleSearchKeyDown}
               type="search"
               placeholder="Buscar en el panel..."
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={Boolean(query.trim())}
+              aria-controls="mobile-search-results"
+              aria-activedescendant={results[activeIndex] ? `mobile-search-option-${activeIndex}` : undefined}
               className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </form>
           {query.trim() && (
             <div className="mt-2">
-              <SearchResultsList results={results} onSelect={goTo} />
+              <SearchResultsList
+                id="mobile-search-results"
+                results={results}
+                activeIndex={activeIndex}
+                onActiveChange={setActiveIndex}
+                onSelect={goTo}
+              />
             </div>
           )}
         </div>
@@ -120,10 +168,16 @@ export default function GlobalSearch() {
 }
 
 function SearchResultsList({
+  id,
   results,
+  activeIndex,
+  onActiveChange,
   onSelect,
 }: {
+  id: string;
   results: NavItem[];
+  activeIndex: number;
+  onActiveChange: (index: number) => void;
   onSelect: (href: string) => void;
 }) {
   if (results.length === 0) {
@@ -131,13 +185,21 @@ function SearchResultsList({
   }
 
   return (
-    <ul className="space-y-0.5">
-      {results.map((item) => (
-        <li key={item.href}>
+    <ul id={id} role="listbox" className="space-y-0.5">
+      {results.map((item, index) => (
+        <li key={item.href} role="none">
           <button
+            id={`${id.replace("results", "option")}-${index}`}
             type="button"
+            role="option"
+            aria-selected={index === activeIndex}
             onClick={() => onSelect(item.href)}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+            onMouseEnter={() => onActiveChange(index)}
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+              index === activeIndex
+                ? "bg-primary-soft text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-300"
+                : "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+            }`}
           >
             <NavIcon name={item.icon} className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
             {item.label}
@@ -146,6 +208,14 @@ function SearchResultsList({
       ))}
     </ul>
   );
+}
+
+export function normalizeSearchText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
 }
 
 function SearchIcon({ className }: { className?: string }) {

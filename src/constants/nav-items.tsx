@@ -20,6 +20,7 @@ export interface NavItem {
     shortLabel: string;
     href: string;
     icon: IconName;
+    keywords?: string[];
 }
 
 export const NAV_ITEMS: Record<Role, NavItem[]> = {
@@ -27,30 +28,30 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/admin", icon: "home" },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/admin/alumnos", icon: "students" },
         { label: "Profesores", shortLabel: "Profesores", href: "/dashboard/admin/profesores", icon: "teacher" },
-        { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
-        { label: "Pagos", shortLabel: "Pagos", href: "/dashboard/admin/pagos", icon: "payments" },
-        { label: "Calendario", shortLabel: "Calendario", href: "/dashboard/admin/calendario", icon: "calendar" },
-        { label: "Categorías", shortLabel: "Categorías", href: "/dashboard/admin/categorias", icon: "tag" },
+        { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance", keywords: ["registro", "marcación"] },
+        { label: "Pagos", shortLabel: "Pagos", href: "/dashboard/admin/pagos", icon: "payments", keywords: ["cuotas", "mensualidades"] },
+        { label: "Calendario", shortLabel: "Calendario", href: "/dashboard/admin/calendario", icon: "calendar", keywords: ["agenda", "eventos", "entrenamientos"] },
+        { label: "Categorías", shortLabel: "Categorías", href: "/dashboard/admin/categorias", icon: "tag", keywords: ["grupos", "equipos"] },
         { label: "Sedes", shortLabel: "Sedes", href: "/dashboard/admin/sedes", icon: "location" },
-        { label: "Reportes", shortLabel: "Reportes", href: "/dashboard/admin/reportes", icon: "chart" },
-        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/admin/configuracion", icon: "settings" },
+        { label: "Reportes", shortLabel: "Reportes", href: "/dashboard/admin/reportes", icon: "chart", keywords: ["informes", "estadísticas", "csv"] },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/admin/configuracion", icon: "settings", keywords: ["tema", "notificaciones"] },
     ],
     profesor: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/profesor", icon: "home" },
-        { label: "Registrar asistencia", shortLabel: "Asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance" },
+        { label: "Registrar asistencia", shortLabel: "Asistencia", href: "/dashboard/profesor/asistencia", icon: "attendance", keywords: ["escáner", "dni", "marcación"] },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/profesor/alumnos", icon: "students" },
-        { label: "Mi horario", shortLabel: "Horario", href: "/dashboard/profesor/horario", icon: "calendar" },
+        { label: "Mi horario", shortLabel: "Horario", href: "/dashboard/profesor/horario", icon: "calendar", keywords: ["agenda", "entrenamientos"] },
         { label: "Evaluaciones", shortLabel: "Evaluaciones", href: "/dashboard/profesor/evaluaciones", icon: "evaluation" },
         { label: "Anuncios", shortLabel: "Anuncios", href: "/dashboard/profesor/anuncios", icon: "announcement" },
-        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/profesor/configuracion", icon: "settings" },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/profesor/configuracion", icon: "settings", keywords: ["tema", "notificaciones"] },
     ],
     alumno: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/alumno", icon: "home" },
-        { label: "Mi perfil", shortLabel: "Perfil", href: "/dashboard/alumno/perfil", icon: "profile" },
-        { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance" },
-        { label: "Mis pagos", shortLabel: "Pagos", href: "/dashboard/alumno/pagos", icon: "payments" },
-        { label: "Calendario", shortLabel: "Agenda", href: "/dashboard/alumno/calendario", icon: "calendar" },
-        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/alumno/configuracion", icon: "settings" },
+        { label: "Mi perfil", shortLabel: "Perfil", href: "/dashboard/alumno/perfil", icon: "profile", keywords: ["datos", "foto", "cuenta"] },
+        { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance", keywords: ["asistencias", "registros"] },
+        { label: "Mis pagos", shortLabel: "Pagos", href: "/dashboard/alumno/pagos", icon: "payments", keywords: ["cuotas", "mensualidades"] },
+        { label: "Calendario", shortLabel: "Agenda", href: "/dashboard/alumno/calendario", icon: "calendar", keywords: ["eventos", "entrenamientos"] },
+        { label: "Configuración", shortLabel: "Ajustes", href: "/dashboard/alumno/configuracion", icon: "settings", keywords: ["tema", "notificaciones"] },
     ],
 };
 
