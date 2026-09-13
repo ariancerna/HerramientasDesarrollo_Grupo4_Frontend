@@ -5,6 +5,7 @@ import AnuncioDestinatarios, { ModoDestinatarios } from "@/components/anuncios/a
 import { Categoria } from "@/types";
 import { Student } from "@/types/student";
 import { Anuncio, AnuncioFormData, EstadoAnuncio } from "@/types/anuncio";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
 interface AnuncioFormProps {
   alumnos: Student[];
@@ -34,6 +35,7 @@ export default function AnuncioForm({
   const [categoriaId, setCategoriaId] = useState(anuncioAEditar?.categoriaId ?? "");
   const [seleccionados, setSeleccionados] = useState<string[]>(anuncioAEditar?.destinatarios ?? []);
   const [errores, setErrores] = useState<string[]>([]);
+  const dialogRef = useModalAccessibility({ onDismiss: onClose });
 
   const obtenerDestinatarios = () => {
     if (modo === "todos") return alumnos.map((alumno) => alumno.id);
@@ -71,7 +73,7 @@ export default function AnuncioForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-8">
-      <div role="dialog" aria-modal="true" aria-labelledby="anuncio-form-title" className="my-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="anuncio-form-title" className="my-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="anuncio-form-title" className="text-lg font-bold text-slate-950 dark:text-white">

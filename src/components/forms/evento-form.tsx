@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Categoria } from "@/types";
 import { EventoClub } from "@/types/calendario";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
 interface EventoFormData {
   titulo: string;
@@ -54,6 +55,7 @@ export default function EventoForm({
   });
   const [errores, setErrores] = useState<Errores>({});
   const { confirm, dialog } = useConfirm();
+  const dialogRef = useModalAccessibility({ onDismiss: onClose });
 
   const validar = (): boolean => {
     const nuevos: Errores = {};
@@ -99,8 +101,8 @@ export default function EventoForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
-      <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-        <h2 className="text-lg font-bold text-slate-950 dark:text-white">
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="evento-form-title" className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
+        <h2 id="evento-form-title" className="text-lg font-bold text-slate-950 dark:text-white">
           {eventoAEditar ? "Editar evento" : "Programar evento o entrenamiento especial"}
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

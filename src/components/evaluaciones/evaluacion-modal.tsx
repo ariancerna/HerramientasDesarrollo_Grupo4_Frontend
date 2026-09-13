@@ -1,5 +1,7 @@
 "use client";
 
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
+
 interface EvaluacionModalProps {
   titulo: string;
   children: React.ReactNode;
@@ -11,9 +13,13 @@ export default function EvaluacionModal({
   children,
   onClose,
 }: EvaluacionModalProps) {
+  const dialogRef = useModalAccessibility({ onDismiss: onClose });
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-8">
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="evaluacion-modal-title"

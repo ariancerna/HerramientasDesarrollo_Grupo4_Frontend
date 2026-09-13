@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -28,18 +29,11 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const dismiss = hideCancel ? onConfirm : onCancel;
-
-  useEffect(() => {
-    if (!open) return;
-    confirmButtonRef.current?.focus();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") dismiss();
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  const dialogRef = useModalAccessibility({
+    open,
+    onDismiss: dismiss,
+    initialFocusRef: confirmButtonRef,
+  });
 
   if (!open) return null;
 
@@ -52,6 +46,8 @@ export function ConfirmDialog({
       onClick={dismiss}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"

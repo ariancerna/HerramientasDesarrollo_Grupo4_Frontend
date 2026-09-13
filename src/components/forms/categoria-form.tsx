@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Categoria, Horario } from "@/types";
 import { HorarioForm } from "./horario-form";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 
 interface CategoriaFormProps {
   categoriaAEditar: Categoria | null;
@@ -40,6 +41,7 @@ export default function CategoriaForm({
   const [errores, setErrores] = useState<Errores>({});
   const [mostrarErrores, setMostrarErrores] = useState(false);
   const { confirm, dialog } = useConfirm();
+  const dialogRef = useModalAccessibility({ onDismiss: onClose });
 
   /**
    * Valida que no haya dos horarios en el mismo día
@@ -158,9 +160,9 @@ export default function CategoriaForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-slate-900">
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="categoria-form-title" className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg dark:bg-slate-900">
         <div className="sticky top-0 bg-white border-b p-6 dark:border-slate-700 dark:bg-slate-900">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 id="categoria-form-title" className="text-2xl font-bold text-gray-900 dark:text-white">
             {categoriaAEditar ? "Editar Categoría" : "Nueva Categoría"}
           </h2>
         </div>

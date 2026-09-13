@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 import { obtenerCategorias } from "@/store/categorias-store";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
@@ -29,6 +30,10 @@ export default function AlumnosProfesorPage() {
   const [formularioAbierto, setFormularioAbierto] = useState(false);
   const [alumnoAEditar, setAlumnoAEditar] = useState<Student | null>(null);
   const [alumnoAEliminar, setAlumnoAEliminar] = useState<Student | null>(null);
+  const deleteDialogRef = useModalAccessibility({
+    open: Boolean(alumnoAEliminar),
+    onDismiss: () => setAlumnoAEliminar(null),
+  });
 
   const alumnosFiltrados = useMemo(
     () => filtrarAlumnos(alumnos.filter((alumno) => nombresCategoriasAsignadas.includes(alumno.categoria)), { texto, categoria, estado }),
@@ -138,6 +143,8 @@ export default function AlumnosProfesorPage() {
         {alumnoAEliminar && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
             <div
+              ref={deleteDialogRef}
+              tabIndex={-1}
               role="dialog"
               aria-modal="true"
               aria-labelledby="confirmar-eliminacion-title"

@@ -5,6 +5,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import { Student } from "@/types/student";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import type { PagoMensualidad } from "@/types/pago";
+import { useModalAccessibility } from "@/hooks/use-modal-accessibility";
 import {
   obtenerPagos,
   obtenerPagosIniciales,
@@ -40,6 +41,10 @@ export default function PagosAdminPage() {
   const [modalAlumno, setModalAlumno] = useState<Student | null>(null);
   const [metodoSeleccionado, setMetodoSeleccionado] = useState<NonNullable<PagoMensualidad["metodoPago"]>>("Yape");
   const [codigoOperacion, setCodigoOperacion] = useState("");
+  const paymentDialogRef = useModalAccessibility({
+    open: Boolean(modalAlumno),
+    onDismiss: () => setModalAlumno(null),
+  });
 
   const periodo = periodoActual();
 
@@ -232,8 +237,8 @@ export default function PagosAdminPage() {
 
         {modalAlumno && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-slate-900">
-              <h2 className="text-lg font-bold text-slate-950 dark:text-white">Registrar pago</h2>
+            <div ref={paymentDialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="payment-dialog-title" className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-slate-900">
+              <h2 id="payment-dialog-title" className="text-lg font-bold text-slate-950 dark:text-white">Registrar pago</h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {modalAlumno.nombres} {modalAlumno.apellidos} · {formatearMonto(MONTO_MENSUALIDAD)} ·{" "}
                 {formatearPeriodo(periodo)}
