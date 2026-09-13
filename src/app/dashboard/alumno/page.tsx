@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
@@ -22,25 +23,11 @@ export default function AlumnoDashboardPage() {
   return (
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
-        <section className="relative mt-2 overflow-hidden rounded-2xl bg-brand-green shadow-lg">
-          <div className="absolute inset-0">
-            <img src="/login-fondo.png" alt="Volleyball" className="h-full w-full object-cover object-[center_20%] opacity-20 sm:opacity-40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-green via-brand-green/90 to-transparent"></div>
-          </div>
-          <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-12 max-w-xl">
-            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              ¡Hola, {primerNombre}!
-            </h1>
-            <p className="mt-3 text-base leading-6 text-brand-lime-light">
-              Consulta tu asistencia, mensualidades y próximas actividades.
-            </p>
-            <div className="mt-6 border-l-2 border-brand-lime pl-4">
-              <p className="text-sm font-medium italic text-white">
-                "Disciplina, trabajo en equipo y grandes resultados."
-              </p>
-            </div>
-          </div>
-        </section>
+        <DashboardWelcomeBanner
+          name={primerNombre}
+          description="Consulta tu asistencia, mensualidades y próximas actividades."
+          quote="Disciplina, trabajo en equipo y grandes resultados."
+        />
         
         <section className="mt-6">
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
