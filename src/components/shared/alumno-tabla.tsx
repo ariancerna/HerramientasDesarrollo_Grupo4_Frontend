@@ -8,6 +8,7 @@ interface AlumnoTablaProps {
   puedeGestionar?: boolean;
   onEditar?: (alumno: Student) => void;
   onEliminar?: (alumno: Student) => void;
+  onDescargarCarnet?: (alumno: Student) => void;
 }
 
 export default function AlumnoTabla({
@@ -15,6 +16,7 @@ export default function AlumnoTabla({
   puedeGestionar = false,
   onEditar,
   onEliminar,
+  onDescargarCarnet,
 }: AlumnoTablaProps) {
   if (alumnos.length === 0) {
     return (
@@ -75,6 +77,14 @@ export default function AlumnoTabla({
                   >
                     Editar
                   </button>
+                  {onDescargarCarnet && (
+                    <button
+                      onClick={() => onDescargarCarnet(alumno)}
+                      className="mr-3 font-semibold text-sky-700 hover:text-sky-900 dark:text-sky-300 dark:hover:text-sky-200"
+                    >
+                      Carnet
+                    </button>
+                  )}
                   <button
                     onClick={() => onEliminar?.(alumno)}
                     className="font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"

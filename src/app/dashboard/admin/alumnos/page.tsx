@@ -5,6 +5,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import AlumnoTabla from "@/components/shared/alumno-tabla";
 import AlumnoForm from "@/components/forms/alumno-form";
+import { descargarCarnetAlumno } from "@/lib/descargar-carnet-alumno";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Student, StudentFormData } from "@/types/student";
 import {
@@ -104,6 +105,7 @@ export default function AlumnosAdminPage() {
           puedeGestionar
           onEditar={handleEditar}
           onEliminar={handleEliminar}
+          onDescargarCarnet={descargarCarnetAlumno}
         />
 
         {isModalOpen && (
