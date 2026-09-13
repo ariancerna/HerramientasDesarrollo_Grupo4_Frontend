@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DniBarcode } from "@/components/shared/dni-barcode";
 import { Student, StudentFormData } from "@/types/student";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -113,6 +114,12 @@ export default function AlumnoForm({
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Completa los datos del jugador.
         </p>
+
+        {alumnoAEditar && (
+          <div className="mt-5">
+            <DniBarcode dni={form.dni} />
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
           <label>
