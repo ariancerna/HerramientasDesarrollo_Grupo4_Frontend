@@ -1,6 +1,7 @@
 "use client";
 
 import { Student } from "@/types/student";
+import { MobileDataCard, MobileDataList } from "@/components/ui/mobile-data-card";
 
 interface AlumnoTablaProps {
   alumnos: Student[];
@@ -25,7 +26,38 @@ export default function AlumnoTabla({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <>
+      <MobileDataList>
+        {alumnos.map((alumno) => (
+          <MobileDataCard
+            key={alumno.id}
+            title={`${alumno.nombres} ${alumno.apellidos}`}
+            subtitle={alumno.email}
+            rows={[
+              { label: "DNI", value: alumno.dni },
+              { label: "Código", value: alumno.codigo },
+              { label: "Categoría", value: alumno.categoria },
+              {
+                label: "Estado",
+                value: alumno.estado === "activo" ? "Activo" : "Inactivo",
+              },
+            ]}
+            actions={
+              puedeGestionar ? (
+                <>
+                  <button type="button" onClick={() => onEditar?.(alumno)} className="font-semibold text-primary-dark">
+                    Editar
+                  </button>
+                  <button type="button" onClick={() => onEliminar?.(alumno)} className="font-semibold text-red-600 dark:text-red-400">
+                    Eliminar
+                  </button>
+                </>
+              ) : undefined
+            }
+          />
+        ))}
+      </MobileDataList>
+      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block">
       <table className="w-full min-w-[760px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>
@@ -87,6 +119,7 @@ export default function AlumnoTabla({
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }

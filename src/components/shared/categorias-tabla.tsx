@@ -1,6 +1,7 @@
 "use client";
 
 import { Categoria, Horario } from "@/types";
+import { MobileDataCard, MobileDataList } from "@/components/ui/mobile-data-card";
 
 const DIAS_CORTOS: Record<Horario["dia"], string> = {
   lunes: "Lun",
@@ -35,7 +36,35 @@ export default function CategoriasTabla({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <>
+      <MobileDataList>
+        {categorias.map((categoria) => (
+          <MobileDataCard
+            key={categoria.id}
+            title={categoria.nombre}
+            subtitle={categoria.descripcion || "Sin descripción"}
+            rows={[
+              {
+                label: "Horarios",
+                value: categoria.horarios.length > 0
+                  ? categoria.horarios
+                      .map((horario) => `${DIAS_CORTOS[horario.dia]} ${horario.horaInicio}–${horario.horaFin}`)
+                      .join(", ")
+                  : "Sin horarios",
+              },
+            ]}
+            actions={
+              puedeGestionar ? (
+                <>
+                  <button type="button" onClick={() => onEditar?.(categoria)} className="font-semibold text-primary-dark">Editar</button>
+                  <button type="button" onClick={() => onEliminar?.(categoria)} className="font-semibold text-red-600 dark:text-red-400">Eliminar</button>
+                </>
+              ) : undefined
+            }
+          />
+        ))}
+      </MobileDataList>
+      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block">
       <table className="w-full min-w-[600px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>
@@ -105,7 +134,8 @@ export default function CategoriasTabla({
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 

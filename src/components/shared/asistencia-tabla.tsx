@@ -1,6 +1,7 @@
 "use client";
 
 import { RegistroAsistencia } from "@/types/asistencia";
+import { MobileDataCard, MobileDataList } from "@/components/ui/mobile-data-card";
 
 interface AsistenciaTablaProps {
   registros: RegistroAsistencia[];
@@ -22,7 +23,38 @@ export default function AsistenciaTabla({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <>
+      <MobileDataList>
+        {registros.map((registro) => (
+          <MobileDataCard
+            key={registro.id}
+            title={registro.estudiante}
+            subtitle={registro.categoria}
+            rows={[
+              { label: "DNI", value: registro.dni },
+              {
+                label: "Fecha y hora",
+                value: new Intl.DateTimeFormat("es-PE", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                }).format(new Date(registro.fechaHora)),
+              },
+              {
+                label: "Método",
+                value: registro.metodo === "ESCANEO" ? "Escaneo" : "Manual",
+              },
+            ]}
+            actions={
+              puedeCorregir ? (
+                <button type="button" onClick={() => onCorregir?.(registro)} className="font-semibold text-primary-dark">
+                  Corregir registro
+                </button>
+              ) : undefined
+            }
+          />
+        ))}
+      </MobileDataList>
+      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block">
       <table className="w-full min-w-[720px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>
@@ -80,6 +112,7 @@ export default function AsistenciaTabla({
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Sede } from "@/types";
+import { MobileDataCard, MobileDataList } from "@/components/ui/mobile-data-card";
 
 interface SedesTablaProps {
   sedes: Sede[];
@@ -24,7 +25,25 @@ export default function SedesTabla({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <>
+      <MobileDataList>
+        {sedes.map((sede) => (
+          <MobileDataCard
+            key={sede.id}
+            title={sede.nombre}
+            rows={[{ label: "Dirección", value: sede.direccion || "Sin dirección" }]}
+            actions={
+              puedeGestionar ? (
+                <>
+                  <button type="button" onClick={() => onEditar?.(sede)} className="font-semibold text-primary-dark">Editar</button>
+                  <button type="button" onClick={() => onEliminar?.(sede)} className="font-semibold text-red-600 dark:text-red-400">Eliminar</button>
+                </>
+              ) : undefined
+            }
+          />
+        ))}
+      </MobileDataList>
+      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block">
       <table className="w-full min-w-[520px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>
@@ -66,7 +85,8 @@ export default function SedesTabla({
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 
