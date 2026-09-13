@@ -23,6 +23,46 @@ body {
   --font-mono: var(--font-geist-mono);
 }
 
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body:has(.print-report) * {
+    visibility: hidden;
+  }
+
+  .print-report,
+  .print-report * {
+    visibility: visible !important;
+  }
+
+  .print-report {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    color: #10233f;
+    background: #ffffff;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-report table {
+    min-width: 0 !important;
+    font-size: 10pt;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

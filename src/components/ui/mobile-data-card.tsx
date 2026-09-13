@@ -11,7 +11,7 @@ interface MobileDataCardProps {
 }
 
 export function MobileDataList({ children }: { children: React.ReactNode }) {
-  return <ul className="space-y-3 md:hidden">{children}</ul>;
+  return <ul className="space-y-3 md:hidden print:hidden">{children}</ul>;
 }
 
 export function MobileDataCard({

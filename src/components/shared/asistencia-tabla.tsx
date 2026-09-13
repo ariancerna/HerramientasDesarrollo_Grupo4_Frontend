@@ -54,7 +54,7 @@ export default function AsistenciaTabla({
           />
         ))}
       </MobileDataList>
-      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block">
+      <div className="hidden overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 md:block print:block">
       <table className="w-full min-w-[720px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead className="bg-slate-50 dark:bg-slate-800/60">
           <tr>

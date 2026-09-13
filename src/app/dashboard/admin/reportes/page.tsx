@@ -117,6 +117,14 @@ export default function ReportesPage() {
     });
   };
 
+  const handleImprimir = () => {
+    const dashboard = document.querySelector<HTMLElement>("[data-theme]");
+    const previousTheme = dashboard?.dataset.theme;
+    dashboard?.setAttribute("data-theme", "light");
+    window.print();
+    if (previousTheme) dashboard?.setAttribute("data-theme", previousTheme);
+  };
+
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
@@ -253,7 +261,7 @@ export default function ReportesPage() {
           </div>
         </form>
 
-        <section className="mt-7" aria-live="polite" aria-labelledby="resultado-title">
+        <section className="print-report mt-7" aria-live="polite" aria-labelledby="resultado-title">
           {registros === null ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900">
               <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white text-slate-400 shadow-sm dark:bg-slate-800 dark:text-slate-500">
@@ -266,6 +274,17 @@ export default function ReportesPage() {
             </div>
           ) : (
             <>
+              <div className="print-only mb-6 border-b-2 border-primary pb-4">
+                <p className="text-sm font-bold uppercase tracking-wide text-primary-dark">
+                  El Golazo Club
+                </p>
+                <h1 className="mt-1 text-2xl font-bold text-ink">Reporte de asistencia</h1>
+                {filtrosAplicados && (
+                  <div className="mt-2">
+                    <ResumenFiltros filtros={filtrosAplicados} />
+                  </div>
+                )}
+              </div>
               {indicadores && (
                 <IndicadoresAsistenciaPanel indicadores={indicadores} />
               )}
@@ -280,17 +299,26 @@ export default function ReportesPage() {
                   {filtrosAplicados && <ResumenFiltros filtros={filtrosAplicados} />}
                   <Button
                     type="button"
+                    onClick={handleImprimir}
+                    variant="secondary"
+                    className="print-hidden shrink-0"
+                  >
+                    <PrintIcon />
+                    Imprimir / PDF
+                  </Button>
+                  <Button
+                    type="button"
                     onClick={handleExportar}
                     disabled={resultadosVisibles.length === 0}
                     variant="secondary"
-                    className="shrink-0 border-primary text-primary-dark hover:bg-primary-soft disabled:border-slate-300 disabled:text-slate-400 dark:disabled:border-slate-700 dark:disabled:text-slate-600"
+                    className="print-hidden shrink-0 border-primary text-primary-dark hover:bg-primary-soft disabled:border-slate-300 disabled:text-slate-400 dark:disabled:border-slate-700 dark:disabled:text-slate-600"
                   >
                     <DownloadIcon />
                     Exportar CSV
                   </Button>
                 </div>
               </div>
-              <div className="mb-4 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-2">
+              <div className="print-hidden mb-4 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-2">
                 <label>
                   <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Buscar en resultados
@@ -327,17 +355,22 @@ export default function ReportesPage() {
                   </select>
                 </label>
               </div>
-              <AsistenciaTabla registros={resultadosPaginados} />
-              <Pagination
-                page={pagina}
-                pageSize={tamanoPagina}
-                totalItems={resultadosVisibles.length}
-                onPageChange={setPagina}
-                onPageSizeChange={(size) => {
-                  setTamanoPagina(size);
-                  setPagina(1);
-                }}
-              />
+              <div className="print-hidden">
+                <AsistenciaTabla registros={resultadosPaginados} />
+                <Pagination
+                  page={pagina}
+                  pageSize={tamanoPagina}
+                  totalItems={resultadosVisibles.length}
+                  onPageChange={setPagina}
+                  onPageSizeChange={(size) => {
+                    setTamanoPagina(size);
+                    setPagina(1);
+                  }}
+                />
+              </div>
+              <div className="print-only">
+                <AsistenciaTabla registros={resultadosVisibles} />
+              </div>
             </>
           )}
         </section>
@@ -417,6 +450,15 @@ function DownloadIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
       <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PrintIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+      <path d="M7 9V3h10v6M7 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 14h10v7H7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
     </svg>
   );
 }
