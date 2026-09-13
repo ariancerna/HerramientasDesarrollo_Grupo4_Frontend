@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Categoria } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -8,6 +8,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import CategoriaForm from "@/components/forms/categoria-form";
 import CategoriasTabla from "@/components/shared/categorias-tabla";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast-provider";
 import {
   obtenerCategorias,
   obtenerCategoriasIniciales,
@@ -28,16 +29,8 @@ export default function CategoriasPage() {
   const [categoriaAEditar, setCategoriaAEditar] = useState<Categoria | null>(
     null
   );
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
-
-  // Ocultar mensaje de éxito después de 3 segundos
-  useEffect(() => {
-    if (mensajeExito) {
-      const timer = setTimeout(() => setMensajeExito(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [mensajeExito]);
+  const { notify } = useToast();
 
   const handleAbrirFormularioNuevo = () => {
     setCategoriaAEditar(null);
@@ -57,15 +50,21 @@ export default function CategoriasPage() {
       if (id) {
         // Actualizar categoría existente
         actualizarCategoria(id, data);
-        setMensajeExito(`Categoría "${data.nombre}" actualizada correctamente`);
+        notify({
+          title: "Categoría actualizada",
+          description: `Se guardaron los cambios de “${data.nombre}”.`,
+        });
       } else {
         // Crear nueva categoría
         crearCategoria(data);
-        setMensajeExito(`Categoría "${data.nombre}" creada correctamente`);
+        notify({
+          title: "Categoría creada",
+          description: `“${data.nombre}” ya está disponible en el sistema.`,
+        });
       }
     } catch (error) {
       console.error("Error al guardar categoría:", error);
-      setMensajeExito("Error al guardar la categoría");
+      notify({ title: "No se pudo guardar la categoría", variant: "error" });
     }
   };
 
@@ -91,10 +90,13 @@ export default function CategoriasPage() {
 
     try {
       eliminarCategoria(categoria.id);
-      setMensajeExito(`Categoría "${categoria.nombre}" eliminada correctamente`);
+      notify({
+        title: "Categoría eliminada",
+        description: `“${categoria.nombre}” fue retirada del sistema.`,
+      });
     } catch (error) {
       console.error("Error al eliminar categoría:", error);
-      setMensajeExito("Error al eliminar la categoría");
+      notify({ title: "No se pudo eliminar la categoría", variant: "error" });
     }
   };
 
@@ -119,13 +121,6 @@ export default function CategoriasPage() {
             Nueva Categoría
           </Button>
         </div>
-
-        {/* Toast de éxito */}
-        {mensajeExito && (
-          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-sm animate-in fade-in dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-300">
-            <p className="font-medium">{mensajeExito}</p>
-          </div>
-        )}
 
         {/* Tabla de categorías */}
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">

@@ -6,6 +6,7 @@ import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { Button } from "@/components/ui/button";
 import { CONTROL_CLASS } from "@/components/ui/control-styles";
+import { useToast } from "@/components/ui/toast-provider";
 import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
 import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
 import {
@@ -26,7 +27,7 @@ export default function ReportesPage() {
     useState<FiltrosReporteAsistencia | null>(null);
   const [registros, setRegistros] = useState<RegistroAsistencia[] | null>(null);
   const [error, setError] = useState("");
-  const [mensajeExportacion, setMensajeExportacion] = useState("");
+  const { notify } = useToast();
   const indicadores = registros
     ? calcularIndicadoresAsistencia(registros)
     : null;
@@ -55,7 +56,6 @@ export default function ReportesPage() {
     setRegistros(nuevosRegistros);
     setFiltrosAplicados({ ...filtros });
     setError("");
-    setMensajeExportacion("");
   };
 
   const handleLimpiar = () => {
@@ -63,16 +63,16 @@ export default function ReportesPage() {
     setFiltrosAplicados(null);
     setRegistros(null);
     setError("");
-    setMensajeExportacion("");
   };
 
   const handleExportar = () => {
     if (!registros || registros.length === 0) return;
 
     descargarCsvReporteAsistencia(registros);
-    setMensajeExportacion(
-      `Se exportaron ${registros.length} registro${registros.length === 1 ? "" : "s"} correctamente.`,
-    );
+    notify({
+      title: "Reporte exportado",
+      description: `Se exportaron ${registros.length} registro${registros.length === 1 ? "" : "s"} correctamente.`,
+    });
   };
 
   return (
@@ -230,14 +230,6 @@ export default function ReportesPage() {
                   </Button>
                 </div>
               </div>
-              {mensajeExportacion && (
-                <p
-                  role="status"
-                  className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
-                >
-                  {mensajeExportacion}
-                </p>
-              )}
               <AsistenciaTabla registros={registros} />
             </>
           )}
