@@ -124,7 +124,7 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="relative grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#16794C]/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        className="relative grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         aria-label={unreadCount > 0 ? `Notificaciones (${unreadCount} sin leer)` : "Notificaciones"}
         aria-expanded={isOpen}
       >
@@ -144,7 +144,7 @@ export default function NotificationBell() {
               <button
                 type="button"
                 onClick={marcarTodasLeidas}
-                className="text-xs font-semibold text-[#16794C] hover:text-[#12613D] dark:text-emerald-400 dark:hover:text-emerald-300"
+                className="text-xs font-semibold text-primary-dark hover:text-primary-hover dark:text-emerald-400 dark:hover:text-emerald-300"
               >
                 Marcar todas como leídas
               </button>
@@ -177,7 +177,7 @@ export default function NotificationBell() {
                     >
                       <span
                         className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                          isUnread ? "bg-[#16794C]" : "bg-transparent"
+                          isUnread ? "bg-primary" : "bg-transparent"
                         }`}
                         aria-hidden="true"
                       />

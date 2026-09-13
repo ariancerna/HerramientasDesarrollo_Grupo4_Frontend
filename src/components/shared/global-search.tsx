@@ -64,7 +64,7 @@ export default function GlobalSearch() {
       <button
         type="button"
         onClick={() => setIsMobileOpen((current) => !current)}
-        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#16794C]/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 sm:hidden"
+        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 sm:hidden"
         aria-label="Buscar en el panel"
         aria-expanded={isMobileOpen}
       >
@@ -84,7 +84,7 @@ export default function GlobalSearch() {
             onFocus={() => setIsOpen(true)}
             type="search"
             placeholder="Buscar en el panel..."
-            className="h-10 w-36 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-[#16794C] focus:bg-white focus:ring-2 focus:ring-[#16794C]/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-800 md:w-52 lg:w-72"
+            className="h-10 w-36 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-800 md:w-52 lg:w-72"
           />
         </label>
       </form>
@@ -105,7 +105,7 @@ export default function GlobalSearch() {
               onChange={(event) => setQuery(event.target.value)}
               type="search"
               placeholder="Buscar en el panel..."
-              className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-[#16794C] focus:bg-white focus:ring-2 focus:ring-[#16794C]/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </form>
           {query.trim() && (

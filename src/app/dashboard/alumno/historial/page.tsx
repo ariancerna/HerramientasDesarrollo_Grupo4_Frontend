@@ -52,7 +52,7 @@ export default function HistorialAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
           <header className="mb-6">
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+            <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">
               MI ESPACIO
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
@@ -100,7 +100,7 @@ export default function HistorialAlumnoPage() {
                       value={fechaDesde}
                       max={fechaHasta || undefined}
                       onChange={(event) => setFechaDesde(event.target.value)}
-                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#16794C]/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                     />
                   </label>
                   <label className="grid gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -110,7 +110,7 @@ export default function HistorialAlumnoPage() {
                       value={fechaHasta}
                       min={fechaDesde || undefined}
                       onChange={(event) => setFechaHasta(event.target.value)}
-                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#16794C]/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                     />
                   </label>
                   <label className="grid gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -122,7 +122,7 @@ export default function HistorialAlumnoPage() {
                           event.target.value as "todos" | "ESCANEO" | "MANUAL",
                         )
                       }
-                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-[#16794C] focus:ring-2 focus:ring-[#16794C]/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                      className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                     >
                       <option value="todos">Todos los métodos</option>
                       <option value="ESCANEO">Escaneo</option>

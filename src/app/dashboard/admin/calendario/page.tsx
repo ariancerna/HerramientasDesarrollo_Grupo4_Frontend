@@ -93,7 +93,7 @@ export default function CalendarioAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">ADMINISTRACIÓN</p>
+          <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">ADMINISTRACIÓN</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
             Calendario
           </h1>
@@ -111,7 +111,7 @@ export default function CalendarioAdminPage() {
         <div className="mb-6 flex justify-end">
           <button
             onClick={handleNuevo}
-            className="whitespace-nowrap rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+            className="whitespace-nowrap rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             + Programar evento
           </button>
@@ -191,7 +191,7 @@ export default function CalendarioAdminPage() {
                     <div className="mt-3 flex gap-3 text-xs font-semibold">
                       <button
                         onClick={() => handleEditar(evento)}
-                        className="text-[#16794C] hover:text-[#12613D] dark:text-emerald-400"
+                        className="text-primary-dark hover:text-primary-hover dark:text-emerald-400"
                       >
                         Editar
                       </button>

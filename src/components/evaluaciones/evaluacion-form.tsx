@@ -72,7 +72,7 @@ export default function EvaluacionForm({
             <select
               value={form.alumnoId}
               onChange={(event) => setForm({ ...form, alumnoId: event.target.value })}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
               <option value="">Selecciona un alumno</option>
               {alumnos.map((alumno) => (
@@ -90,7 +90,7 @@ export default function EvaluacionForm({
               type="date"
               value={form.fecha}
               onChange={(event) => setForm({ ...form, fecha: event.target.value })}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.fecha && <p className="mt-1 text-xs text-red-600">{errores.fecha}</p>}
           </label>
@@ -111,7 +111,7 @@ export default function EvaluacionForm({
                 value={form[campo] ?? ""}
                 onChange={(event) => cambiarNota(campo, event.target.value)}
                 placeholder="1 a 10"
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
               />
             </label>
           ))}
@@ -123,7 +123,7 @@ export default function EvaluacionForm({
             rows={4}
             value={form.observaciones}
             onChange={(event) => setForm({ ...form, observaciones: event.target.value })}
-            className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+            className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             placeholder="Describe el rendimiento del alumno..."
           />
           {errores.observaciones && <p className="mt-1 text-xs text-red-600">{errores.observaciones}</p>}
@@ -133,7 +133,7 @@ export default function EvaluacionForm({
           <button type="button" onClick={onClose} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">
             Cancelar
           </button>
-          <button type="submit" className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#12613D]">
+          <button type="submit" className="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary-hover">
             Guardar evaluación
           </button>
         </div>

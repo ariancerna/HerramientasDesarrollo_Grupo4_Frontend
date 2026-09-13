@@ -25,7 +25,7 @@ export default function AlumnoDashboardPage() {
         <section className="relative px-0 py-1">
           <div className="relative">
             <div className="max-w-xl">
-              <p className="text-xs font-bold tracking-[0.14em] text-[#16794C] dark:text-emerald-400">MI ESPACIO</p>
+              <p className="text-xs font-bold tracking-[0.14em] text-primary-dark dark:text-emerald-400">MI ESPACIO</p>
               <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">Buenos días, {primerNombre}</h1>
               <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">Consulta tu asistencia, mensualidades y próximas actividades en un solo lugar.</p>
             </div>
@@ -55,18 +55,18 @@ export default function AlumnoDashboardPage() {
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Asistencia</p>
             <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{asistenciaPorcentaje}%</p>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"><div className="h-full rounded-full bg-[#6FCF3A]" style={{ width: `${asistenciaPorcentaje}%` }} /></div>
-            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver historial →</Link>
+            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-primary-dark dark:text-emerald-400">Ver historial →</Link>
           </article>
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Mensualidad</p>
             <p className="mt-2 text-lg font-bold text-slate-950 dark:text-white">{mensualidad?.estado === "pagado" ? "Al día" : mensualidad?.estado === "vencido" ? "Pago vencido" : "Pago pendiente"}</p>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{mensualidad ? `Vence el ${formatearFechaCorta(mensualidad.vencimiento)}` : "Sin mensualidad registrada"}</p>
-            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-[#16794C] dark:text-emerald-400">Ver detalle →</Link>
+            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-primary-dark dark:text-emerald-400">Ver detalle →</Link>
           </article>
         </section>
 
         <section className="mt-9">
-          <div className="mb-4 flex items-end justify-between gap-4"><div><h2 className="text-xl font-bold text-[#0A1628] dark:text-white">Tu espacio</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestiona tu información y revisa tus avances.</p></div><Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-[#16794C] dark:text-emerald-400 sm:block">Agenda completa →</Link></div>
+          <div className="mb-4 flex items-end justify-between gap-4"><div><h2 className="text-xl font-bold text-ink dark:text-white">Tu espacio</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestiona tu información y revisa tus avances.</p></div><Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-primary-dark dark:text-emerald-400 sm:block">Agenda completa →</Link></div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <ModuloCard
             href="/dashboard/alumno/perfil"
@@ -109,13 +109,13 @@ function ModuloCard({ href, titulo, descripcion, enlace, detalle, icono }: { hre
     <Link href={href} className="group flex min-h-52 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#86c966] hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/60">
       <div>
         <div className="flex items-start justify-between gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">{icono}</span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400">{icono}</span>
           {detalle && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">{detalle}</span>}
         </div>
-        <h2 className="mt-5 text-xl font-bold text-[#0A1628] dark:text-white">{titulo}</h2>
+        <h2 className="mt-5 text-xl font-bold text-ink dark:text-white">{titulo}</h2>
         <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{descripcion}</p>
       </div>
-      <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#16794C] dark:text-emerald-400">{enlace}<ArrowIcon /></span>
+      <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary-dark dark:text-emerald-400">{enlace}<ArrowIcon /></span>
     </Link>
   );
 }

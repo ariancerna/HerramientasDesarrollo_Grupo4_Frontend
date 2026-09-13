@@ -61,7 +61,7 @@ export default function AnuncioDestinatarios({
         <select
           value={categoriaId}
           onChange={(event) => onCategoriaChange(event.target.value)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((categoria) => (

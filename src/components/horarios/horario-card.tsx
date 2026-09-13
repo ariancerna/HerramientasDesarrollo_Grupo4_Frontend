@@ -13,7 +13,7 @@ export default function HorarioCard({ horario }: HorarioCardProps) {
     }`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-[#16794C]">
+          <p className="text-sm font-bold uppercase tracking-wide text-primary-dark">
             {NOMBRES_DIAS[horario.dia]}
           </p>
           <h2 className="mt-1 text-lg font-bold text-slate-950 dark:text-white">
@@ -21,7 +21,7 @@ export default function HorarioCard({ horario }: HorarioCardProps) {
           </h2>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-          estaActivo ? "bg-[#edf8e8] text-[#16794C]" : "bg-red-100 text-red-700"
+          estaActivo ? "bg-primary-soft text-primary-dark" : "bg-red-100 text-red-700"
         }`}>
           {estaActivo ? "Activo" : "Cancelado"}
         </span>

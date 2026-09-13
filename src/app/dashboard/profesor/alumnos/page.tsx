@@ -85,7 +85,7 @@ export default function AlumnosProfesorPage() {
       <div>
           <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+            <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">
               PROFESOR
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
@@ -98,7 +98,7 @@ export default function AlumnosProfesorPage() {
             <button
               type="button"
               onClick={abrirNuevoAlumno}
-              className="inline-flex items-center justify-center rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+              className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               Nuevo alumno
             </button>

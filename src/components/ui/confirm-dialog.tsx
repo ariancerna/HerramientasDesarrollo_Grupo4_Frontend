@@ -64,7 +64,7 @@ export function ConfirmDialog({
             className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${
               isDanger
                 ? "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
-                : "bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400"
+                : "bg-primary-soft text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400"
             }`}
           >
             {isDanger ? <WarningIcon /> : <InfoIcon />}
@@ -96,7 +96,7 @@ export function ConfirmDialog({
             className={`rounded-lg px-4 py-2.5 text-sm font-bold text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               isDanger
                 ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
-                : "bg-[#16794C] hover:bg-[#12613D] focus:ring-[#16794C]"
+                : "bg-primary hover:bg-primary-hover focus:ring-primary"
             }`}
           >
             {confirmLabel}

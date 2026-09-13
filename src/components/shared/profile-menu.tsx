@@ -42,7 +42,7 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex min-w-0 items-center gap-2.5 rounded-lg p-1 pr-1.5 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#16794C]/40 dark:hover:bg-slate-800 sm:pr-2"
+        className="flex min-w-0 items-center gap-2.5 rounded-lg p-1 pr-1.5 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:hover:bg-slate-800 sm:pr-2"
         aria-label="Menú de perfil"
         aria-expanded={isOpen}
       >
@@ -57,7 +57,7 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
         <UserAvatar
           nombre={session?.usuario.nombre}
           fotoUrl={alumno?.fotoUrl}
-          className="h-9 w-9 bg-[#16794C] text-sm font-bold text-white"
+          className="h-9 w-9 bg-primary text-sm font-bold text-white"
         />
       </button>
 

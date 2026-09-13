@@ -85,11 +85,11 @@ export default function AnuncioForm({
         <form className="mt-5 space-y-4">
           <label>
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">Título</span>
-            <input value={titulo} onChange={(event) => setTitulo(event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Título del anuncio" />
+            <input value={titulo} onChange={(event) => setTitulo(event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Título del anuncio" />
           </label>
           <label>
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">Mensaje</span>
-            <textarea rows={4} value={mensaje} onChange={(event) => setMensaje(event.target.value)} className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Escribe el aviso para tus alumnos..." />
+            <textarea rows={4} value={mensaje} onChange={(event) => setMensaje(event.target.value)} className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Escribe el aviso para tus alumnos..." />
           </label>
 
           <AnuncioDestinatarios
@@ -111,8 +111,8 @@ export default function AnuncioForm({
 
           <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
             <button type="button" onClick={onClose} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Cancelar</button>
-            <button type="button" onClick={(event) => guardar(event, "borrador")} className="rounded-lg border border-[#16794C] px-4 py-2.5 text-sm font-bold text-[#16794C] hover:bg-[#edf8e8]">Guardar borrador</button>
-            <button type="button" onClick={(event) => guardar(event, "enviado")} className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#12613D]">Enviar anuncio</button>
+            <button type="button" onClick={(event) => guardar(event, "borrador")} className="rounded-lg border border-primary px-4 py-2.5 text-sm font-bold text-primary-dark hover:bg-primary-soft">Guardar borrador</button>
+            <button type="button" onClick={(event) => guardar(event, "enviado")} className="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary-hover">Enviar anuncio</button>
           </div>
         </form>
       </div>

@@ -15,8 +15,8 @@ export default function IndicadoresAsistenciaPanel({
   return (
     <section className="mb-7" aria-labelledby="indicadores-title">
       <div className="mb-4">
-        <p className="text-sm font-semibold text-[#16794C]">INDICADORES</p>
-        <h2 id="indicadores-title" className="mt-0.5 text-xl font-bold text-[#0A1628] dark:text-white">
+        <p className="text-sm font-semibold text-primary-dark">INDICADORES</p>
+        <h2 id="indicadores-title" className="mt-0.5 text-xl font-bold text-ink dark:text-white">
           Resumen de asistencia
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -90,11 +90,11 @@ function Indicador({
       <div className="flex items-start justify-between gap-4">
         <div>
           <dt className="text-sm font-semibold text-slate-600 dark:text-slate-300">{etiqueta}</dt>
-          <dd className="mt-2 text-3xl font-bold tracking-tight text-[#0A1628] dark:text-white">
+          <dd className="mt-2 text-3xl font-bold tracking-tight text-ink dark:text-white">
             {valor}
           </dd>
         </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-400">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-400">
           {icono}
         </span>
       </div>
@@ -118,7 +118,7 @@ function DistribucionCard({
 
   return (
     <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-      <h3 className="font-bold text-[#0A1628] dark:text-white">{titulo}</h3>
+      <h3 className="font-bold text-ink dark:text-white">{titulo}</h3>
       <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{descripcion}</p>
 
       {datos.length === 0 ? (
@@ -133,7 +133,7 @@ function DistribucionCard({
                 <span className="truncate font-medium text-slate-700 dark:text-slate-300">
                   {formatearEtiqueta(dato.etiqueta)}
                 </span>
-                <span className="font-bold text-[#0A1628] dark:text-white">{dato.cantidad}</span>
+                <span className="font-bold text-ink dark:text-white">{dato.cantidad}</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div

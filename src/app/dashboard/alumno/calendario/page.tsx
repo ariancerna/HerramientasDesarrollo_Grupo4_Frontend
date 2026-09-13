@@ -43,7 +43,7 @@ export default function CalendarioAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+          <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">
             MI ESPACIO
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
@@ -142,7 +142,7 @@ export default function CalendarioAlumnoPage() {
                       aria-pressed={filtro === item.valor}
                       className={`flex-1 rounded-lg px-3 py-2 text-xs font-bold transition sm:flex-none ${
                         filtro === item.valor
-                          ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-700 dark:text-emerald-300"
+                          ? "bg-white text-primary-dark shadow-sm dark:bg-slate-700 dark:text-emerald-300"
                           : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
                       }`}
                     >

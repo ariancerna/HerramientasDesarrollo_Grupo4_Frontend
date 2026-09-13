@@ -44,7 +44,7 @@ export default function PagosAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+          <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">
             MI ESPACIO
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">

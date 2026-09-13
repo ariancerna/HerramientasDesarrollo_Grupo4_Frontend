@@ -68,7 +68,7 @@ export default function ProfesoresTabla({
               <td className="px-4 py-3 text-right">
                 <button
                   onClick={() => onEditar?.(profesor)}
-                  className="mr-3 font-semibold text-[#16794C] hover:text-[#12613D] dark:text-emerald-400 dark:hover:text-emerald-300"
+                  className="mr-3 font-semibold text-primary-dark hover:text-primary-hover dark:text-emerald-400 dark:hover:text-emerald-300"
                 >
                   Editar
                 </button>

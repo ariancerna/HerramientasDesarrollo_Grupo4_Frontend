@@ -80,7 +80,7 @@ export default function SedesPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">
+            <p className="text-sm font-semibold tracking-[0.1em] text-primary-dark">
               ADMINISTRACIÓN
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
@@ -93,7 +93,7 @@ export default function SedesPage() {
           </div>
           <button
             onClick={handleAbrirFormularioNuevo}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#16794C] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#12613D] transition focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:w-auto"
           >
             <PlusIcon />
             Nueva sede

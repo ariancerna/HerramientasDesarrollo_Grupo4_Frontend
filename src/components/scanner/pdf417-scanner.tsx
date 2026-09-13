@@ -208,7 +208,7 @@ export default function Pdf417Scanner({
         <button
           type="button"
           onClick={isScanning ? stopCamera : startCamera}
-          className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+          className="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           {isScanning ? "Detener cámara" : "Activar cámara"}
         </button>
@@ -228,11 +228,11 @@ export default function Pdf417Scanner({
             onChange={(event) => setTestValue(event.target.value)}
             inputMode="numeric"
             placeholder="Ejemplo: 76543210"
-            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
           />
           <button
             type="submit"
-            className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#16794C] hover:bg-[#edf8e8] dark:border-slate-600 dark:text-slate-200 dark:hover:bg-emerald-500/10"
+            className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-soft dark:border-slate-600 dark:text-slate-200 dark:hover:bg-emerald-500/10"
           >
             Simular lectura
           </button>

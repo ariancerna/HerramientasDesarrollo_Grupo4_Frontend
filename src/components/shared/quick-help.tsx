@@ -55,7 +55,7 @@ export default function QuickHelp() {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#16794C]/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         aria-label="Ayuda rápida"
         aria-expanded={isOpen}
         aria-controls="quick-help-menu"
@@ -81,7 +81,7 @@ export default function QuickHelp() {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
-                  <NavIcon name={item.icon} className="h-4 w-4 text-[#16794C] dark:text-emerald-400" />
+                  <NavIcon name={item.icon} className="h-4 w-4 text-primary-dark dark:text-emerald-400" />
                   <span>
                     <span className="block">{item.label}</span>
                     <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-400">

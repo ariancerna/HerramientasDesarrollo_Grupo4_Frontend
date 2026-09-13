@@ -53,7 +53,7 @@ export default function EvaluacionTabla({
               <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{mostrarNota(evaluacion.actitud)}</td>
               <td className="max-w-xs px-4 py-3 text-slate-600 dark:text-slate-400">{evaluacion.observaciones}</td>
               <td className="whitespace-nowrap px-4 py-3 text-right">
-                <button type="button" onClick={() => onEditar(evaluacion)} className="mr-3 font-semibold text-[#16794C] hover:text-[#12613D]">
+                <button type="button" onClick={() => onEditar(evaluacion)} className="mr-3 font-semibold text-primary-dark hover:text-primary-hover">
                   Editar
                 </button>
                 <button type="button" onClick={() => onEliminar(evaluacion)} className="font-medium text-red-600 hover:text-red-800">

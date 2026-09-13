@@ -223,7 +223,7 @@ export default function CategoriaForm({
               <button
                 type="button"
                 onClick={agregarHorario}
-                className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+                className="rounded bg-primary px-3 py-1 text-xs text-white transition hover:bg-primary-hover"
               >
                 + Agregar horario
               </button>
@@ -265,7 +265,7 @@ export default function CategoriaForm({
             </button>
             <button
               type="submit"
-              className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white transition hover:bg-primary-hover"
             >
               {categoriaAEditar ? "Actualizar" : "Crear"} categoría
             </button>

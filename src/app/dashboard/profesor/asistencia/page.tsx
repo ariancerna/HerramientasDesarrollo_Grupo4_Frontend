@@ -206,7 +206,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("ESCANEO")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "ESCANEO"
-                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                ? "bg-white text-primary-dark shadow-sm dark:bg-slate-900 dark:text-emerald-400"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
@@ -219,7 +219,7 @@ export default function AsistenciaProfesorPage() {
             onClick={() => cambiarVista("MANUAL")}
             className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
               vista === "MANUAL"
-                ? "bg-white text-[#16794C] shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                ? "bg-white text-primary-dark shadow-sm dark:bg-slate-900 dark:text-emerald-400"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
@@ -259,7 +259,7 @@ export default function AsistenciaProfesorPage() {
                     autoComplete="off"
                     placeholder="8 dígitos"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
@@ -272,7 +272,7 @@ export default function AsistenciaProfesorPage() {
                     value={fechaManual}
                     onChange={(event) => setFechaManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
@@ -285,14 +285,14 @@ export default function AsistenciaProfesorPage() {
                     value={horaManual}
                     onChange={(event) => setHoraManual(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                   />
                 </label>
 
                 <div className="sm:col-span-2">
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-[#16794C] px-4 py-3 font-bold text-white shadow-sm transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+                    className="w-full rounded-lg bg-primary px-4 py-3 font-bold text-white shadow-sm transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   >
                     Registrar asistencia manual
                   </button>
@@ -328,7 +328,7 @@ export default function AsistenciaProfesorPage() {
               <button
                 type="button"
                 onClick={() => guardarRegistro(estudianteEscaneado, "ESCANEO")}
-                className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+                className="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 Registrar asistencia
               </button>

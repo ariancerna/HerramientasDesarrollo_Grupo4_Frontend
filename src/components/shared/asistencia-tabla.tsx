@@ -61,7 +61,7 @@ export default function AsistenciaTabla({
                 }).format(new Date(registro.fechaHora))}
               </td>
               <td className="px-4 py-3">
-                <span className="inline-flex rounded-full bg-[#edf8e8] px-2.5 py-0.5 text-xs font-medium text-[#16794C] dark:bg-emerald-500/15 dark:text-emerald-300">
+                <span className="inline-flex rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-medium text-primary-dark dark:bg-emerald-500/15 dark:text-emerald-300">
                   {registro.metodo === "ESCANEO" ? "Escaneo" : "Manual"}
                 </span>
               </td>
@@ -70,7 +70,7 @@ export default function AsistenciaTabla({
                   <button
                     type="button"
                     onClick={() => onCorregir?.(registro)}
-                    className="font-semibold text-[#16794C] hover:text-[#12613D] dark:text-emerald-400 dark:hover:text-emerald-300"
+                    className="font-semibold text-primary-dark hover:text-primary-hover dark:text-emerald-400 dark:hover:text-emerald-300"
                   >
                     Corregir
                   </button>
