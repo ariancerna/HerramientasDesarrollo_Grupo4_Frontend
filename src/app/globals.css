@@ -82,7 +82,7 @@ input[type="number"] {
      ============================================ */
 
   /* Fondo del área principal */
-  --color-bg-app: #f3f8fd;              /* Claro: blanco con tinte celeste */
+  --color-bg-app: #f7f8ff;               /* Claro: blanco con tinte celeste */
   --color-bg-app-dark: #0a1628;         /* Oscuro: navy profundo */
 
   /* 🎨 Modo CLARO: azul oscuro elegante */
