@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { LoginForm } from "@/components/forms/login-form";
+import { PhoneContactIcon } from "@/components/shared/phone-contact-icon";
 import { ROUTES } from "@/constants/routes";
 
 export default function LoginPage() {
@@ -134,13 +135,7 @@ export default function LoginPage() {
               </a>
 
               <p className="flex items-center gap-2">
-                <Image
-                  src="/phone.png"
-                  alt="Teléfono"
-                  width={18}
-                  height={18}
-                  className="h-[18px] w-[18px] -scale-x-100 object-contain [filter:brightness(0)_saturate(100%)_invert(48%)_sepia(83%)_saturate(3857%)_hue-rotate(205deg)_brightness(100%)_contrast(94%)]"
-                />
+                <PhoneContactIcon />
                 <span>998 678 259</span>
               </p>
 
