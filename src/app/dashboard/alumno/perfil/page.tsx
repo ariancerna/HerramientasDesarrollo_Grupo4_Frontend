@@ -175,23 +175,20 @@ function PerfilForm({
           nombre={`${form.nombres} ${form.apellidos}`}
           fotoUrl={form.fotoUrl}
           imageAlt={`Foto de perfil de ${form.nombres}`}
-          /* 🎨 CAMBIO: bg-[#16794C] ring-[#edf8e8] → bg-brand-green ring-brand-green-soft */
-          className="mx-auto h-36 w-36 bg-brand-green text-4xl font-bold text-white ring-4 ring-brand-green-soft dark:ring-emerald-500/20"
+          className="mx-auto h-36 w-36 bg-brand-green text-4xl font-bold text-white ring-4 ring-brand-green-soft dark:ring-brand-green/25"
         />
         {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
         <h2 className="mt-5 text-xl font-bold text-navy dark:text-white">
           {form.nombres} {form.apellidos}
         </h2>
-        {/* 🎨 CAMBIO: bg-[#edf8e8] text-[#16794C] → bg-brand-green-soft text-brand-green */}
-        <span className="mt-2 inline-flex rounded-full bg-brand-green-soft px-3 py-1 text-xs font-bold text-brand-green dark:bg-emerald-500/15 dark:text-emerald-300">
+        <span className="mt-2 inline-flex rounded-full bg-brand-green-soft px-3 py-1 text-xs font-bold text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
           {alumno.categoria}
         </span>
 
         <div className="mt-5 flex flex-col gap-2">
-          {/* 🎨 CAMBIO: border-[#16794C] text-[#16794C] hover:bg-[#edf8e8] → border-brand-green text-brand-green hover:bg-brand-green-soft */}
           <label
             htmlFor="foto-perfil"
-            className="cursor-pointer rounded-lg border border-brand-green px-4 py-2.5 text-sm font-bold text-brand-green transition hover:bg-brand-green-soft dark:border-emerald-500 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+            className="cursor-pointer rounded-lg border border-brand-green px-4 py-2.5 text-sm font-bold text-brand-green transition hover:bg-brand-green-soft dark:border-brand-green dark:text-brand-lime-light dark:hover:bg-brand-green/10"
           >
             {form.fotoUrl ? "Cambiar foto" : "Agregar foto"}
           </label>

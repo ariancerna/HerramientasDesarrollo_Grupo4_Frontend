@@ -96,7 +96,7 @@ export function RegisterForm() {
   }
 
   const inputClass = (hasError?: string) =>
-    `h-12 w-full rounded-xl border bg-[#f8fafb] px-4 text-[14px] text-[#172337] outline-none transition placeholder:text-[#9aa7b5] focus:border-[#00a94f] focus:bg-white focus:ring-4 focus:ring-[#00a94f]/10 ${
+    `h-12 w-full rounded-xl border bg-[#f8fafb] px-4 text-[14px] text-[#172337] outline-none transition placeholder:text-[#9aa7b5] focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 ${
       hasError
         ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
         : "border-[#e3e8ed]"
@@ -185,7 +185,7 @@ export function RegisterForm() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-13 w-full items-center justify-center rounded-xl bg-[#00a94f] px-6 text-[15px] font-bold text-white shadow-[0_5px_18px_rgba(0,169,79,0.28)] transition hover:bg-[#008f43] disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex h-13 w-full items-center justify-center rounded-xl bg-primary px-6 text-[15px] font-bold text-white shadow-[0_5px_18px_rgba(30,58,138,0.28)] transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Creando cuenta..." : "Crear cuenta"}
         </button>

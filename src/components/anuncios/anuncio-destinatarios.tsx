@@ -50,7 +50,7 @@ export default function AnuncioDestinatarios({
               value={valor}
               checked={modo === valor}
               onChange={() => onModoChange(valor)}
-              className="accent-[#16794C]"
+              className="accent-brand-green"
             />
             {etiqueta}
           </label>
@@ -61,7 +61,7 @@ export default function AnuncioDestinatarios({
         <select
           value={categoriaId}
           onChange={(event) => onCategoriaChange(event.target.value)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-[#16794C] focus:ring-2 focus:ring-[#6FCF3A]/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((categoria) => (
@@ -80,7 +80,7 @@ export default function AnuncioDestinatarios({
                 type="checkbox"
                 checked={seleccionados.includes(alumno.id)}
                 onChange={() => alternarAlumno(alumno.id)}
-                className="accent-[#16794C]"
+                className="accent-brand-green"
               />
               {alumno.nombres} {alumno.apellidos}
             </label>

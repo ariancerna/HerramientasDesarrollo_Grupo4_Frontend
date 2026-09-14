@@ -24,43 +24,43 @@ export default function ConfirmacionEscaneo({
 
   return (
     <section
-      className="rounded-lg border border-emerald-200 bg-emerald-50 p-5"
+      className="rounded-lg border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/30 dark:bg-emerald-500/10"
       aria-labelledby="confirmacion-asistencia-title"
     >
-      <p className="text-sm font-semibold text-emerald-800">
+      <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
         Estudiante identificado
       </p>
       <h2
         id="confirmacion-asistencia-title"
-        className="mt-1 text-xl font-bold text-slate-950"
+        className="mt-1 text-xl font-bold text-slate-950 dark:text-white"
       >
         Confirma la asistencia
       </h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
         Revisa los datos antes de guardar el registro.
       </p>
 
-      <dl className="mt-4 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
+      <dl className="mt-4 grid gap-3 text-sm text-slate-700 dark:text-slate-200 sm:grid-cols-2">
         <div>
-          <dt className="font-medium text-slate-500">Estudiante</dt>
+          <dt className="font-medium text-slate-500 dark:text-slate-400">Estudiante</dt>
           <dd>
             {estudiante.nombres} {estudiante.apellidos}
           </dd>
         </div>
         <div>
-          <dt className="font-medium text-slate-500">DNI</dt>
+          <dt className="font-medium text-slate-500 dark:text-slate-400">DNI</dt>
           <dd>{estudiante.dni}</dd>
         </div>
         <div>
-          <dt className="font-medium text-slate-500">Categoría</dt>
+          <dt className="font-medium text-slate-500 dark:text-slate-400">Categoría</dt>
           <dd>{estudiante.categoria}</dd>
         </div>
         <div>
-          <dt className="font-medium text-slate-500">Método</dt>
+          <dt className="font-medium text-slate-500 dark:text-slate-400">Método</dt>
           <dd>{metodo === "ESCANEO" ? "Escaneo de DNI" : "Registro manual"}</dd>
         </div>
         <div className="sm:col-span-2">
-          <dt className="font-medium text-slate-500">Fecha y hora</dt>
+          <dt className="font-medium text-slate-500 dark:text-slate-400">Fecha y hora</dt>
           <dd>
             {new Intl.DateTimeFormat("es-PE", {
               dateStyle: "medium",
@@ -74,14 +74,14 @@ export default function ConfirmacionEscaneo({
         <button
           type="button"
           onClick={onConfirmar}
-          className="rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2"
+          className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 dark:focus:ring-offset-slate-900"
         >
           Confirmar asistencia
         </button>
         <button
           type="button"
           onClick={onCancelar}
-          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
+          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           Cancelar
         </button>

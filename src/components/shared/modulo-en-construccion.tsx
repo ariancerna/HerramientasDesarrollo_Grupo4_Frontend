@@ -11,14 +11,14 @@ interface ModuloEnConstruccionProps {
 export default function ModuloEnConstruccion({ titulo, descripcion, icono }: ModuloEnConstruccionProps) {
   return (
     <div>
-      <p className="text-sm font-semibold tracking-[0.1em] text-[#16794C]">ADMINISTRACIÓN</p>
-      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-lg bg-[#edf8e8] text-[#16794C]"><ModuleIconGraphic name={icono} /></span>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#0A1628]">{titulo}</h1>
-        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">{descripcion}</p>
-        <div className="mt-6 inline-flex rounded-full bg-[#edf8e8] px-3 py-1 text-xs font-semibold text-[#16794C]">Módulo en desarrollo</div>
+      <p className="text-sm font-semibold tracking-[0.1em] text-brand-green dark:text-brand-lime-light">ADMINISTRACIÓN</p>
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"><ModuleIconGraphic name={icono} /></span>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-navy dark:text-white">{titulo}</h1>
+        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-400">{descripcion}</p>
+        <div className="mt-6 inline-flex rounded-full bg-brand-green-soft px-3 py-1 text-xs font-semibold text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">Módulo en desarrollo</div>
         <div className="mt-8">
-          <Link href="/dashboard/admin" className="inline-flex rounded-lg bg-[#16794C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#12613D] focus:outline-none focus:ring-2 focus:ring-[#16794C] focus:ring-offset-2">Volver al panel</Link>
+          <Link href="/dashboard/admin" className="inline-flex rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 dark:focus:ring-offset-slate-900">Volver al panel</Link>
         </div>
       </section>
     </div>
