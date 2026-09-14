@@ -67,31 +67,33 @@ export default function QuickHelp() {
         <section
           id="quick-help-menu"
           aria-label="Ayuda rápida"
-          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+4rem)] z-40 max-h-[70vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72"
+          className="fixed right-3 top-[calc(env(safe-area-inset-top)+4rem)] z-40 max-h-[70vh] w-[85vw] max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-80"
         >
-          <div className="px-2 py-2.5">
+          <div className="border-b border-slate-100 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-800/60">
             <p className="text-sm font-bold text-slate-900 dark:text-white">Ayuda rápida</p>
-            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Elige el módulo que necesitas consultar.</p>
           </div>
-          <ul className="border-t border-slate-100 pt-1 dark:border-slate-700">
-            {items.map((item) => (
-              <li key={item.href}>
+          <div className="max-h-[min(420px,calc(70vh-4rem))] overflow-y-auto p-3">
+            <div className="space-y-2">
+              {items.map((item) => (
                 <Link
+                  key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+                  className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50/60 p-3 transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-sm dark:border-sky-900/50 dark:bg-sky-950/40 dark:hover:border-sky-700"
                 >
-                  <NavIcon name={item.icon} className="h-4 w-4 text-brand-green dark:text-brand-lime-light" />
-                  <span>
-                    <span className="block">{item.label}</span>
-                    <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-400">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sky-50 text-sky-600 dark:bg-sky-900/60 dark:text-sky-300">
+                    <NavIcon name={item.icon} className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-bold text-slate-900 dark:text-white">{item.label}</span>
+                    <span className="mt-0.5 block text-xs leading-snug text-slate-500 dark:text-slate-300">
                       {HELP_DESCRIPTIONS[item.label] ?? "Accede a este módulo."}
                     </span>
                   </span>
                 </Link>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
         </section>
       )}
     </div>

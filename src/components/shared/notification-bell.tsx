@@ -137,32 +137,32 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border text-body transition hover:bg-primary-soft hover:text-primary focus:outline-none focus:ring-4 focus:ring-primary/20"
+        className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-green/40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         aria-label={unreadCount > 0 ? `Notificaciones (${unreadCount} sin leer)` : "Notificaciones"}
         aria-expanded={isOpen}
       >
         <BellIcon />
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-danger px-1 text-[10px] font-bold text-white ring-2 ring-surface">
+          <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="fixed right-3 top-[calc(env(safe-area-inset-top)+4rem)] z-40 max-h-[70vh] w-[85vw] max-w-xs overflow-hidden rounded-2xl border border-border bg-surface shadow-popover sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-80">
-          <div className="flex items-center justify-between gap-3 border-b border-border bg-bg-dashboard/40 px-5 py-4">
+        <div className="fixed right-3 top-[calc(env(safe-area-inset-top)+4rem)] z-40 max-h-[70vh] w-[85vw] max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-80">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-800/60">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-sky-50 text-sky-600">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-sky-50 text-sky-600 dark:bg-sky-900/60 dark:text-sky-300">
                 <BellIcon />
               </span>
-              <p className="text-sm font-extrabold text-ink">Notificaciones</p>
+              <p className="text-sm font-extrabold text-slate-900 dark:text-white">Notificaciones</p>
             </div>
             {unreadCount > 0 && (
               <button
                 type="button"
                 onClick={marcarTodasLeidas}
-                className="shrink-0 text-xs font-semibold text-sky-600 hover:text-sky-700"
+                className="shrink-0 text-xs font-semibold text-sky-600 hover:text-sky-700 dark:text-sky-300 dark:hover:text-sky-200"
               >
                 Marcar todas leídas
               </button>
@@ -170,14 +170,14 @@ export default function NotificationBell() {
           </div>
 
           {settings.notificacionesSilenciadas && (
-            <p className="border-b border-warning/20 bg-warning/10 px-5 py-2.5 text-xs font-medium text-warning">
+            <p className="border-b border-amber-200 bg-amber-50 px-5 py-2.5 text-xs font-medium text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300">
               Las notificaciones están silenciadas. Actívalas en Configuración.
             </p>
           )}
 
           <div className="max-h-[min(420px,calc(70vh-4rem))] overflow-y-auto p-3">
             {visibleNotifications.length === 0 ? (
-              <p className="rounded-xl bg-bg-dashboard/40 p-4 text-center text-sm text-body">
+              <p className="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-500 dark:bg-slate-700/40 dark:text-slate-400">
                 No tienes notificaciones.
               </p>
             ) : (
@@ -190,7 +190,9 @@ export default function NotificationBell() {
                     <div
                       key={notification.id}
                       className={`rounded-xl border p-3 transition ${
-                        isUnread ? "border-sky-100 bg-sky-50/60" : "border-border bg-surface"
+                        isUnread
+                          ? "border-sky-100 bg-sky-50/60 dark:border-sky-900/50 dark:bg-sky-950/40"
+                          : "border-slate-100 bg-white dark:border-slate-700 dark:bg-slate-800"
                       }`}
                     >
                       <Link
@@ -202,27 +204,36 @@ export default function NotificationBell() {
                         className="block"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <p className="flex items-center gap-2 text-sm font-bold text-ink">
-                            {isUnread && <span className="h-2 w-2 shrink-0 rounded-full bg-sky-300" aria-hidden="true" />}
+                          <p className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                            {isUnread && (
+                              <span
+                                className="h-2 w-2 shrink-0 rounded-full bg-sky-400 dark:bg-sky-400"
+                                aria-hidden="true"
+                              />
+                            )}
                             {notification.title}
                           </p>
-                          <span className="shrink-0 text-xs font-semibold text-muted">{notification.time}</span>
+                          <span className="shrink-0 text-xs font-semibold text-slate-400 dark:text-slate-400">
+                            {notification.time}
+                          </span>
                         </div>
-                        <p className="mt-1 pl-0 text-xs leading-5 text-body">{notification.description}</p>
+                        <p className="mt-1 pl-0 text-xs leading-5 text-slate-500 dark:text-slate-300">
+                          {notification.description}
+                        </p>
                       </Link>
 
-                      <div className="mt-3 flex flex-nowrap items-center gap-1.5 border-t border-border pt-3">
+                      <div className="mt-3 flex flex-nowrap items-center gap-1.5 border-t border-slate-100 pt-3 dark:border-slate-700">
                         {isUnread ? (
                           <button
                             type="button"
                             onClick={() => marcarLeida(notification.id)}
-                            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg border border-sky-100 bg-surface px-2 py-1.5 text-[11px] font-semibold text-sky-600 transition hover:bg-sky-50 sm:px-2.5 sm:text-xs"
+                            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg border border-sky-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-sky-600 transition hover:bg-sky-50 dark:border-sky-800 dark:bg-slate-800 dark:text-sky-300 dark:hover:bg-sky-950/40 sm:px-2.5 sm:text-xs"
                           >
                             <CheckIcon />
                             Marcar como visto
                           </button>
                         ) : (
-                          <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg bg-bg-dashboard/40 px-2 py-1.5 text-[11px] font-semibold text-muted sm:px-2.5 sm:text-xs">
+                          <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg bg-slate-100 px-2 py-1.5 text-[11px] font-semibold text-slate-500 dark:bg-slate-700 dark:text-slate-300 sm:px-2.5 sm:text-xs">
                             <CheckAllIcon />
                             Vista
                           </span>
@@ -233,14 +244,14 @@ export default function NotificationBell() {
                             <button
                               type="button"
                               onClick={() => eliminarNotificacion(notification.id)}
-                              className="shrink-0 whitespace-nowrap rounded-lg bg-danger px-2.5 py-1.5 text-[11px] font-semibold text-white hover:opacity-90 sm:text-xs"
+                              className="shrink-0 whitespace-nowrap rounded-lg bg-red-600 px-2.5 py-1.5 text-[11px] font-semibold text-white hover:opacity-90 sm:text-xs"
                             >
                               Confirmar
                             </button>
                             <button
                               type="button"
                               onClick={() => setDeleteId(null)}
-                              className="shrink-0 whitespace-nowrap rounded-lg border border-border px-2.5 py-1.5 text-[11px] font-semibold text-body hover:bg-bg-dashboard/40 sm:text-xs"
+                              className="shrink-0 whitespace-nowrap rounded-lg border border-slate-200 px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 sm:text-xs"
                             >
                               Cancelar
                             </button>
@@ -249,7 +260,7 @@ export default function NotificationBell() {
                           <button
                             type="button"
                             onClick={() => setDeleteId(notification.id)}
-                            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg border border-danger/25 bg-surface px-2 py-1.5 text-[11px] font-semibold text-danger transition hover:bg-danger-light sm:px-2.5 sm:text-xs"
+                            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg border border-red-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-900/50 dark:bg-slate-800 dark:text-red-400 dark:hover:bg-red-950/40 sm:px-2.5 sm:text-xs"
                           >
                             <TrashIcon />
                             Eliminar
