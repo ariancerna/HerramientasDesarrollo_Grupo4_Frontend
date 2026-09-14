@@ -128,7 +128,7 @@ export default function ForgotPasswordPage() {
                   alt="WhatsApp"
                   width={18}
                   height={18}
-                  className="h-[18px] w-[18px] object-contain [filter:invert(48%)_sepia(18%)_saturate(1561%)_hue-rotate(67deg)_brightness(91%)_contrast(88%)]"
+                  className="h-[18px] w-[18px] object-contain [filter:brightness(0)_saturate(100%)_invert(48%)_sepia(83%)_saturate(3857%)_hue-rotate(205deg)_brightness(100%)_contrast(94%)]"
                 />
                 <span>994 796 381</span>
               </a>
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
                   alt="Teléfono"
                   width={18}
                   height={18}
-                  className="h-[18px] w-[18px] object-contain"
+                  className="h-[18px] w-[18px] -scale-x-100 object-contain [filter:brightness(0)_saturate(100%)_invert(48%)_sepia(83%)_saturate(3857%)_hue-rotate(205deg)_brightness(100%)_contrast(94%)]"
                 />
                 <span>998 678 259</span>
               </p>
@@ -150,7 +150,7 @@ export default function ForgotPasswordPage() {
                   alt="Ubicación"
                   width={18}
                   height={18}
-                  className="mt-0.5 h-[18px] w-[18px] object-contain"
+                  className="mt-0.5 h-[18px] w-[18px] object-contain [filter:brightness(0)_saturate(100%)_invert(48%)_sepia(83%)_saturate(3857%)_hue-rotate(205deg)_brightness(100%)_contrast(94%)]"
                 />
                 <span>
                   Plaza Cívica Pro - Los Olivos. Av. Honestidad Mz. D Lte 7
