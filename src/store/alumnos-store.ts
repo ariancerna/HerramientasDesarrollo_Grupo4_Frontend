@@ -4,6 +4,8 @@ import {
   StudentProfileData,
 } from "@/types/student";
 import { MOCK_ALUMNOS } from "@/lib/mock/alumnos.mock";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isStudent } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-alumnos";
 
@@ -24,19 +26,7 @@ function crearId() {
  */
 export function obtenerAlumnos(): Student[] {
   if (!isBrowser()) return MOCK_ALUMNOS;
-
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_ALUMNOS));
-    return MOCK_ALUMNOS;
-  }
-
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Student[]) : MOCK_ALUMNOS;
-  } catch {
-    return MOCK_ALUMNOS;
-  }
+  return readJsonList(STORAGE_KEY, MOCK_ALUMNOS, isStudent);
 }
 
 export function obtenerAlumnoPorId(id: string): Student | undefined {
@@ -45,7 +35,7 @@ export function obtenerAlumnoPorId(id: string): Student | undefined {
 
 function guardarAlumnos(alumnos: Student[]) {
   if (isBrowser()) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(alumnos));
+    writeJson(STORAGE_KEY, alumnos);
   }
 }
 
@@ -116,6 +106,8 @@ export function filtrarAlumnos(
   const estado = opciones.estado ?? "todos";
 
   return alumnos.filter((a) => {
+    if (!isStudent(a)) return false;
+
     const coincideTexto =
       texto === "" ||
       a.nombres.toLowerCase().includes(texto) ||

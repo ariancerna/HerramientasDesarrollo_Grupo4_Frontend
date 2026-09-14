@@ -1,5 +1,7 @@
 import { MOCK_ANUNCIOS } from "@/lib/mock/anuncios.mock";
 import { Anuncio, AnuncioFormData, EstadoAnuncio } from "@/types/anuncio";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isAnuncio } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-anuncios";
 
@@ -17,25 +19,14 @@ function crearId() {
 
 function guardarAnuncios(anuncios: Anuncio[]) {
   if (esNavegador()) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(anuncios));
+    writeJson(STORAGE_KEY, anuncios);
   }
 }
 
 export function obtenerAnuncios(): Anuncio[] {
   if (!esNavegador()) return MOCK_ANUNCIOS;
 
-  const almacenados = localStorage.getItem(STORAGE_KEY);
-  if (!almacenados) {
-    guardarAnuncios(MOCK_ANUNCIOS);
-    return MOCK_ANUNCIOS;
-  }
-
-  try {
-    const anuncios: unknown = JSON.parse(almacenados);
-    return Array.isArray(anuncios) ? (anuncios as Anuncio[]) : MOCK_ANUNCIOS;
-  } catch {
-    return MOCK_ANUNCIOS;
-  }
+  return readJsonList(STORAGE_KEY, MOCK_ANUNCIOS, isAnuncio);
 }
 
 export function obtenerAnunciosPorProfesor(profesorId: string): Anuncio[] {

@@ -28,6 +28,10 @@ interface LoginResult {
   rol?: Role;
 }
 
+function normalizarCredencial(value: string): string {
+  return value.trim();
+}
+
 export function useAuth() {
   const snapshot = useSyncExternalStore(
     subscribeToSession,
@@ -40,12 +44,39 @@ export function useAuth() {
     () => false,
   );
   const parsedSession = useMemo(() => parseSessionSnapshot(snapshot), [snapshot]);
+  const isRecognizedSession = useMemo(() => {
+    if (!parsedSession) return false;
+
+    const usuariosReconocidos = [
+      ...MOCK_USUARIOS,
+      ...obtenerProfesores().map((profesor) => ({
+        id: profesor.id,
+        usuario: profesor.usuario,
+        nombre: profesor.nombre,
+        password: profesor.password,
+        rol: "profesor" as const,
+        estudianteId: undefined,
+      })),
+    ];
+
+    return usuariosReconocidos.some(
+      (usuario) =>
+        usuario.id === parsedSession.usuario.id &&
+        usuario.usuario === parsedSession.usuario.usuario &&
+        usuario.rol === parsedSession.usuario.rol &&
+        usuario.estudianteId === parsedSession.usuario.estudianteId,
+    );
+  }, [parsedSession]);
   const session: Session | null =
-    parsedSession && !isSessionExpired(parsedSession) ? parsedSession : null;
+    parsedSession && isRecognizedSession && !isSessionExpired(parsedSession)
+      ? parsedSession
+      : null;
   const isLoading = !isHydrated;
   const lastTouchRef = useRef(0);
 
   const login = useCallback(({ usuario, password }: LoginParams): LoginResult => {
+    const cleanUsuario = normalizarCredencial(usuario);
+    const cleanPassword = normalizarCredencial(password);
     const profesoresRegistrados = obtenerProfesores().map((profesor) => ({
       id: profesor.id,
       usuario: profesor.usuario,
@@ -55,7 +86,7 @@ export function useAuth() {
       estudianteId: undefined,
     }));
     const match = [...MOCK_USUARIOS, ...profesoresRegistrados].find(
-      (u) => u.usuario === usuario && u.password === password
+      (u) => u.usuario === cleanUsuario && u.password === cleanPassword
     );
 
     if (!match) {
@@ -87,6 +118,13 @@ export function useAuth() {
   const actualizarUsuarioActual = useCallback((nombre: string) => {
     actualizarUsuarioSesion({ nombre });
   }, []);
+
+  useEffect(() => {
+    if (isLoading || !snapshot) return;
+    if (!parsedSession || !isRecognizedSession || isSessionExpired(parsedSession)) {
+      clearSession();
+    }
+  }, [isLoading, snapshot, parsedSession, isRecognizedSession]);
 
   // Reinicia el contador de inactividad ante actividad del usuario
   useEffect(() => {

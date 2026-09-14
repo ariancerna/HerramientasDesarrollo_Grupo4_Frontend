@@ -2,6 +2,8 @@ import { MOCK_EVENTOS_CLUB } from "@/lib/mock/eventos.mock";
 import { obtenerCategorias } from "@/store/categorias-store";
 import type { ActividadCalendario, EventoClub } from "@/types/calendario";
 import type { Horario } from "@/types";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isEventoClub } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-eventos";
 const EVENTOS_CHANGE_EVENT = "kickstamp:eventos-change";
@@ -16,29 +18,14 @@ export function obtenerEventosIniciales(): EventoClub[] {
   return MOCK_EVENTOS_CLUB;
 }
 
-function restaurarEventos(): EventoClub[] {
-  const eventos = [...MOCK_EVENTOS_CLUB];
-  eventosCache = eventos;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(eventos));
-  return eventos;
-}
-
 // LEER
 export function obtenerEventos(): EventoClub[] {
   if (!isBrowser()) return obtenerEventosIniciales();
   if (eventosCache) return eventosCache;
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return restaurarEventos();
-
-  try {
-    const eventos: unknown = JSON.parse(raw);
-    if (!Array.isArray(eventos)) return restaurarEventos();
-    eventosCache = eventos as EventoClub[];
-    return eventosCache;
-  } catch {
-    return restaurarEventos();
-  }
+  const eventos = readJsonList(STORAGE_KEY, MOCK_EVENTOS_CLUB, isEventoClub);
+  eventosCache = eventos;
+  return eventosCache;
 }
 
 export function suscribirEventos(onStoreChange: () => void) {
@@ -81,7 +68,7 @@ export function actualizarEvento(id: string, cambios: Partial<EventoClub>): Even
 function guardarEventos(eventos: EventoClub[]) {
   if (isBrowser()) {
     eventosCache = eventos;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(eventos));
+    writeJson(STORAGE_KEY, eventos);
     window.dispatchEvent(new Event(EVENTOS_CHANGE_EVENT));
   }
 }

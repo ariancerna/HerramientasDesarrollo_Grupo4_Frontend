@@ -1,5 +1,7 @@
 import { Sede } from "@/types";
 import { MOCK_SEDES } from "@/lib/mock/sedes.mock";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isSede } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-sedes";
 const SEDES_CHANGE_EVENT = "kickstamp:sedes-change";
@@ -14,32 +16,14 @@ export function obtenerSedesIniciales(): Sede[] {
   return MOCK_SEDES;
 }
 
-function restaurarSedes(): Sede[] {
-  const sedes = [...MOCK_SEDES];
-  sedesCache = sedes;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sedes));
-  return sedes;
-}
-
 // LEER
 export function obtenerSedes(): Sede[] {
   if (!isBrowser()) return obtenerSedesIniciales();
   if (sedesCache) return sedesCache;
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return restaurarSedes();
-  }
-
-  try {
-    const sedes: unknown = JSON.parse(raw);
-    if (!Array.isArray(sedes)) return restaurarSedes();
-
-    sedesCache = sedes as Sede[];
-    return sedesCache;
-  } catch {
-    return restaurarSedes();
-  }
+  const sedes = readJsonList(STORAGE_KEY, MOCK_SEDES, isSede);
+  sedesCache = sedes;
+  return sedesCache;
 }
 
 export function suscribirSedes(onStoreChange: () => void) {
@@ -94,7 +78,7 @@ export function eliminarSede(id: string): boolean {
 function guardarSedes(sedes: Sede[]) {
   if (isBrowser()) {
     sedesCache = sedes;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sedes));
+    writeJson(STORAGE_KEY, sedes);
     window.dispatchEvent(new Event(SEDES_CHANGE_EVENT));
   }
 }

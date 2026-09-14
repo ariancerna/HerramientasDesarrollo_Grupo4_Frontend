@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Caveat, Geist, Geist_Mono } from "next/font/google";
 import SwRegister from "@/components/shared/sw-register";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,17 +14,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
-// 2. Añadida la configuración de Caveat
 const caveatFont = Caveat({
   variable: "--font-caveat",
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "KickStamp | El Golazo Club",
-  description: "Gestión de alumnos y asistencia de El Golazo Club",
+  description: "Gestion de alumnos y asistencia de El Golazo Club",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -53,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${caveatFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
         <SwRegister />
       </body>
     </html>

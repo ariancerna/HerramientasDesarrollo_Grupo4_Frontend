@@ -6,6 +6,8 @@ import {
   RegistroAsistencia,
 } from "@/types/asistencia";
 import { MOCK_ASISTENCIAS } from "@/lib/mock/asistencias.mock";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isRegistroAsistencia } from "@/lib/storage-validators";
 
 export type {
   DatosCorreccionAsistencia,
@@ -19,24 +21,12 @@ const STORAGE_KEY = "kickstamp-asistencias";
 
 function leerRegistros(): RegistroAsistencia[] {
   if (typeof window === "undefined") return MOCK_ASISTENCIAS;
-
-  const storedValue = window.localStorage.getItem(STORAGE_KEY);
-  if (!storedValue) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_ASISTENCIAS));
-    return MOCK_ASISTENCIAS;
-  }
-
-  try {
-    const parsedValue: unknown = JSON.parse(storedValue);
-    return Array.isArray(parsedValue) ? (parsedValue as RegistroAsistencia[]) : [];
-  } catch {
-    return [];
-  }
+  return readJsonList(STORAGE_KEY, MOCK_ASISTENCIAS, isRegistroAsistencia);
 }
 
 function guardarRegistros(registros: RegistroAsistencia[]) {
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+    writeJson(STORAGE_KEY, registros);
   }
 }
 

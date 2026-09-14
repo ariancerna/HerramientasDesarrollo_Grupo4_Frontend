@@ -1,5 +1,7 @@
 import { Profesor } from "@/types";
 import { MOCK_PROFESORES } from "@/lib/mock/profesores.mock";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isProfesor } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-profesores";
 const PROFESORES_CHANGE_EVENT = "kickstamp:profesores-change";
@@ -14,32 +16,14 @@ export function obtenerProfesoresIniciales(): Profesor[] {
   return MOCK_PROFESORES;
 }
 
-function restaurarProfesores(): Profesor[] {
-  const profesores = [...MOCK_PROFESORES];
-  profesoresCache = profesores;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profesores));
-  return profesores;
-}
-
 // LEER
 export function obtenerProfesores(): Profesor[] {
   if (!isBrowser()) return obtenerProfesoresIniciales();
   if (profesoresCache) return profesoresCache;
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return restaurarProfesores();
-  }
-
-  try {
-    const profesores: unknown = JSON.parse(raw);
-    if (!Array.isArray(profesores)) return restaurarProfesores();
-
-    profesoresCache = profesores as Profesor[];
-    return profesoresCache;
-  } catch {
-    return restaurarProfesores();
-  }
+  const profesores = readJsonList(STORAGE_KEY, MOCK_PROFESORES, isProfesor);
+  profesoresCache = profesores;
+  return profesoresCache;
 }
 
 export function suscribirProfesores(onStoreChange: () => void) {
@@ -114,7 +98,7 @@ export function filtrarProfesores(profesores: Profesor[], texto: string): Profes
 function guardarProfesores(profesores: Profesor[]) {
   if (isBrowser()) {
     profesoresCache = profesores;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profesores));
+    writeJson(STORAGE_KEY, profesores);
     window.dispatchEvent(new Event(PROFESORES_CHANGE_EVENT));
   }
 }

@@ -1,5 +1,7 @@
 import { MOCK_PAGOS } from "@/lib/mock/pagos.mock";
 import type { PagoMensualidad } from "@/types/pago";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isPagoMensualidad } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-pagos";
 const PAGOS_CHANGE_EVENT = "kickstamp:pagos-change";
@@ -14,32 +16,14 @@ export function obtenerPagosIniciales(): PagoMensualidad[] {
   return MOCK_PAGOS;
 }
 
-function restaurarPagos(): PagoMensualidad[] {
-  const pagos = [...MOCK_PAGOS];
-  pagosCache = pagos;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(pagos));
-  return pagos;
-}
-
 // LEER
 export function obtenerPagos(): PagoMensualidad[] {
   if (!isBrowser()) return obtenerPagosIniciales();
   if (pagosCache) return pagosCache;
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return restaurarPagos();
-  }
-
-  try {
-    const pagos: unknown = JSON.parse(raw);
-    if (!Array.isArray(pagos)) return restaurarPagos();
-
-    pagosCache = pagos as PagoMensualidad[];
-    return pagosCache;
-  } catch {
-    return restaurarPagos();
-  }
+  const pagos = readJsonList(STORAGE_KEY, MOCK_PAGOS, isPagoMensualidad);
+  pagosCache = pagos;
+  return pagosCache;
 }
 
 export function suscribirPagos(onStoreChange: () => void) {
@@ -121,7 +105,7 @@ export function eliminarPago(id: string): boolean {
 function guardarPagos(pagos: PagoMensualidad[]) {
   if (isBrowser()) {
     pagosCache = pagos;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(pagos));
+    writeJson(STORAGE_KEY, pagos);
     window.dispatchEvent(new Event(PAGOS_CHANGE_EVENT));
   }
 }

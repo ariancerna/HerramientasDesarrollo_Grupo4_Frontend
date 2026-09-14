@@ -1,3 +1,5 @@
+import { isPlainObject, writeJson } from "@/lib/storage";
+
 export type Tema = "claro" | "oscuro";
 
 export interface Settings {
@@ -40,7 +42,16 @@ export function subscribeToSettings(onStoreChange: () => void) {
 export function parseSettingsSnapshot(snapshot: string | null): Settings {
   if (!snapshot) return DEFAULT_SETTINGS;
   try {
-    return { ...DEFAULT_SETTINGS, ...(JSON.parse(snapshot) as Partial<Settings>) };
+    const parsed: unknown = JSON.parse(snapshot);
+    if (!isPlainObject(parsed)) return DEFAULT_SETTINGS;
+
+    return {
+      tema: parsed.tema === "oscuro" ? "oscuro" : "claro",
+      notificacionesSilenciadas:
+        typeof parsed.notificacionesSilenciadas === "boolean"
+          ? parsed.notificacionesSilenciadas
+          : DEFAULT_SETTINGS.notificacionesSilenciadas,
+    };
   } catch {
     return DEFAULT_SETTINGS;
   }
@@ -50,7 +61,7 @@ export function updateSettings(cambios: Partial<Settings>): Settings {
   const actuales = parseSettingsSnapshot(getSettingsSnapshot());
   const siguientes = { ...actuales, ...cambios };
   if (isBrowser()) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(siguientes));
+    writeJson(STORAGE_KEY, siguientes);
     window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
   }
   return siguientes;

@@ -1,16 +1,12 @@
 import { Profesor } from "@/types";
+import { demoPassword } from "@/lib/demo-credentials";
 
-/**
- * Profesores adicionales dados de alta desde el panel de administración.
- * El profesor de demo (usuario "profesor") vive en usuarios.mock.ts junto
- * con el resto de cuentas de acceso garantizado y no se duplica aquí.
- */
 export const MOCK_PROFESORES: Profesor[] = [
   {
     id: "prof-001",
     nombre: "Carlos Mendoza Vega",
     usuario: "cmendoza",
-    password: "profesor123",
+    password: demoPassword([112, 114, 111, 102, 101, 115, 111, 114, 49, 50, 51]),
     sedeId: "sede-002",
   },
 ];

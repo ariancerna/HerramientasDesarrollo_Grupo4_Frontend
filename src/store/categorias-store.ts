@@ -1,5 +1,7 @@
 import { Categoria } from "@/types";
 import { MOCK_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isCategoria } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-categorias";
 const CATEGORIAS_CHANGE_EVENT = "kickstamp:categorias-change";
@@ -14,32 +16,14 @@ export function obtenerCategoriasIniciales(): Categoria[] {
   return MOCK_CATEGORIAS;
 }
 
-function restaurarCategorias(): Categoria[] {
-  const categorias = [...MOCK_CATEGORIAS];
-  categoriasCache = categorias;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(categorias));
-  return categorias;
-}
-
 // LEER
 export function obtenerCategorias(): Categoria[] {
   if (!isBrowser()) return obtenerCategoriasIniciales();
   if (categoriasCache) return categoriasCache;
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return restaurarCategorias();
-  }
-
-  try {
-    const categorias: unknown = JSON.parse(raw);
-    if (!Array.isArray(categorias)) return restaurarCategorias();
-
-    categoriasCache = categorias as Categoria[];
-    return categoriasCache;
-  } catch {
-    return restaurarCategorias();
-  }
+  const categorias = readJsonList(STORAGE_KEY, MOCK_CATEGORIAS, isCategoria);
+  categoriasCache = categorias;
+  return categoriasCache;
 }
 
 export function suscribirCategorias(onStoreChange: () => void) {
@@ -122,7 +106,7 @@ export function asignarCategoriasAProfesor(profesorId: string, categoriaIds: str
 function guardarCategorias(categorias: Categoria[]) {
   if (isBrowser()) {
     categoriasCache = categorias;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(categorias));
+    writeJson(STORAGE_KEY, categorias);
     window.dispatchEvent(new Event(CATEGORIAS_CHANGE_EVENT));
   }
 }

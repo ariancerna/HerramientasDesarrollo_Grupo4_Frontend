@@ -1,5 +1,7 @@
 import { MOCK_EVALUACIONES } from "@/lib/mock/evaluaciones.mock";
 import { Evaluacion, EvaluacionFormData } from "@/types/evaluacion";
+import { readJsonList, writeJson } from "@/lib/storage";
+import { isEvaluacion } from "@/lib/storage-validators";
 
 const STORAGE_KEY = "kickstamp-evaluaciones";
 
@@ -17,27 +19,14 @@ function crearId() {
 
 function guardarEvaluaciones(evaluaciones: Evaluacion[]) {
   if (esNavegador()) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(evaluaciones));
+    writeJson(STORAGE_KEY, evaluaciones);
   }
 }
 
 export function obtenerEvaluaciones(): Evaluacion[] {
   if (!esNavegador()) return MOCK_EVALUACIONES;
 
-  const almacenadas = localStorage.getItem(STORAGE_KEY);
-  if (!almacenadas) {
-    guardarEvaluaciones(MOCK_EVALUACIONES);
-    return MOCK_EVALUACIONES;
-  }
-
-  try {
-    const evaluaciones: unknown = JSON.parse(almacenadas);
-    return Array.isArray(evaluaciones)
-      ? (evaluaciones as Evaluacion[])
-      : MOCK_EVALUACIONES;
-  } catch {
-    return MOCK_EVALUACIONES;
-  }
+  return readJsonList(STORAGE_KEY, MOCK_EVALUACIONES, isEvaluacion);
 }
 
 export function obtenerEvaluacionesPorAlumno(alumnoId: string): Evaluacion[] {
