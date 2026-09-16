@@ -1,43 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import type { ComponentType } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
 import { obtenerProximasActividadesTodas } from "@/store/calendario-store";
-
-interface SeccionAdmin {
-  titulo: string;
-  descripcion: string;
-  href: string;
-  etiqueta: string;
-  icono: ComponentType;
-}
-
-const SECCIONES: SeccionAdmin[] = [
-  { titulo: "Alumnos", descripcion: "Administra el padrón, datos y estado de cada jugador.", href: "/dashboard/admin/alumnos", etiqueta: "Gestionar alumnos", icono: StudentsIcon },
-  { titulo: "Profesores", descripcion: "Da de alta profesores y asígnalos a una sede.", href: "/dashboard/admin/profesores", etiqueta: "Gestionar profesores", icono: TeacherIcon },
-  { titulo: "Asistencia", descripcion: "Revisa los registros y corrige datos cuando sea necesario.", href: "/dashboard/admin/asistencia", etiqueta: "Ver asistencia", icono: AttendanceIcon },
-  { titulo: "Pagos", descripcion: "Registra pagos y revisa las deudas pendientes de los alumnos.", href: "/dashboard/admin/pagos", etiqueta: "Gestionar pagos", icono: PaymentsIcon },
-  { titulo: "Calendario", descripcion: "Programa entrenamientos especiales, torneos y eventos del club.", href: "/dashboard/admin/calendario", etiqueta: "Ver calendario", icono: CalendarIcon },
-  { titulo: "Categorías", descripcion: "Organiza los grupos deportivos del club.", href: "/dashboard/admin/categorias", etiqueta: "Ver categorías", icono: TagIcon },
-  { titulo: "Sedes", descripcion: "Administra los locales donde opera el club.", href: "/dashboard/admin/sedes", etiqueta: "Gestionar sedes", icono: LocationIcon },
-  { titulo: "Reportes", descripcion: "Consulta los indicadores de participación del club.", href: "/dashboard/admin/reportes", etiqueta: "Ver reportes", icono: ChartIcon },
-  { titulo: "Configuración", descripcion: "Gestiona los ajustes generales del sistema.", href: "/dashboard/admin/configuracion", etiqueta: "Abrir configuración", icono: GearIcon },
-];
+import { obtenerPagos } from "@/store/pagos-store";
 
 export default function AdminDashboardPage() {
   const { session } = useAuth();
   const primerNombre = session?.usuario.nombre.split(" ")[0] ?? "Administrador";
   const alumnos = obtenerAlumnos();
   const asistencias = obtenerRegistrosAsistencia();
+  const pagos = obtenerPagos();
   const activos = alumnos.filter((alumno) => alumno.estado === "activo").length;
-  const pendientes = alumnos.length - activos;
-  const proximaActividad = obtenerProximasActividadesTodas(new Date(), 1)[0];
-  const recientes = asistencias.slice(0, 3);
+  const inactivos = alumnos.length - activos;
+  const pagosPendientes = pagos.filter((pago) => pago.estado === "pendiente");
+  const pagosVencidos = pagos.filter((pago) => pago.estado === "vencido");
+  const hoy = fechaLocal(new Date());
+  const asistenciasHoy = asistencias.filter((registro) => fechaLocal(new Date(registro.fechaHora)) === hoy).length;
+  const proximasActividades = obtenerProximasActividadesTodas(new Date(), 4);
+  const proximaActividad = proximasActividades[0];
+  const recientes = asistencias.slice(0, 5);
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
@@ -52,7 +38,7 @@ export default function AdminDashboardPage() {
           <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:divide-x-0">
             <Metric label="Alumnos registrados" value={alumnos.length} />
             <Metric label="Alumnos activos" value={activos} />
-            <Metric label="Asistencias hoy" value={asistencias.length} />
+            <Metric label="Asistencias hoy" value={asistenciasHoy} />
           </dl>
         </section>
 
@@ -61,57 +47,82 @@ export default function AdminDashboardPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-green dark:text-brand-lime-light">Requiere atención</p>
-                <h2 className="mt-2 text-xl font-bold text-navy dark:text-white">{pendientes} alumno(s) con pago pendiente</h2>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Revisa el estado de mensualidad y registra los pagos recibidos.</p>
+                <h2 className="mt-2 text-xl font-bold text-navy dark:text-white">{pagosPendientes.length + pagosVencidos.length} mensualidad(es) por regularizar</h2>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Revisa los pagos pendientes y vencidos antes del siguiente entrenamiento.</p>
               </div>
               <Link href="/dashboard/admin/pagos" className="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white hover:bg-brand-green-dark">Gestionar pagos</Link>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-200 pt-5 dark:border-slate-800">
-              <MiniMetric label="Asistencia registrada" value={asistencias.length} />
+              <MiniMetric label="Pagos vencidos" value={pagosVencidos.length} />
               <MiniMetric label="Próxima actividad" value={proximaActividad ? formatearFecha(proximaActividad.fecha) : "Sin agenda"} />
             </div>
           </article>
           <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold text-navy dark:text-white">Actividad reciente</h2>
-              <Link href="/dashboard/admin/asistencia" className="text-xs font-bold text-brand-green dark:text-brand-lime-light">Ver todo →</Link>
-            </div>
-            <div className="mt-4 space-y-3">
-              {recientes.length ? recientes.map((registro) => (
-                <div key={registro.id} className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{registro.estudiante}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{registro.categoria}</p>
-                  </div>
-                  <span className="whitespace-nowrap text-xs text-slate-400">{new Date(registro.fechaHora).toLocaleDateString("es-PE")}</span>
-                </div>
-              )) : <p className="text-sm text-slate-500">Sin registros recientes.</p>}
+            <h2 className="font-bold text-navy dark:text-white">Estado operativo</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Resumen de situaciones que requieren seguimiento.</p>
+            <div className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
+              <StatusRow label="Pagos vencidos" value={pagosVencidos.length} tone="danger" />
+              <StatusRow label="Pagos pendientes" value={pagosPendientes.length} tone="warning" />
+              <StatusRow label="Alumnos inactivos" value={inactivos} tone="neutral" />
             </div>
           </article>
         </section>
 
-        <section className="mt-9" aria-labelledby="admin-actions-title">
-          <div className="mb-4">
-            <h2 id="admin-actions-title" className="text-xl font-bold text-navy dark:text-white">Gestión del club</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Selecciona el área que deseas administrar.</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {SECCIONES.slice(0, 6).map((seccion) => {
-              const Icon = seccion.icono;
-              return (
-                <Link key={seccion.href} href={seccion.href} className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60">
-                  <div className="flex items-start gap-4">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"><Icon /></span>
-                    <div>
-                      <h3 className="text-lg font-bold text-navy dark:text-white">{seccion.titulo}</h3>
-                      <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">{seccion.descripcion}</p>
+        <section className="mt-9 grid gap-4 xl:grid-cols-[1.35fr_0.9fr]" aria-label="Información operativa">
+          <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <PanelHeader title="Últimos registros" description="Asistencias registradas recientemente" href="/dashboard/admin/asistencia" linkLabel="Ver todos" />
+            {recientes.length ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
+                    <tr>
+                      <th className="px-5 py-3 font-semibold">Alumno</th>
+                      <th className="px-5 py-3 font-semibold">Registro</th>
+                      <th className="px-5 py-3 font-semibold">Fecha y hora</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {recientes.map((registro) => (
+                      <tr key={registro.id} className="text-sm">
+                        <td className="px-5 py-4">
+                          <p className="font-semibold text-navy dark:text-slate-100">{registro.estudiante}</p>
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{registro.categoria}</p>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="inline-flex rounded-full bg-brand-green-soft px-2.5 py-1 text-xs font-bold text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
+                            {registro.metodo === "ESCANEO" ? "Escaneo" : "Manual"}
+                          </span>
+                        </td>
+                        <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-500 dark:text-slate-400">{formatearFechaHora(registro.fechaHora)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptyState message="Todavía no hay asistencias registradas." />
+            )}
+          </article>
+
+          <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <PanelHeader title="Próximos eventos" description="Agenda general del club" href="/dashboard/admin/calendario" linkLabel="Ver calendario" />
+            {proximasActividades.length ? (
+              <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                {proximasActividades.map((actividad) => (
+                  <div key={actividad.id} className="flex gap-4 py-4">
+                    <DateBadge date={actividad.fecha} />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.titulo}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}</p>
+                      <p className="mt-1 truncate text-xs text-slate-400">{actividad.ubicacion}</p>
                     </div>
                   </div>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-brand-lime-light">{seccion.etiqueta}<ArrowIcon /></span>
-                </Link>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="No hay eventos programados." />
+            )}
+          </article>
         </section>
       </div>
     </RoleGuard>
@@ -129,15 +140,21 @@ function Metric({ label, value }: { label: string; value: number }) {
 }
 function MiniMetric({ label, value }: { label: string; value: string | number }) { return <div><p className="text-xs text-slate-500 dark:text-slate-400">{label}</p><p className="mt-1 text-sm font-bold text-navy dark:text-white">{value}</p></div>; }
 function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
+function fechaLocal(fecha: Date) { return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}-${String(fecha.getDate()).padStart(2, "0")}`; }
+function formatearFechaHora(fechaHora: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(fechaHora)); }
 
-function IconFrame({ children }: { children: React.ReactNode }) { return <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">{children}</svg>; }
-function StudentsIcon() { return <IconFrame><circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
-function AttendanceIcon() { return <IconFrame><path d="M7 3v3M17 3v3M4 9h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.8" /><path d="m8.5 15 2 2 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></IconFrame>; }
-function PaymentsIcon() { return <IconFrame><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M3 9h18M7 14h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
-function TagIcon() { return <IconFrame><path d="M11.5 3H5a2 2 0 0 0-2 2v6.5a2 2 0 0 0 .59 1.41l8.5 8.5a2 2 0 0 0 2.82 0l6.5-6.5a2 2 0 0 0 0-2.82l-8.5-8.5A2 2 0 0 0 11.5 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><circle cx="8" cy="8" r="1.5" fill="currentColor" /></IconFrame>; }
-function ChartIcon() { return <IconFrame><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
-function GearIcon() { return <IconFrame><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
-function TeacherIcon() { return <IconFrame><circle cx="12" cy="7" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><path d="M9 20h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></IconFrame>; }
-function LocationIcon() { return <IconFrame><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" strokeWidth="1.8" /></IconFrame>; }
-function ArrowIcon() { return <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
-function CalendarIcon() { return <IconFrame><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><circle cx="8" cy="14" r="1.2" fill="currentColor" /><circle cx="12" cy="14" r="1.2" fill="currentColor" /><circle cx="16" cy="14" r="1.2" fill="currentColor" /></IconFrame>; }
+function StatusRow({ label, value, tone }: { label: string; value: number; tone: "danger" | "warning" | "neutral" }) {
+  const tones = { danger: "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300", warning: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300", neutral: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" };
+  return <div className="flex items-center justify-between py-3 text-sm"><span className="text-slate-600 dark:text-slate-300">{label}</span><span className={`min-w-8 rounded-full px-2.5 py-1 text-center text-xs font-bold ${tones[tone]}`}>{value}</span></div>;
+}
+
+function PanelHeader({ title, description, href, linkLabel }: { title: string; description: string; href: string; linkLabel: string }) {
+  return <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 dark:border-slate-800"><div><h2 className="font-bold text-navy dark:text-white">{title}</h2><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p></div><Link href={href} className="whitespace-nowrap text-xs font-bold text-brand-green dark:text-brand-lime-light">{linkLabel} →</Link></div>;
+}
+
+function DateBadge({ date }: { date: string }) {
+  const fecha = new Date(`${date}T12:00:00`);
+  return <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-brand-green-soft text-center dark:bg-brand-green/15"><div><span className="block text-lg font-black leading-none text-brand-green dark:text-brand-lime-light">{fecha.getDate()}</span><span className="mt-1 block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">{new Intl.DateTimeFormat("es-PE", { month: "short" }).format(fecha).replace(".", "")}</span></div></div>;
+}
+
+function EmptyState({ message }: { message: string }) { return <p className="px-5 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{message}</p>; }
