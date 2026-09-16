@@ -7,30 +7,26 @@ import { useAuth } from "@/hooks/use-auth";
 import { obtenerCategorias } from "@/store/categorias-store";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerProximasActividades } from "@/store/calendario-store";
-
-const ACCESOS = [
-  {
-    titulo: "Registrar asistencia",
-    descripcion: "Escanea el DNI del alumno o realiza un registro manual.",
-    href: "/dashboard/profesor/asistencia",
-    etiqueta: "Ir al registro",
-    icono: AttendanceIcon,
-  },
-  {
-    titulo: "Consultar alumnos",
-    descripcion: "Revisa el padrón y encuentra alumnos por nombre, DNI o categoría.",
-    href: "/dashboard/profesor/alumnos",
-    etiqueta: "Ver alumnos",
-    icono: StudentsIcon,
-  },
-];
+import { obtenerEvaluacionesPorProfesor } from "@/store/evaluaciones-store";
 
 export default function ProfesorDashboardPage() {
   const { session } = useAuth();
   const primerNombre = session?.usuario.nombre.split(" ")[0] ?? "Profesor";
+  const profesorId = session?.usuario.id ?? "";
   const categorias = obtenerCategorias().filter((categoria) => categoria.profesorIds?.includes(session?.usuario.id ?? ""));
   const alumnos = obtenerAlumnos().filter((alumno) => categorias.some((categoria) => categoria.nombre === alumno.categoria));
-  const proximaSesion = categorias.flatMap((categoria) => obtenerProximasActividades(categoria.nombre, new Date(), 1)).sort((a, b) => `${a.fecha}${a.horaInicio}`.localeCompare(`${b.fecha}${b.horaInicio}`))[0];
+  const proximasSesiones = categorias
+    .flatMap((categoria) => obtenerProximasActividades(categoria.nombre, new Date(), 4))
+    .filter((actividad, index, lista) => lista.findIndex((item) => item.id === actividad.id) === index)
+    .sort((a, b) => `${a.fecha}${a.horaInicio}`.localeCompare(`${b.fecha}${b.horaInicio}`))
+    .slice(0, 4);
+  const proximaSesion = proximasSesiones[0];
+  const evaluaciones = profesorId ? obtenerEvaluacionesPorProfesor(profesorId) : [];
+  const ultimaEvaluacionPorAlumno = new Map(evaluaciones.map((evaluacion) => [evaluacion.alumnoId, evaluacion]));
+  const seguimiento = [...alumnos]
+    .sort((a, b) => Number(ultimaEvaluacionPorAlumno.has(a.id)) - Number(ultimaEvaluacionPorAlumno.has(b.id)))
+    .slice(0, 5);
+  const alumnosSinEvaluacion = alumnos.filter((alumno) => !ultimaEvaluacionPorAlumno.has(alumno.id)).length;
 
   return (
     <RoleGuard allowedRoles={["profesor"]}>
@@ -63,50 +59,58 @@ export default function ProfesorDashboardPage() {
               </div>
             </article>
             <MetricCard label="Alumnos asignados" value={alumnos.length} detail={`${categorias.length} categorías activas`} href="/dashboard/profesor/alumnos" />
-            <MetricCard label="Pendiente hoy" value="2" detail="Evaluaciones por registrar" href="/dashboard/profesor/evaluaciones" />
+            <MetricCard label="Seguimiento pendiente" value={alumnosSinEvaluacion} detail="Alumnos sin evaluación" href="/dashboard/profesor/evaluaciones" />
           </section>
 
-          <section className="mt-9" aria-labelledby="accesos-title">
-            <div className="mb-4">
-              <h2 id="accesos-title" className="text-xl font-bold text-navy dark:text-white">
-                Herramientas de trabajo
-              </h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Selecciona la tarea que deseas realizar.
-              </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {ACCESOS.map((acceso) => {
-                const Icon = acceso.icono;
-
-                return (
-                  <Link
-                    key={acceso.href}
-                    href={acceso.href}
-                    className="group flex min-h-44 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60"
-                  >
-                    <div className="flex items-start gap-4">
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
-                        <Icon />
-                      </span>
-                      <div>
-                        <h3 className="text-lg font-bold text-navy dark:text-white">
-                          {acceso.titulo}
-                        </h3>
-                        <p className="mt-1.5 text-sm leading-6 text-slate-500 dark:text-slate-400">
-                          {acceso.descripcion}
-                        </p>
+          <section className="mt-9 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]" aria-label="Agenda y seguimiento">
+            <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <PanelHeader title="Agenda de trabajo" description="Tus próximas sesiones y eventos" href="/dashboard/profesor/horario" linkLabel="Ver horario" />
+              {proximasSesiones.length ? (
+                <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                  {proximasSesiones.map((actividad) => (
+                    <div key={actividad.id} className="flex items-center gap-4 py-4">
+                      <DateBadge date={actividad.fecha} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.categoria ?? actividad.titulo}</p>
+                          <span className="rounded-full bg-brand-green-soft px-2 py-0.5 text-[10px] font-bold uppercase text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">{actividad.tipo}</span>
+                        </div>
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""} · {actividad.ubicacion}</p>
                       </div>
+                      <Link href="/dashboard/profesor/asistencia" aria-label={`Registrar asistencia de ${actividad.categoria ?? actividad.titulo}`} className="hidden rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-brand-green transition hover:border-brand-lime sm:block dark:border-slate-700 dark:text-brand-lime-light">Registrar</Link>
                     </div>
-                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-brand-lime-light">
-                      {acceso.etiqueta}
-                      <ArrowIcon />
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="No tienes sesiones programadas." />
+              )}
+            </article>
+
+            <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <PanelHeader title="Seguimiento de alumnos" description="Estado de sus evaluaciones" href="/dashboard/profesor/evaluaciones" linkLabel="Ver evaluaciones" />
+              {seguimiento.length ? (
+                <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                  {seguimiento.map((alumno) => {
+                    const evaluacion = ultimaEvaluacionPorAlumno.get(alumno.id);
+                    return (
+                      <div key={alumno.id} className="flex items-center justify-between gap-4 py-4">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{alumno.nombres} {alumno.apellidos}</p>
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{alumno.categoria}</p>
+                        </div>
+                        {evaluacion ? (
+                          <span className="whitespace-nowrap rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">Evaluado {formatearFechaCorta(evaluacion.fecha)}</span>
+                        ) : (
+                          <span className="whitespace-nowrap rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">Por evaluar</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <EmptyState message="No hay alumnos asignados." />
+              )}
+            </article>
           </section>
       </div>
     </RoleGuard>
@@ -119,16 +123,6 @@ function AttendanceIcon() {
       <path d="M7 3v3M17 3v3M4 9h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       <rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.8" />
       <path d="m8.5 15 2 2 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function StudentsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M15 6.2a3 3 0 0 1 0 5.6M16.5 14.4c2.2.6 3.5 2.1 4 4.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -153,3 +147,15 @@ function MetricCard({ label, value, detail, href }: { label: string; value: stri
 }
 
 function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
+function formatearFechaCorta(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
+
+function PanelHeader({ title, description, href, linkLabel }: { title: string; description: string; href: string; linkLabel: string }) {
+  return <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 dark:border-slate-800"><div><h2 className="font-bold text-navy dark:text-white">{title}</h2><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p></div><Link href={href} className="whitespace-nowrap text-xs font-bold text-brand-green dark:text-brand-lime-light">{linkLabel} →</Link></div>;
+}
+
+function DateBadge({ date }: { date: string }) {
+  const fecha = new Date(`${date}T12:00:00`);
+  return <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-brand-green-soft text-center dark:bg-brand-green/15"><div><span className="block text-lg font-black leading-none text-brand-green dark:text-brand-lime-light">{fecha.getDate()}</span><span className="mt-1 block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">{new Intl.DateTimeFormat("es-PE", { month: "short" }).format(fecha).replace(".", "")}</span></div></div>;
+}
+
+function EmptyState({ message }: { message: string }) { return <p className="px-5 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{message}</p>; }
