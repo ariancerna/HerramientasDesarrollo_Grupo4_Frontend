@@ -6,7 +6,8 @@ import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-ba
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
-import { obtenerMensualidadActual } from "@/store/pagos-store";
+import { obtenerAnuncios } from "@/store/anuncios-store";
+import { obtenerMensualidadActual, obtenerPagosPorEstudiante } from "@/store/pagos-store";
 import { obtenerProximasActividades } from "@/store/calendario-store";
 
 export default function AlumnoDashboardPage() {
@@ -16,9 +17,21 @@ export default function AlumnoDashboardPage() {
   const alumno = estudianteId ? obtenerAlumnos().find((item) => item.id === estudianteId) : undefined;
   const asistencias = estudianteId ? obtenerAsistenciasPorEstudiante(estudianteId) : [];
   const mensualidad = estudianteId ? obtenerMensualidadActual(estudianteId) : undefined;
+  const pagos = estudianteId ? obtenerPagosPorEstudiante(estudianteId) : [];
   const actividades = alumno ? obtenerProximasActividades(alumno.categoria, new Date(), 3) : [];
   const proximaActividad = actividades[0];
-  const asistenciaPorcentaje = asistencias.length ? Math.min(100, asistencias.length * 10) : 0;
+  const periodoActual = fechaPeriodo(new Date());
+  const asistenciasDelMes = asistencias.filter((registro) => fechaPeriodo(new Date(registro.fechaHora)) === periodoActual).length;
+  const anuncios = estudianteId
+    ? obtenerAnuncios()
+        .filter((anuncio) => anuncio.estado === "enviado" && anuncio.destinatarios.includes(estudianteId))
+        .sort((a, b) => b.fechaCreacion.localeCompare(a.fechaCreacion))
+        .slice(0, 3)
+    : [];
+  const movimientos = [
+    ...asistencias.map((registro) => ({ id: registro.id, titulo: "Asistencia registrada", detalle: registro.metodo === "ESCANEO" ? "Registro por escaneo" : "Registro manual", fecha: registro.fechaHora, tipo: "asistencia" as const })),
+    ...pagos.filter((pago) => pago.estado === "pagado" && pago.fechaPago).map((pago) => ({ id: pago.id, titulo: "Pago registrado", detalle: pago.concepto, fecha: `${pago.fechaPago}T12:00:00`, tipo: "pago" as const })),
+  ].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()).slice(0, 4);
 
   return (
     <RoleGuard allowedRoles={["alumno"]}>
@@ -86,13 +99,9 @@ export default function AlumnoDashboardPage() {
           </article>
 
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Asistencia</p>
-            <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{asistenciaPorcentaje}%</p>
-            {/* 🎨 CAMBIO: bg-[#6FCF3A] → bg-brand-lime */}
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-              <div className="h-full rounded-full bg-brand-lime" style={{ width: `${asistenciaPorcentaje}%` }} />
-            </div>
-            {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Asistencias este mes</p>
+            <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{asistenciasDelMes}</p>
+            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{asistencias.length} registros en tu historial</p>
             <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-lime-light">
               Ver historial →
             </Link>
@@ -113,48 +122,71 @@ export default function AlumnoDashboardPage() {
           </article>
         </section>
 
-        <section className="mt-9">
-          <div className="mb-4 flex items-end justify-between gap-4">
-            <div>
-              {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
-              <h2 className="text-xl font-bold text-navy dark:text-white">Tu espacio</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestiona tu información y revisa tus avances.</p>
-            </div>
-            {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-            <Link href="/dashboard/alumno/calendario" className="hidden text-sm font-bold text-brand-green dark:text-brand-lime-light sm:block">
-              Agenda completa →
-            </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <ModuloCard
-              href="/dashboard/alumno/perfil"
-              titulo="Mi perfil"
-              descripcion="Actualiza tus datos personales y consulta tu categoría asignada."
-              enlace="Ver mi perfil"
-              icono={<ProfileIcon />}
-            />
-            <ModuloCard
-              href="/dashboard/alumno/historial"
-              titulo="Mi historial"
-              descripcion="Revisa y filtra las fechas y métodos de tus asistencias."
-              enlace="Consultar historial"
-              icono={<HistoryIcon />}
-            />
-            <ModuloCard
-              href="/dashboard/alumno/pagos"
-              titulo="Mis pagos"
-              descripcion="Consulta el estado actual y el historial de tus mensualidades."
-              enlace="Ver mis pagos"
-              detalle={mensualidad?.estado === "pagado" ? "Al día" : mensualidad?.estado === "pendiente" ? "Pago pendiente" : mensualidad ? "Pago vencido" : undefined}
-              icono={<PaymentsIcon />}
-            />
-            <ModuloCard
-              href="/dashboard/alumno/calendario"
-              titulo="Calendario"
-              descripcion="Mantente al tanto de entrenamientos y eventos del club."
-              enlace="Ver calendario"
-              icono={<CalendarIcon />}
-            />
+        <section className="mt-9 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]" aria-label="Agenda y novedades personales">
+          <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <PanelHeader title="Próximas actividades" description="Entrenamientos y eventos de tu categoría" href="/dashboard/alumno/calendario" linkLabel="Ver calendario" />
+            {actividades.length ? (
+              <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                {actividades.map((actividad) => (
+                  <div key={actividad.id} className="flex gap-4 py-4">
+                    <DateBadge date={actividad.fecha} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.titulo}</p>
+                        <span className="rounded-full bg-brand-green-soft px-2 py-0.5 text-[10px] font-bold uppercase text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">{actividad.tipo}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}</p>
+                      <p className="mt-1 truncate text-xs text-slate-400">{actividad.ubicacion}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="No tienes actividades programadas." />
+            )}
+          </article>
+
+          <div className="grid gap-4">
+            <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <PanelHeader title="Avisos para ti" description="Comunicados de tu profesor" />
+              {anuncios.length ? (
+                <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                  {anuncios.map((anuncio) => (
+                    <div key={anuncio.id} className="py-4">
+                      <div className="flex items-start gap-3">
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-lime" aria-hidden="true" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-navy dark:text-slate-100">{anuncio.titulo}</p>
+                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{anuncio.mensaje}</p>
+                          <p className="mt-2 text-[11px] font-medium text-slate-400">{formatearFechaHora(anuncio.fechaCreacion)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="No tienes avisos nuevos." />
+              )}
+            </article>
+
+            <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+              <PanelHeader title="Últimos movimientos" description="Asistencias y pagos registrados" />
+              {movimientos.length ? (
+                <div className="divide-y divide-slate-100 px-5 dark:divide-slate-800">
+                  {movimientos.map((movimiento) => (
+                    <div key={`${movimiento.tipo}-${movimiento.id}`} className="flex items-center justify-between gap-4 py-3.5">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{movimiento.titulo}</p>
+                        <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{movimiento.detalle}</p>
+                      </div>
+                      <span className="whitespace-nowrap text-[11px] font-medium text-slate-400">{formatearFechaHora(movimiento.fecha)}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="Todavía no hay movimientos." />
+              )}
+            </article>
           </div>
         </section>
       </div>
@@ -162,80 +194,26 @@ export default function AlumnoDashboardPage() {
   );
 }
 
-function ModuloCard({ href, titulo, descripcion, enlace, detalle, icono }: { href: string; titulo: string; descripcion: string; enlace: string; detalle?: string; icono: React.ReactNode }) {
-  return (
-    // 🎨 CAMBIO: hover:border-[#86c966] → hover:border-brand-lime
-    <Link
-      href={href}
-      className="group flex min-h-52 flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-lime hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-green/60"
-    >
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          {/* 🎨 CAMBIO: bg-[#edf8e8] text-[#16794C] → bg-brand-green-soft text-brand-green */}
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
-            {icono}
-          </span>
-          {detalle && (
-            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-              {detalle}
-            </span>
-          )}
-        </div>
-        {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
-        <h2 className="mt-5 text-xl font-bold text-navy dark:text-white">{titulo}</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{descripcion}</p>
-      </div>
-      {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-      <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-green dark:text-brand-lime-light">
-        {enlace}
-        <ArrowIcon />
-      </span>
-    </Link>
-  );
-}
-
-function HistoryIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path d="M3 3v5h5M3.05 13a9 9 0 1 0 2.13-7.14L3 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function ProfileIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M5 20c.7-3.8 3-6 7-6s6.3 2.2 7 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-function PaymentsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M3 9h18M7 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-function CalendarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M8 3v4M16 3v4M4 10h16M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true">
-      <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 function formatearActividad(fecha: string, hora: string) {
   return `${new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`))} · ${hora}`;
 }
 function formatearFechaCorta(fecha: string) {
   return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`));
 }
+function fechaPeriodo(fecha: Date) {
+  return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}`;
+}
+function formatearFechaHora(fecha: string) {
+  return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(fecha));
+}
+
+function PanelHeader({ title, description, href, linkLabel }: { title: string; description: string; href?: string; linkLabel?: string }) {
+  return <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 dark:border-slate-800"><div><h2 className="font-bold text-navy dark:text-white">{title}</h2><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p></div>{href && linkLabel ? <Link href={href} className="whitespace-nowrap text-xs font-bold text-brand-green dark:text-brand-lime-light">{linkLabel} →</Link> : null}</div>;
+}
+
+function DateBadge({ date }: { date: string }) {
+  const fecha = new Date(`${date}T12:00:00`);
+  return <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-brand-green-soft text-center dark:bg-brand-green/15"><div><span className="block text-lg font-black leading-none text-brand-green dark:text-brand-lime-light">{fecha.getDate()}</span><span className="mt-1 block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">{new Intl.DateTimeFormat("es-PE", { month: "short" }).format(fecha).replace(".", "")}</span></div></div>;
+}
+
+function EmptyState({ message }: { message: string }) { return <p className="px-5 py-8 text-center text-sm text-slate-500 dark:text-slate-400">{message}</p>; }
