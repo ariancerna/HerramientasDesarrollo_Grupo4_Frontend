@@ -112,8 +112,8 @@ export default function AdminDashboardPage() {
                   <div key={actividad.id} className="flex gap-4 py-4">
                     <DateBadge date={actividad.fecha} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.titulo}</p>
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}</p>
+                      <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.tipo === "entrenamiento" ? actividad.categoria ?? actividad.titulo : actividad.titulo}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400"><span className="capitalize">{actividad.tipo}</span> · {actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}</p>
                       <p className="mt-1 truncate text-xs text-slate-400">{actividad.ubicacion}</p>
                     </div>
                   </div>
