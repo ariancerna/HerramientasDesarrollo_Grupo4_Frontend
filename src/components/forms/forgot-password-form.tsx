@@ -1,3 +1,4 @@
+// src/components/forms/forgot-password-form.tsx
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
@@ -18,16 +19,12 @@ export function ForgotPasswordForm() {
   const [verificando, setVerificando] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  function handleCorreoChange(
-    event: ChangeEvent<HTMLInputElement>
-  ) {
+  function handleCorreoChange(event: ChangeEvent<HTMLInputElement>) {
     setCorreo(event.target.value);
     setError("");
   }
 
-  function handleCodigoChange(
-    event: ChangeEvent<HTMLInputElement>
-  ) {
+  function handleCodigoChange(event: ChangeEvent<HTMLInputElement>) {
     const value = event.target.value.replace(/\D/g, "");
 
     if (value.length <= 6) {
@@ -93,24 +90,23 @@ export function ForgotPasswordForm() {
   if (verificado) {
     return (
       <div className="text-center">
-
         {/* Icono */}
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#dcfce7] text-[#16a34a]">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-chart-win/10 text-chart-win">
           <CheckIcon />
         </div>
 
-        <h3 className="mt-5 text-lg font-extrabold text-[#111827]">
+        <h3 className="mt-5 text-lg font-extrabold text-ink">
           Código verificado
         </h3>
 
-        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#64748b]">
+        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-body">
           El código fue verificado correctamente. Ya puedes continuar con
           la recuperación de tu contraseña.
         </p>
 
         <button
           type="button"
-          className="mt-6 h-14 w-full rounded-xl bg-[#00a651] text-[15px] font-bold text-white shadow-[0_4px_16px_rgba(0,143,60,0.28)] transition hover:bg-[#008f47]"
+          className="mt-6 h-12 w-full rounded-xl bg-primary text-[15px] font-bold text-white shadow-[0_5px_18px_rgba(30,58,138,0.28)] transition hover:bg-primary-hover"
         >
           Continuar
         </button>
@@ -119,23 +115,18 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      noValidate
-      className="space-y-5"
-    >
-
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
       {/* CORREO */}
       <div>
         <label
           htmlFor="correo"
-          className="mb-2 block text-sm font-semibold text-[#334155]"
+          className="mb-1.5 block text-sm font-semibold text-ink"
         >
           Correo electrónico
         </label>
 
         <div className="relative">
-          <MailIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#94a3b8]" />
+          <MailIcon className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
 
           <input
             id="correo"
@@ -145,44 +136,36 @@ export function ForgotPasswordForm() {
             value={correo}
             onChange={handleCorreoChange}
             placeholder="tucorreo@ejemplo.com"
-            className={`h-14 w-full rounded-xl border bg-[#f8fafc] pl-12 pr-4 text-[15px] text-[#111827] outline-none transition placeholder:text-[#94a3b8] focus:border-[#00a651] focus:bg-white focus:ring-4 focus:ring-[#00a651]/10 ${
+            className={`h-12 w-full rounded-xl border bg-bg-auth pl-11 pr-4 text-[14px] text-ink outline-none transition placeholder:text-muted focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary-soft ${
               error
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
-                : "border-[#e2e8f0]"
+                ? "border-danger focus:border-danger focus:ring-danger-light"
+                : "border-border"
             }`}
           />
         </div>
 
         {error && (
-          <p className="mt-1.5 text-xs font-medium text-red-600">
-            {error}
-          </p>
+          <p className="mt-1.5 text-xs font-medium text-danger">{error}</p>
         )}
       </div>
 
       {/* CÓDIGO */}
       {codigoEnviado && (
-        <div className="rounded-2xl border border-[#dcfce7] bg-[#f0fdf4] p-4">
-
+        <div className="rounded-2xl border border-border bg-primary-soft/40 p-4">
           <div className="mb-4">
-            <label
-              htmlFor="codigo"
-              className="block text-sm font-bold text-[#166534]"
-            >
+            <label htmlFor="codigo" className="block text-sm font-bold text-primary">
               Código de verificación
             </label>
 
-            <p className="mt-1 text-xs leading-5 text-[#64748b]">
+            <p className="mt-1 text-xs leading-5 text-body">
               Hemos enviado un código de 6 dígitos a:
             </p>
 
-            <p className="mt-1 text-sm font-bold text-[#111827]">
-              {correo}
-            </p>
+            <p className="mt-1 text-sm font-bold text-ink">{correo}</p>
           </div>
 
           <div className="relative">
-            <KeyIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#94a3b8]" />
+            <KeyIcon className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
 
             <input
               id="codigo"
@@ -194,16 +177,14 @@ export function ForgotPasswordForm() {
               value={codigo}
               onChange={handleCodigoChange}
               placeholder="Ingresa el código"
-              className={`h-14 w-full rounded-xl border bg-white pl-12 pr-4 text-center text-[20px] font-bold tracking-[0.35em] text-[#111827] outline-none transition placeholder:text-[#94a3b8] placeholder:text-sm placeholder:tracking-normal focus:border-[#00a651] focus:ring-4 focus:ring-[#00a651]/10 ${
-                codigoError
-                  ? "border-red-500"
-                  : "border-[#d1d5db]"
+              className={`h-14 w-full rounded-xl border bg-white pl-11 pr-4 text-center text-[20px] font-bold tracking-[0.35em] text-ink outline-none transition placeholder:text-sm placeholder:tracking-normal placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary-soft ${
+                codigoError ? "border-danger" : "border-border"
               }`}
             />
           </div>
 
           {codigoError && (
-            <p className="mt-1.5 text-xs font-medium text-red-600">
+            <p className="mt-1.5 text-xs font-medium text-danger">
               {codigoError}
             </p>
           )}
@@ -214,7 +195,7 @@ export function ForgotPasswordForm() {
               type="button"
               onClick={handleReenviar}
               disabled={cooldown > 0 || loading}
-              className="text-sm font-bold text-[#15803d] transition hover:text-[#0f6b32] disabled:cursor-not-allowed disabled:text-[#94a3b8]"
+              className="text-sm font-bold text-primary transition hover:opacity-80 disabled:cursor-not-allowed disabled:text-muted"
             >
               {cooldown > 0
                 ? `Reenviar código en ${cooldown}s`
@@ -230,22 +211,16 @@ export function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={loading || verificando}
-        className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#00a651] text-[15px] font-bold text-white shadow-[0_4px_16px_rgba(0,143,60,0.28)] transition hover:bg-[#008f47] disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-primary text-[15px] font-bold text-white shadow-[0_5px_18px_rgba(30,58,138,0.28)] transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading || verificando ? (
           <>
             <SpinnerIcon />
-
-            {verificando
-              ? "Verificando código..."
-              : "Enviando código..."}
+            {verificando ? "Verificando código..." : "Enviando código..."}
           </>
         ) : (
           <>
-            {codigoEnviado
-              ? "Verificar código"
-              : "Enviar código"}
-
+            {codigoEnviado ? "Verificar código" : "Enviar código"}
             <ArrowIcon />
           </>
         )}
@@ -253,7 +228,7 @@ export function ForgotPasswordForm() {
 
       {/* Mensaje */}
       {codigoEnviado && (
-        <p className="text-center text-xs leading-5 text-[#94a3b8]">
+        <p className="text-center text-xs leading-5 text-muted">
           Revisa también tu carpeta de spam o correo no deseado.
         </p>
       )}
@@ -261,32 +236,12 @@ export function ForgotPasswordForm() {
   );
 }
 
-/* =========================
-   ICONOS
-========================= */
+/* ICONOS */
 
-function MailIcon({
-  className,
-}: {
-  className?: string;
-}) {
+function MailIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
       <path
         d="m4 7 8 6 8-6"
         stroke="currentColor"
@@ -298,26 +253,10 @@ function MailIcon({
   );
 }
 
-function KeyIcon({
-  className,
-}: {
-  className?: string;
-}) {
+function KeyIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
-      <circle
-        cx="8"
-        cy="15"
-        r="4"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle cx="8" cy="15" r="4" stroke="currentColor" strokeWidth="1.8" />
       <path
         d="m11 12 8-8m-3 3 2 2m-5 1 2 2"
         stroke="currentColor"
@@ -331,12 +270,7 @@ function KeyIcon({
 
 function CheckIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-7 w-7"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7" aria-hidden="true">
       <path
         d="m5 13 4 4L19 7"
         stroke="currentColor"
@@ -350,12 +284,7 @@ function CheckIcon() {
 
 function ArrowIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-5 w-5"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
       <path
         d="M5 12h14M13 6l6 6-6 6"
         stroke="currentColor"
@@ -369,12 +298,7 @@ function ArrowIcon() {
 
 function SpinnerIcon() {
   return (
-    <svg
-      className="h-5 w-5 animate-spin"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle
         cx="12"
         cy="12"
@@ -383,7 +307,6 @@ function SpinnerIcon() {
         strokeWidth="3"
         className="opacity-25"
       />
-
       <path
         d="M21 12a9 9 0 0 1-9 9"
         stroke="currentColor"
