@@ -1,33 +1,203 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { ROLE_LABELS } from "@/constants/nav-items";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useSettings } from "@/hooks/use-settings";
 
-export default function ConfiguracionScreen() {
-  const { session, logout } = useAuth();
-  const { settings, setTema, setNotificacionesSilenciadas } = useSettings();
-  const router = useRouter();
+type TabId = "club" | "apariencia" | "cuenta" | "seguridad";
 
-  const handleLogout = () => {
-    logout();
-    router.replace(ROUTES.LOGIN);
-  };
+const TABS: { id: TabId; label: string; icon: (className: string) => React.ReactNode }[] = [
+  { id: "club", label: "Club", icon: (c) => <BuildingIcon className={c} /> },
+  { id: "apariencia", label: "Apariencia", icon: (c) => <PaletteIcon className={c} /> },
+  { id: "cuenta", label: "Cuenta", icon: (c) => <UserIcon className={c} /> },
+  { id: "seguridad", label: "Seguridad", icon: (c) => <ShieldIcon className={c} /> },
+];
+
+export default function ConfiguracionScreen() {
+  const [activeTab, setActiveTab] = useState<TabId>("club");
+  const { confirm, dialog } = useConfirm();
 
   return (
     <div className="space-y-6">
       <header>
-        {/* ❌ Eliminado: <p>AJUSTES</p> */}
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
           Configuración
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Personaliza cómo se ve y te avisa el sistema.
+          Ajustes generales del sistema de El Golazo Club.
         </p>
       </header>
 
+      {/* TABS */}
+      <div className="overflow-x-auto border-b border-slate-200 dark:border-slate-800">
+        <nav className="flex min-w-max gap-1" aria-label="Pestañas de configuración">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
+                  isActive
+                    ? "border-brand-green text-brand-green dark:border-brand-lime-light dark:text-brand-lime-light"
+                    : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+              >
+                {tab.icon("h-4 w-4")}
+                {tab.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {activeTab === "club" && <ClubTab confirm={confirm} />}
+      {activeTab === "apariencia" && <AparienciaTab />}
+      {activeTab === "cuenta" && <CuentaTab />}
+      {activeTab === "seguridad" && <SeguridadTab confirm={confirm} />}
+
+      {dialog}
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB: CLUB
+   Estos campos corresponden 1 a 1 a la tabla `configuracion_club`
+   del backend (monto_mensualidad, dia_vencimiento), más datos
+   generales de contacto para mostrar en el sistema.
+============================================================ */
+function ClubTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"] }) {
+  const [form, setForm] = useState({
+    nombre: "El Golazo Club",
+    direccion: "",
+    telefono: "",
+    correo: "",
+    horarioAtencion: "Lunes a Sábado, 3pm - 9pm",
+    montoMensualidad: "180",
+    diaVencimiento: "10",
+  });
+
+  function update<K extends keyof typeof form>(key: K, value: string) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleGuardar() {
+    await confirm({
+      title: "Datos guardados",
+      message:
+        "Cuando el backend esté conectado, esto se guardará en la tabla configuracion_club.",
+      confirmLabel: "Entendido",
+      hideCancel: true,
+    });
+  }
+
+  return (
+    <SettingsCard
+      title="Datos del club"
+      description="Información general y reglas de mensualidad del club."
+    >
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <Field label="Nombre del club">
+          <input
+            value={form.nombre}
+            onChange={(e) => update("nombre", e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Teléfono / WhatsApp">
+          <input
+            value={form.telefono}
+            onChange={(e) => update("telefono", e.target.value)}
+            placeholder="+51 999 999 999"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Correo de contacto">
+          <input
+            type="email"
+            value={form.correo}
+            onChange={(e) => update("correo", e.target.value)}
+            placeholder="contacto@elgolazoclub.pe"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Dirección">
+          <input
+            value={form.direccion}
+            onChange={(e) => update("direccion", e.target.value)}
+            placeholder="Av. Ejemplo 123"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Horario de atención" full>
+          <input
+            value={form.horarioAtencion}
+            onChange={(e) => update("horarioAtencion", e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+      </div>
+
+      <div className="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+          Reglas de mensualidad
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <Field label="Monto de mensualidad (S/)">
+            <input
+              type="number"
+              min={0}
+              value={form.montoMensualidad}
+              onChange={(e) => update("montoMensualidad", e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+
+          <Field label="Día de vencimiento (1-28)">
+            <input
+              type="number"
+              min={1}
+              max={28}
+              value={form.diaVencimiento}
+              onChange={(e) => update("diaVencimiento", e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <button
+          type="button"
+          onClick={handleGuardar}
+          className="rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark"
+        >
+          Guardar cambios
+        </button>
+      </div>
+    </SettingsCard>
+  );
+}
+
+/* ============================================================
+   TAB: APARIENCIA (lo que ya existía, reorganizado)
+============================================================ */
+function AparienciaTab() {
+  const { settings, setTema, setNotificacionesSilenciadas } = useSettings();
+
+  return (
+    <div className="space-y-6">
       <SettingsCard title="Apariencia" description="Elige cómo se ve el panel en este dispositivo.">
         <ToggleRow
           label="Modo oscuro"
@@ -48,18 +218,73 @@ export default function ConfiguracionScreen() {
           onChange={setNotificacionesSilenciadas}
         />
       </SettingsCard>
+    </div>
+  );
+}
 
-      <SettingsCard title="Cuenta" description="Información de la sesión activa.">
+/* ============================================================
+   TAB: CUENTA (lo que ya existía)
+============================================================ */
+function CuentaTab() {
+  const { session } = useAuth();
+
+  return (
+    <SettingsCard title="Cuenta" description="Información de la sesión activa.">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+            {session?.usuario.nombre}
+          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Usuario: {session?.usuario.usuario} ·{" "}
+            {session ? ROLE_LABELS[session.usuario.rol] : ""}
+          </p>
+        </div>
+      </div>
+    </SettingsCard>
+  );
+}
+
+/* ============================================================
+   TAB: SEGURIDAD (cerrar sesión + lo que antes vivía en Cuenta)
+============================================================ */
+function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"] }) {
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.replace(ROUTES.LOGIN);
+  };
+
+  async function handleCambiarPassword() {
+    await confirm({
+      title: "Próximamente",
+      message:
+        "Cambiar contraseña estará disponible cuando se conecte el backend (endpoint AUTH-10).",
+      confirmLabel: "Entendido",
+      hideCancel: true,
+    });
+  }
+
+  return (
+    <div className="space-y-6">
+      <SettingsCard title="Contraseña" description="Actualiza tu contraseña de acceso.">
+        <button
+          type="button"
+          onClick={handleCambiarPassword}
+          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          Cambiar contraseña
+        </button>
+      </SettingsCard>
+
+      <SettingsCard title="Sesión" description="Cierra tu sesión en este dispositivo.">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-              {session?.usuario.nombre}
-            </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Usuario: {session?.usuario.usuario} ·{" "}
-              {session ? ROLE_LABELS[session.usuario.rol] : ""}
-            </p>
-          </div>
+          <p className="text-xs text-slate-400">
+            Por seguridad, la sesión se cierra automáticamente tras 15 minutos
+            de inactividad.
+          </p>
           <button
             type="button"
             onClick={handleLogout}
@@ -68,10 +293,33 @@ export default function ConfiguracionScreen() {
             Cerrar sesión en este dispositivo
           </button>
         </div>
-        <p className="mt-4 border-t border-slate-100 pt-4 text-xs text-slate-400 dark:border-slate-800 dark:text-slate-500">
-          Por seguridad, la sesión se cierra automáticamente tras 15 minutos de inactividad.
-        </p>
       </SettingsCard>
+    </div>
+  );
+}
+
+/* ============================================================
+   PIEZAS COMPARTIDAS
+============================================================ */
+
+const inputClass =
+  "h-11 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+
+function Field({
+  label,
+  children,
+  full,
+}: {
+  label: string;
+  children: React.ReactNode;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "sm:col-span-2" : undefined}>
+      <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+        {label}
+      </label>
+      {children}
     </div>
   );
 }
@@ -87,7 +335,6 @@ function SettingsCard({
 }) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-      {/* 🎨 CAMBIO: text-[#0A1628] → text-navy */}
       <h2 className="font-bold text-navy dark:text-white">{title}</h2>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
       <div className="mt-5 border-t border-slate-100 pt-5 dark:border-slate-800">{children}</div>
@@ -118,7 +365,6 @@ function ToggleRow({
         aria-checked={checked}
         aria-label={label}
         onClick={() => onChange(!checked)}
-        /* 🎨 CAMBIO: focus:ring-[#16794C] → focus:ring-brand-green, bg-[#16794C] → bg-brand-green */
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
           checked ? "bg-brand-green" : "bg-slate-300 dark:bg-slate-600"
         }`}
@@ -131,5 +377,55 @@ function ToggleRow({
         />
       </button>
     </div>
+  );
+}
+
+/* ICONOS */
+
+function BuildingIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M4 21V5a1 1 0 0 1 1-1h6v17" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M14 21V10a1 1 0 0 1 1-1h5v12" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M3 21h18M7 7h1m-1 3.5h1M7 14h1m5-4h1m-1 3.5h1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PaletteIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1.1.9-2 2-2h2a3 3 0 0 0 3-3c0-5-3.6-8.5-8-8.5Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <circle cx="7.5" cy="10.5" r="1.2" fill="currentColor" />
+      <circle cx="9" cy="15" r="1.2" fill="currentColor" />
+      <circle cx="14.5" cy="7.5" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function UserIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M4.5 20c1.4-3.4 4.2-5 7.5-5s6.1 1.6 7.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ShieldIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
