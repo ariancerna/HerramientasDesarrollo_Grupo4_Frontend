@@ -42,5 +42,4 @@ export interface Profesor {
   nombre: string;
   usuario: string;
   password: string;
-  sedeId: string;
 }

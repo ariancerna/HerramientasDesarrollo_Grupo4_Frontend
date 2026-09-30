@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
-import AlumnoTabla from "@/components/shared/alumno-tabla";
+import { AlumnoLista } from "@/components/shared/alumno-lista";
 import AlumnoForm from "@/components/forms/alumno-form";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Student, StudentFormData } from "@/types/student";
@@ -76,32 +76,25 @@ export default function AlumnosAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
             Gestión de alumnos
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Busca, filtra, crea, edita y elimina alumnos del club.
-          </p>
         </header>
 
-        <AlumnoFiltros
-          texto={texto}
-          onTextoChange={setTexto}
-          categoria={categoria}
-          onCategoriaChange={setCategoria}
-          estado={estado}
-          onEstadoChange={setEstado}
-          onNuevoAlumno={handleNuevo}
-        />
+        <div className="mb-5">
+          <AlumnoFiltros
+            texto={texto}
+            onTextoChange={setTexto}
+            categoria={categoria}
+            onCategoriaChange={setCategoria}
+            estado={estado}
+            onEstadoChange={setEstado}
+            onNuevoAlumno={handleNuevo}
+          />
+        </div>
 
-        <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
-          {alumnosFiltrados.length} alumno(s) encontrado(s)
-        </p>
-
-        <AlumnoTabla
+        <AlumnoLista
           alumnos={alumnosFiltrados}
-          puedeGestionar
           onEditar={handleEditar}
           onEliminar={handleEliminar}
         />

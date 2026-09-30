@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { Profesor } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { RoleGuard } from "@/components/shared/role-guard";
 import ProfesorForm from "@/components/forms/profesor-form";
-import ProfesoresTabla from "@/components/shared/profesores-tabla";
+import { ProfesorLista } from "@/components/shared/profesor-lista";
 import {
   obtenerProfesores,
   obtenerProfesoresIniciales,
@@ -15,7 +15,6 @@ import {
   eliminarProfesor,
   filtrarProfesores,
 } from "@/store/profesores-store";
-import { obtenerSedes, obtenerSedesIniciales, suscribirSedes } from "@/store/sedes-store";
 import {
   asignarCategoriasAProfesor,
   obtenerCategorias,
@@ -29,29 +28,26 @@ export default function ProfesoresPage() {
     obtenerProfesores,
     obtenerProfesoresIniciales,
   );
-  const sedes = useSyncExternalStore(suscribirSedes, obtenerSedes, obtenerSedesIniciales);
   const categorias = useSyncExternalStore(
     suscribirCategorias,
     obtenerCategorias,
     obtenerCategoriasIniciales,
   );
   const [texto, setTexto] = useState("");
+  const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [profesorAEditar, setProfesorAEditar] = useState<Profesor | null>(null);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
-  const profesoresFiltrados = useMemo(
-    () => filtrarProfesores(profesores, texto),
-    [profesores, texto],
-  );
+  const profesoresFiltrados = useMemo(() => {
+    const porTexto = filtrarProfesores(profesores, texto);
+    if (categoriaFiltro === "todas") return porTexto;
 
-  useEffect(() => {
-    if (mensajeExito) {
-      const timer = setTimeout(() => setMensajeExito(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [mensajeExito]);
+    return porTexto.filter((profesor) => {
+      const categoria = categorias.find((c) => c.id === categoriaFiltro);
+      return categoria?.profesorIds?.includes(profesor.id) ?? false;
+    });
+  }, [profesores, texto, categoriaFiltro, categorias]);
 
   const handleNuevo = () => {
     setProfesorAEditar(null);
@@ -67,11 +63,9 @@ export default function ProfesoresPage() {
     if (id) {
       actualizarProfesor(id, data);
       asignarCategoriasAProfesor(id, categoriaIds);
-      setMensajeExito(`Profesor "${data.nombre}" actualizado correctamente`);
     } else {
       const profesor = crearProfesor(data);
       asignarCategoriasAProfesor(profesor.id, categoriaIds);
-      setMensajeExito(`Profesor "${data.nombre}" creado correctamente`);
     }
     setMostrarFormulario(false);
     setProfesorAEditar(null);
@@ -94,49 +88,48 @@ export default function ProfesoresPage() {
 
     eliminarProfesor(profesor.id);
     asignarCategoriasAProfesor(profesor.id, []);
-    setMensajeExito(`Profesor "${profesor.nombre}" eliminado correctamente`);
   };
 
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
             Profesores
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Da de alta profesores, asígnalos a una sede y gestiona su acceso al sistema.
-          </p>
         </header>
 
-        {mensajeExito && (
-          <div className="mb-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
-            <p className="font-medium">{mensajeExito}</p>
-          </div>
-        )}
-
-        <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center">
           <input
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder="Buscar por nombre o usuario..."
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-80"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-72"
           />
+
+          <select
+            value={categoriaFiltro}
+            onChange={(e) => setCategoriaFiltro(e.target.value)}
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white lg:w-56"
+          >
+            <option value="todas">Todas las categorías</option>
+            {categorias.map((categoria) => (
+              <option key={categoria.id} value={categoria.id}>
+                {categoria.nombre}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={handleNuevo}
-            className="whitespace-nowrap rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
+            className="whitespace-nowrap rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 lg:ml-auto"
           >
             + Nuevo profesor
           </button>
         </div>
 
-        <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
-          {profesoresFiltrados.length} profesor(es) encontrado(s)
-        </p>
-
-        <ProfesoresTabla
+        <ProfesorLista
           profesores={profesoresFiltrados}
-          sedes={sedes}
           categorias={categorias}
           onEditar={handleEditar}
           onEliminar={handleEliminar}
@@ -146,7 +139,6 @@ export default function ProfesoresPage() {
           <ProfesorForm
             key={profesorAEditar?.id ?? "nuevo"}
             profesorAEditar={profesorAEditar}
-            sedes={sedes}
             categorias={categorias}
             onClose={() => setMostrarFormulario(false)}
             onGuardar={handleGuardar}

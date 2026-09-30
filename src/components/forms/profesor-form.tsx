@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Categoria, Profesor, Sede } from "@/types";
+import { Categoria, Profesor } from "@/types";
 import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
 import { usuarioProfesorDisponible } from "@/store/profesores-store";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -10,12 +10,10 @@ interface ProfesorFormData {
   nombre: string;
   usuario: string;
   password: string;
-  sedeId: string;
 }
 
 interface ProfesorFormProps {
   profesorAEditar: Profesor | null;
-  sedes: Sede[];
   categorias: Categoria[];
   onClose: () => void;
   onGuardar: (data: Omit<Profesor, "id">, categoriaIds: string[], id?: string) => void;
@@ -25,20 +23,18 @@ type Errores = Partial<Record<keyof ProfesorFormData, string>>;
 
 export default function ProfesorForm({
   profesorAEditar,
-  sedes,
   categorias,
   onClose,
   onGuardar,
 }: ProfesorFormProps) {
   const [form, setForm] = useState<ProfesorFormData>(() => {
     if (!profesorAEditar) {
-      return { nombre: "", usuario: "", password: "", sedeId: sedes[0]?.id ?? "" };
+      return { nombre: "", usuario: "", password: "" };
     }
     return {
       nombre: profesorAEditar.nombre,
       usuario: profesorAEditar.usuario,
       password: "",
-      sedeId: profesorAEditar.sedeId,
     };
   });
   const [errores, setErrores] = useState<Errores>({});
@@ -81,10 +77,6 @@ export default function ProfesorForm({
       nuevosErrores.password = "Mínimo 6 caracteres.";
     }
 
-    if (!form.sedeId) {
-      nuevosErrores.sedeId = "Selecciona una sede.";
-    }
-
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
@@ -111,7 +103,6 @@ export default function ProfesorForm({
       nombre: form.nombre.trim(),
       usuario: form.usuario.trim(),
       password: form.password ? form.password : profesorAEditar?.password ?? "",
-      sedeId: form.sedeId,
     };
     onGuardar(datos, categoriaIds, profesorAEditar?.id);
   };
@@ -125,18 +116,12 @@ export default function ProfesorForm({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
       <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-        <h2 className="text-lg font-bold text-slate-950 dark:text-white">
+        <h2 className="text-lg font-extrabold text-slate-950 dark:text-white">
           {profesorAEditar ? "Editar profesor" : "Nuevo profesor"}
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Da de alta cuentas de profesores y asígnalos a una sede.
+          Da de alta cuentas de profesores y gestiona su acceso al sistema.
         </p>
-
-        {sedes.length === 0 && (
-          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
-            Primero crea una sede para poder asignar profesores.
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2">
@@ -181,25 +166,6 @@ export default function ProfesorForm({
             {errores.password && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.password}</p>}
           </label>
 
-          <label className="sm:col-span-2">
-            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Sede
-            </span>
-            <select
-              value={form.sedeId}
-              onChange={(e) => setForm({ ...form, sedeId: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-            >
-              <option value="">Selecciona una sede</option>
-              {sedes.map((sede) => (
-                <option key={sede.id} value={sede.id}>
-                  {sede.nombre}
-                </option>
-              ))}
-            </select>
-            {errores.sedeId && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.sedeId}</p>}
-          </label>
-
           <fieldset className="sm:col-span-2">
             <legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
               Categorías asignadas
@@ -229,14 +195,13 @@ export default function ProfesorForm({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={sedes.length === 0}
-              className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
             >
               Guardar
             </button>

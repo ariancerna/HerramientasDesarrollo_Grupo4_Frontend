@@ -47,7 +47,7 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-[2px]"
       role="presentation"
       onClick={dismiss}
     >
@@ -59,32 +59,35 @@ export function ConfirmDialog({
         onClick={(event) => event.stopPropagation()}
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800"
       >
-        <div className="flex items-start gap-4">
-          <span
-            className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${
-              isDanger
-                ? "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
-                : "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
-            }`}
-          >
-            {isDanger ? <WarningIcon /> : <InfoIcon />}
-          </span>
-          <div className="min-w-0 pt-0.5">
-            <h2 id="confirm-dialog-title" className="text-base font-bold text-slate-950 dark:text-white">
-              {title}
-            </h2>
-            <div id="confirm-dialog-message" className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              {message}
-            </div>
-          </div>
+        <span
+          className={`grid h-12 w-12 place-items-center rounded-full ${
+            isDanger
+              ? "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
+              : "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
+          }`}
+        >
+          {isDanger ? <WarningIcon /> : <InfoIcon />}
+        </span>
+
+        <h2
+          id="confirm-dialog-title"
+          className="mt-4 text-lg font-extrabold tracking-tight text-slate-950 dark:text-white"
+        >
+          {title}
+        </h2>
+        <div
+          id="confirm-dialog-message"
+          className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300"
+        >
+          {message}
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex gap-3">
           {!hideCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+              className="flex-1 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
             >
               {cancelLabel}
             </button>
@@ -93,7 +96,7 @@ export function ConfirmDialog({
             ref={confirmButtonRef}
             type="button"
             onClick={onConfirm}
-            className={`rounded-lg px-4 py-2.5 text-sm font-bold text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            className={`flex-1 rounded-full px-4 py-2.5 text-sm font-bold text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               isDanger
                 ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
                 : "bg-brand-green hover:bg-brand-green-dark focus:ring-brand-green"
