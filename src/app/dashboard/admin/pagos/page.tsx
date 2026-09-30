@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { PagosLista } from "@/components/shared/pagos-lista";
 import { Student } from "@/types/student";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import type { PagoMensualidad } from "@/types/pago";
@@ -155,79 +156,12 @@ export default function PagosAdminPage() {
           </select>
         </div>
 
-        <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">{filas.length} alumno(s) encontrado(s)</p>
-
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
-          <table className="w-full min-w-[820px] divide-y divide-slate-200 text-sm dark:divide-slate-800">
-            <thead className="bg-slate-50 dark:bg-slate-800/60">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Alumno</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">DNI / Código</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Categoría</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Monto</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Estado del pago</th>
-                <th className="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">Acción</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {filas.map(({ alumno, pago }) => {
-                const pagado = pago?.estado === "pagado";
-                return (
-                  <tr key={alumno.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-slate-800 dark:text-slate-100">
-                        {alumno.nombres} {alumno.apellidos}
-                      </p>
-                      <p className="text-xs text-slate-500">{alumno.email}</p>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
-                      {alumno.dni}
-                      <br />
-                      {alumno.codigo}
-                    </td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{alumno.categoria}</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
-                      {formatearMonto(pago?.monto ?? MONTO_MENSUALIDAD)}
-                      {pago?.metodoPago && (
-                        <span className="block text-xs text-slate-400">{pago.metodoPago}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          pagado
-                            ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
-                            : pago?.estado === "vencido"
-                              ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
-                              : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
-                        }`}
-                      >
-                        {pagado ? "Pagado" : pago?.estado === "vencido" ? "Vencido" : pago ? "Por pagar" : "Sin registro"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {pagado ? (
-                        <button
-                          onClick={() => marcarComoDeuda(pago, alumno)}
-                          className="rounded-lg bg-slate-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-700"
-                        >
-                          Marcar deuda
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => abrirModalRegistro(alumno)}
-                          className="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white transition hover:bg-brand-green-dark"
-                        >
-                          Registrar pago
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <PagosLista
+          filas={filas}
+          montoBase={MONTO_MENSUALIDAD}
+          onRegistrar={abrirModalRegistro}
+          onMarcarDeuda={marcarComoDeuda}
+        />
 
         {modalAlumno && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
