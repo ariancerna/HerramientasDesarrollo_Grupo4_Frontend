@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useConfirm } from "@/hooks/use-confirm";
 import EventoForm from "@/components/forms/evento-form";
+import { CalendarioLista } from "@/components/shared/calendario-lista";
 import {
   obtenerEventos,
   obtenerEventosIniciales,
@@ -37,7 +38,7 @@ export default function CalendarioAdminPage() {
     () => {
       void eventos;
       void categorias;
-      return obtenerProximasActividadesTodas(new Date(), 20);
+      return obtenerProximasActividadesTodas(new Date(), 150);
     },
     [eventos, categorias],
   );
@@ -116,97 +117,13 @@ export default function CalendarioAdminPage() {
           </button>
         </div>
 
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
-          <div>
-            <h2 className="mb-3 text-lg font-bold text-slate-950 dark:text-white">
-              Próximas actividades (todas las categorías)
-            </h2>
-            <div className="space-y-3">
-              {proximasActividades.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-300 bg-white p-9 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                  No hay actividades programadas en las próximas semanas.
-                </div>
-              ) : (
-                proximasActividades.map((actividad) => (
-                  <article
-                    key={actividad.id}
-                    className="grid gap-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-[5rem_1fr] sm:items-center dark:border-slate-700 dark:bg-slate-900"
-                  >
-                    <div className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                      {new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(
-                        new Date(`${actividad.fecha}T12:00:00`),
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold capitalize ${
-                            actividad.tipo === "entrenamiento"
-                              ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
-                              : "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300"
-                          }`}
-                        >
-                          {actividad.tipo}
-                        </span>
-                        <p className="font-bold text-slate-950 dark:text-white">{actividad.titulo}</p>
-                        {actividad.categoria && (
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            · {actividad.categoria}
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                        {actividad.ubicacion} · {actividad.horaInicio}
-                        {actividad.horaFin ? ` – ${actividad.horaFin}` : ""}
-                      </p>
-                    </div>
-                  </article>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-3 text-lg font-bold text-slate-950 dark:text-white">
-              Eventos programados
-            </h2>
-            <div className="space-y-3">
-              {eventos.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                  No hay eventos creados todavía.
-                </div>
-              ) : (
-                eventos.map((evento) => (
-                  <div
-                    key={evento.id}
-                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
-                  >
-                    <p className="font-bold text-slate-950 dark:text-white">{evento.titulo}</p>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      {evento.fecha} · {evento.horaInicio}
-                      {evento.horaFin ? `–${evento.horaFin}` : ""}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{evento.ubicacion}</p>
-                    <div className="mt-3 flex gap-3 text-xs font-semibold">
-                      <button
-                        onClick={() => handleEditar(evento)}
-                        className="text-brand-green hover:text-brand-green-dark dark:text-brand-lime-light"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleEliminar(evento)}
-                        className="text-red-600 hover:text-red-800 dark:text-red-400"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </section>
+        <CalendarioLista
+          actividades={proximasActividades}
+          eventos={eventos}
+          categorias={categorias}
+          onEditar={handleEditar}
+          onEliminar={handleEliminar}
+        />
 
         {mostrarFormulario && (
           <EventoForm
