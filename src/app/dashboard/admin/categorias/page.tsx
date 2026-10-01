@@ -2,11 +2,10 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Categoria } from "@/types";
-import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
 import { RoleGuard } from "@/components/shared/role-guard";
 import CategoriaForm from "@/components/forms/categoria-form";
-import CategoriasTabla from "@/components/shared/categorias-tabla";
+import { CategoriasLista } from "@/components/shared/categorias-lista";
 import {
   obtenerCategorias,
   obtenerCategoriasIniciales,
@@ -17,7 +16,6 @@ import {
 } from "@/store/categorias-store";
 
 export default function CategoriasPage() {
-  const { session } = useAuth();
   const categorias = useSyncExternalStore(
     suscribirCategorias,
     obtenerCategorias,
@@ -94,8 +92,6 @@ export default function CategoriasPage() {
     }
   };
 
-  const isAdmin = session?.usuario.rol === "administrador";
-
   return (
     <RoleGuard allowedRoles={["administrador"]}>
       <div className="space-y-6">
@@ -121,15 +117,11 @@ export default function CategoriasPage() {
           </div>
         )}
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-          <CategoriasTabla
-            categorias={categorias}
-            puedeGestionar={isAdmin}
-            onEditar={handleEditarCategoria}
-            onEliminar={handleEliminarCategoria}
-          />
-        </div>
-
+        <CategoriasLista
+          categorias={categorias}
+          onEditar={handleEditarCategoria}
+          onEliminar={handleEliminarCategoria}
+        />
       </div>
 
       {mostrarFormulario && (
