@@ -5,36 +5,30 @@ import type {
 
 interface IndicadoresAsistenciaProps {
   indicadores: IndicadoresAsistencia;
+  onCategoriaSeleccionada?: (categoria: string) => void;
 }
 
 export default function IndicadoresAsistenciaPanel({
   indicadores,
+  onCategoriaSeleccionada,
 }: IndicadoresAsistenciaProps) {
   const actividadReciente = indicadores.porFecha.slice(-7);
 
   return (
     <section className="mb-7" aria-labelledby="indicadores-title">
-      <div className="mb-4">
-        <p className="text-sm font-semibold text-brand-green">INDICADORES</p>
-        <h2 id="indicadores-title" className="mt-0.5 text-xl font-bold text-navy dark:text-white">
-          Resumen de asistencia
-        </h2>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Los resultados corresponden a los filtros aplicados al reporte.
-        </p>
-      </div>
+      <h2 id="indicadores-title" className="mb-4 text-xl font-extrabold tracking-tight text-navy dark:text-white">
+        Resumen de asistencia
+      </h2>
 
       <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Indicador
           etiqueta="Asistencias"
           valor={indicadores.totalAsistencias.toLocaleString("es-PE")}
-          ayuda="Registros encontrados"
           icono={<CheckIcon />}
         />
         <Indicador
           etiqueta="Alumnos únicos"
           valor={indicadores.estudiantesUnicos.toLocaleString("es-PE")}
-          ayuda="Con al menos un registro"
           icono={<StudentsIcon />}
         />
         <Indicador
@@ -43,7 +37,6 @@ export default function IndicadoresAsistenciaPanel({
             minimumFractionDigits: 1,
             maximumFractionDigits: 1,
           })}
-          ayuda={`${indicadores.diasConActividad} día${indicadores.diasConActividad === 1 ? "" : "s"} con actividad`}
           icono={<CalendarIcon />}
         />
         <Indicador
@@ -51,7 +44,6 @@ export default function IndicadoresAsistenciaPanel({
           valor={`${indicadores.porcentajeEscaneo.toLocaleString("es-PE", {
             maximumFractionDigits: 1,
           })}%`}
-          ayuda="Del total de asistencias"
           icono={<ScanIcon />}
         />
       </dl>
@@ -59,13 +51,12 @@ export default function IndicadoresAsistenciaPanel({
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
         <DistribucionCard
           titulo="Asistencia por categoría"
-          descripcion="Participación dentro del resultado actual"
           datos={indicadores.porCategoria}
           formatearEtiqueta={(etiqueta) => etiqueta}
+          onBarraClick={onCategoriaSeleccionada}
         />
         <DistribucionCard
           titulo="Actividad reciente"
-          descripcion="Últimos 7 días con registros en el periodo"
           datos={actividadReciente}
           formatearEtiqueta={formatearFecha}
         />
@@ -77,12 +68,10 @@ export default function IndicadoresAsistenciaPanel({
 function Indicador({
   etiqueta,
   valor,
-  ayuda,
   icono,
 }: {
   etiqueta: string;
   valor: string;
-  ayuda: string;
   icono: React.ReactNode;
 }) {
   return (
@@ -90,59 +79,77 @@ function Indicador({
       <div className="flex items-start justify-between gap-4">
         <div>
           <dt className="text-sm font-semibold text-slate-600 dark:text-slate-300">{etiqueta}</dt>
-          <dd className="mt-2 text-3xl font-bold tracking-tight text-navy dark:text-white">
+          <dd className="mt-2 text-3xl font-extrabold tracking-tight text-navy dark:text-white">
             {valor}
           </dd>
         </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
           {icono}
         </span>
       </div>
-      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{ayuda}</p>
     </div>
   );
 }
 
 function DistribucionCard({
   titulo,
-  descripcion,
   datos,
   formatearEtiqueta,
+  onBarraClick,
 }: {
   titulo: string;
-  descripcion: string;
   datos: DistribucionAsistencia[];
   formatearEtiqueta: (etiqueta: string) => string;
+  onBarraClick?: (etiqueta: string) => void;
 }) {
   const maximo = Math.max(...datos.map((dato) => dato.cantidad), 1);
+  const esClicable = Boolean(onBarraClick);
 
   return (
     <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-      <h3 className="font-bold text-navy dark:text-white">{titulo}</h3>
-      <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{descripcion}</p>
+      <h3 className="font-extrabold text-navy dark:text-white">{titulo}</h3>
 
       {datos.length === 0 ? (
         <p className="mt-6 rounded-lg bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:bg-slate-800 dark:text-slate-400">
           No hay datos para mostrar.
         </p>
       ) : (
-        <ul className="mt-5 space-y-4">
-          {datos.map((dato) => (
-            <li key={dato.etiqueta}>
-              <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
-                <span className="truncate font-medium text-slate-700 dark:text-slate-300">
-                  {formatearEtiqueta(dato.etiqueta)}
-                </span>
-                <span className="font-bold text-navy dark:text-white">{dato.cantidad}</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div
-                  className="h-full rounded-full bg-brand-lime"
-                  style={{ width: `${(dato.cantidad / maximo) * 100}%` }}
-                />
-              </div>
-            </li>
-          ))}
+        <ul className="mt-5 space-y-3">
+          {datos.map((dato) => {
+            const contenido = (
+              <>
+                <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
+                  <span className="truncate font-semibold text-slate-700 dark:text-slate-300">
+                    {formatearEtiqueta(dato.etiqueta)}
+                  </span>
+                  <span className="font-extrabold text-navy dark:text-white">{dato.cantidad}</span>
+                </div>
+                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div
+                    className="h-full rounded-full bg-brand-green transition-all"
+                    style={{ width: `${(dato.cantidad / maximo) * 100}%` }}
+                  />
+                </div>
+              </>
+            );
+
+            if (!esClicable) {
+              return <li key={dato.etiqueta}>{contenido}</li>;
+            }
+
+            return (
+              <li key={dato.etiqueta}>
+                <button
+                  type="button"
+                  onClick={() => onBarraClick?.(dato.etiqueta)}
+                  className="w-full rounded-lg p-1.5 text-left transition hover:bg-brand-green-soft dark:hover:bg-brand-green/10"
+                  title={`Filtrar el reporte por "${dato.etiqueta}"`}
+                >
+                  {contenido}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </article>

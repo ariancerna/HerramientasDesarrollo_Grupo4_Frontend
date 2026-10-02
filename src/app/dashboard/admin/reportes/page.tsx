@@ -37,9 +37,8 @@ export default function ReportesPage() {
     setError("");
   };
 
-  const handleGenerar = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const mensajeError = validarPeriodoReporte(filtros);
+  const generar = (filtrosAUsar: FiltrosReporteAsistencia) => {
+    const mensajeError = validarPeriodoReporte(filtrosAUsar);
 
     if (mensajeError) {
       setError(mensajeError);
@@ -48,12 +47,23 @@ export default function ReportesPage() {
 
     const nuevosRegistros = generarReporteAsistencia(
       obtenerRegistrosAsistencia(),
-      filtros,
+      filtrosAUsar,
     );
     setRegistros(nuevosRegistros);
-    setFiltrosAplicados({ ...filtros });
+    setFiltrosAplicados({ ...filtrosAUsar });
     setError("");
     setMensajeExportacion("");
+  };
+
+  const handleGenerar = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    generar(filtros);
+  };
+
+  const handleCategoriaDesdeGrafico = (categoria: string) => {
+    const nuevosFiltros = { ...filtros, categoria };
+    setFiltros(nuevosFiltros);
+    generar(nuevosFiltros);
   };
 
   const handleLimpiar = () => {
@@ -77,28 +87,20 @@ export default function ReportesPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
             Reportes de asistencia
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Consulta la participación del club por periodo, categoría y método de registro.
-          </p>
         </header>
 
         <form
           onSubmit={handleGenerar}
           className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
         >
-          <div className="mb-4 flex items-start gap-3">
+          <div className="mb-4 flex items-center gap-3">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
               <FilterIcon />
             </span>
-            <div>
-              <h2 className="font-bold text-navy dark:text-white">Configurar reporte</h2>
-              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                Deja los campos sin seleccionar para incluir todos los registros.
-              </p>
-            </div>
+            <h2 className="font-extrabold text-navy dark:text-white">Configurar reporte</h2>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -174,13 +176,13 @@ export default function ReportesPage() {
             <button
               type="button"
               onClick={handleLimpiar}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             >
               Limpiar filtros
             </button>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-green-dark hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2"
             >
               <ChartIcon />
               Generar reporte
@@ -194,7 +196,7 @@ export default function ReportesPage() {
               <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white text-slate-400 shadow-sm dark:bg-slate-800 dark:text-slate-500">
                 <ChartIcon />
               </span>
-              <h2 className="mt-4 font-bold text-slate-800 dark:text-slate-200">Reporte pendiente</h2>
+              <h2 className="mt-4 font-extrabold text-slate-800 dark:text-slate-200">Reporte pendiente</h2>
               <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Selecciona los filtros que necesites y genera el reporte para consultar los registros.
               </p>
@@ -202,27 +204,30 @@ export default function ReportesPage() {
           ) : (
             <>
               {indicadores && (
-                <IndicadoresAsistenciaPanel indicadores={indicadores} />
+                <IndicadoresAsistenciaPanel
+                  indicadores={indicadores}
+                  onCategoriaSeleccionada={handleCategoriaDesdeGrafico}
+                />
               )}
-              <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-brand-green">RESULTADO</p>
-                  <h2 id="resultado-title" className="mt-0.5 text-xl font-bold text-navy dark:text-white">
-                    {registros.length} registro{registros.length === 1 ? "" : "s"} encontrado{registros.length === 1 ? "" : "s"}
+              <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex items-center gap-3">
+                  <h2 id="resultado-title" className="text-xl font-extrabold text-navy dark:text-white">
+                    Resultado
                   </h2>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <span className="rounded-full bg-brand-green-soft px-3 py-1 text-sm font-extrabold text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
+                    {registros.length}
+                  </span>
                   {filtrosAplicados && <ResumenFiltros filtros={filtrosAplicados} />}
-                  <button
-                    type="button"
-                    onClick={handleExportar}
-                    disabled={registros.length === 0}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-brand-green bg-white px-4 py-2.5 text-sm font-bold text-brand-green transition hover:bg-brand-green-soft focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-400 disabled:hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-800 dark:disabled:border-slate-700 dark:disabled:text-slate-600 dark:disabled:hover:bg-slate-900"
-                  >
-                    <DownloadIcon />
-                    Exportar CSV
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={handleExportar}
+                  disabled={registros.length === 0}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-green-dark hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-lime focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
+                >
+                  <DownloadIcon />
+                  Exportar CSV
+                </button>
               </div>
               {mensajeExportacion && (
                 <p
@@ -273,10 +278,12 @@ function ResumenFiltros({ filtros }: { filtros: FiltrosReporteAsistencia }) {
       : null,
   ].filter(Boolean);
 
+  if (partes.length === 0) return null;
+
   return (
-    <p className="text-sm text-slate-500 dark:text-slate-400">
-      {partes.length > 0 ? partes.join(" · ") : "Todos los registros"}
-    </p>
+    <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+      {partes.join(" · ")}
+    </span>
   );
 }
 
