@@ -34,8 +34,11 @@ export default function ConfiguracionScreen() {
       </header>
 
       {/* TABS */}
-      <div className="overflow-x-auto border-b border-slate-200 dark:border-slate-800">
-        <nav className="flex min-w-max gap-1" aria-label="Pestañas de configuración">
+      <div className="overflow-x-auto">
+        <nav
+          className="inline-flex min-w-max gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 dark:border-slate-700 dark:bg-slate-800"
+          aria-label="Pestañas de configuración"
+        >
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -43,10 +46,10 @@ export default function ConfiguracionScreen() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
+                className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition ${
                   isActive
-                    ? "border-brand-green text-brand-green dark:border-brand-lime-light dark:text-brand-lime-light"
-                    : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                    ? "bg-brand-green text-white shadow-sm"
+                    : "text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
                 }`}
               >
                 {tab.icon("h-4 w-4")}
@@ -102,6 +105,7 @@ function ClubTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"
     <SettingsCard
       title="Datos del club"
       description="Información general y reglas de mensualidad del club."
+      icon={<BuildingIcon className="h-5 w-5" />}
     >
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Field label="Nombre del club">
@@ -198,7 +202,11 @@ function AparienciaTab() {
 
   return (
     <div className="space-y-6">
-      <SettingsCard title="Apariencia" description="Elige cómo se ve el panel en este dispositivo.">
+      <SettingsCard
+        title="Apariencia"
+        description="Elige cómo se ve el panel en este dispositivo."
+        icon={<PaletteIcon className="h-5 w-5" />}
+      >
         <ToggleRow
           label="Modo oscuro"
           description="Cambia los colores del panel a un tema oscuro."
@@ -210,6 +218,7 @@ function AparienciaTab() {
       <SettingsCard
         title="Notificaciones"
         description="Controla los avisos que muestra la campana del panel."
+        icon={<BellIcon className="h-5 w-5" />}
       >
         <ToggleRow
           label="Silenciar notificaciones"
@@ -229,7 +238,11 @@ function CuentaTab() {
   const { session } = useAuth();
 
   return (
-    <SettingsCard title="Cuenta" description="Información de la sesión activa.">
+    <SettingsCard
+      title="Cuenta"
+      description="Información de la sesión activa."
+      icon={<UserIcon className="h-5 w-5" />}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
@@ -269,7 +282,11 @@ function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["con
 
   return (
     <div className="space-y-6">
-      <SettingsCard title="Contraseña" description="Actualiza tu contraseña de acceso.">
+      <SettingsCard
+        title="Contraseña"
+        description="Actualiza tu contraseña de acceso."
+        icon={<LockIcon className="h-5 w-5" />}
+      >
         <button
           type="button"
           onClick={handleCambiarPassword}
@@ -279,7 +296,11 @@ function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["con
         </button>
       </SettingsCard>
 
-      <SettingsCard title="Sesión" description="Cierra tu sesión en este dispositivo.">
+      <SettingsCard
+        title="Sesión"
+        description="Cierra tu sesión en este dispositivo."
+        icon={<ShieldIcon className="h-5 w-5" />}
+      >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-400">
             Por seguridad, la sesión se cierra automáticamente tras 15 minutos
@@ -327,16 +348,27 @@ function Field({
 function SettingsCard({
   title,
   description,
+  icon,
   children,
 }: {
   title: string;
   description: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-      <h2 className="font-bold text-navy dark:text-white">{title}</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
+      <div className="flex items-center gap-3">
+        {icon && (
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">
+            {icon}
+          </span>
+        )}
+        <div>
+          <h2 className="font-extrabold text-navy dark:text-white">{title}</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
+        </div>
+      </div>
       <div className="mt-5 border-t border-slate-100 pt-5 dark:border-slate-800">{children}</div>
     </section>
   );
@@ -412,6 +444,29 @@ function UserIcon({ className }: { className: string }) {
     <svg viewBox="0 0 24 24" fill="none" className={className}>
       <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
       <path d="M4.5 20c1.4-3.4 4.2-5 7.5-5s6.1 1.6 7.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BellIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M6 9a6 6 0 1 1 12 0c0 3.2 1 5 1.5 5.8a.8.8 0 0 1-.7 1.2H5.2a.8.8 0 0 1-.7-1.2C5 14 6 12.2 6 9Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M9.5 18a2.5 2.5 0 0 0 5 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LockIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.8" />
     </svg>
   );
 }
