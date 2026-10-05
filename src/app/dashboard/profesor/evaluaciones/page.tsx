@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import EvaluacionForm from "@/components/evaluaciones/evaluacion-form";
-import EvaluacionTabla from "@/components/evaluaciones/evaluacion-tabla";
+import { EvaluacionLista } from "@/components/evaluaciones/evaluacion-lista";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
 import { obtenerAlumnos } from "@/store/alumnos-store";
@@ -83,18 +83,20 @@ export default function EvaluacionesProfesorPage() {
     <RoleGuard allowedRoles={["profesor"]}>
       <div>
         <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Evaluaciones</h1>
-            <p className="mt-1 text-sm text-slate-500">Registra el rendimiento y las observaciones de tus alumnos.</p>
-          </div>
-          <button type="button" onClick={abrirNuevaEvaluacion} disabled={alumnos.length === 0} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-green-dark disabled:cursor-not-allowed disabled:opacity-50">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
+            Evaluaciones
+          </h1>
+          <button
+            type="button"
+            onClick={abrirNuevaEvaluacion}
+            disabled={alumnos.length === 0}
+            className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark disabled:cursor-not-allowed disabled:opacity-50"
+          >
             Registrar evaluación
           </button>
         </header>
 
-        <p className="mb-3 text-sm text-slate-500">{evaluaciones.length} evaluación(es) registrada(s)</p>
-        <EvaluacionTabla
+        <EvaluacionLista
           evaluaciones={evaluaciones}
           nombresAlumnos={nombresAlumnos}
           onEditar={abrirEdicion}
