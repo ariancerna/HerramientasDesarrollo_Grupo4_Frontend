@@ -70,7 +70,6 @@ export default function AlumnoDashboardPage() {
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-[1.55fr_0.8fr_0.8fr]">
-          {/* 🎨 CAMBIO: de brand-blue inexistente al verdadero token azul (brand-green) */}
           <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-green to-brand-green-dark p-6 text-white shadow-sm sm:p-7">
             <div className="absolute -right-9 -top-10 h-40 w-40 rounded-full border-[26px] border-white/10" aria-hidden="true" />
             <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-brand-lime-light">Tu siguiente actividad</p>
@@ -84,7 +83,6 @@ export default function AlumnoDashboardPage() {
                   <p className="text-sm font-semibold">
                     {formatearActividad(proximaActividad.fecha, proximaActividad.horaInicio)}
                   </p>
-                  {/* 🎨 CAMBIO: text-[#12613D] → text-brand-green-dark */}
                   <Link
                     href="/dashboard/alumno/calendario"
                     className="rounded-lg bg-white px-3 py-2 text-xs font-bold text-brand-green-dark transition hover:bg-blue-50"
@@ -100,24 +98,27 @@ export default function AlumnoDashboardPage() {
 
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Asistencias este mes</p>
-            <p className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">{asistenciasDelMes}</p>
-            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{asistencias.length} registros en tu historial</p>
-            <Link href="/dashboard/alumno/historial" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-lime-light">
-              Ver historial →
+            <p className="mt-2 text-3xl font-extrabold text-slate-950 dark:text-white">{asistenciasDelMes}</p>
+            <Link
+              href="/dashboard/alumno/historial"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-green px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-green-dark hover:shadow-md"
+            >
+              Historial
+              <ArrowRightIcon />
             </Link>
           </article>
 
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Mensualidad</p>
-            <p className="mt-2 text-lg font-bold text-slate-950 dark:text-white">
+            <p className="mt-2 text-lg font-extrabold text-slate-950 dark:text-white">
               {mensualidad?.estado === "pagado" ? "Al día" : mensualidad?.estado === "vencido" ? "Pago vencido" : "Pago pendiente"}
             </p>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              {mensualidad ? `Vence el ${formatearFechaCorta(mensualidad.vencimiento)}` : "Sin mensualidad registrada"}
-            </p>
-            {/* 🎨 CAMBIO: text-[#16794C] → text-brand-green */}
-            <Link href="/dashboard/alumno/pagos" className="mt-4 inline-block text-xs font-bold text-brand-green dark:text-brand-lime-light">
-              Ver detalle →
+            <Link
+              href="/dashboard/alumno/pagos"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-green px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-green-dark hover:shadow-md"
+            >
+              Pagos
+              <ArrowRightIcon />
             </Link>
           </article>
         </section>
@@ -217,3 +218,11 @@ function DateBadge({ date }: { date: string }) {
 }
 
 function EmptyState({ message }: { message: string }) { return <p className="px-5 py-8 text-center text-sm text-slate-500 dark:text-slate-400">{message}</p>; }
+
+function ArrowRightIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
