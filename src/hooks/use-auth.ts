@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
-import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
-import { obtenerAlumnoPorId } from "@/store/alumnos-store";
-import { obtenerProfesores } from "@/store/profesores-store";
+import { ApiError, apiFetch } from "@/lib/api";
 import {
   actualizarUsuarioSesion,
   clearSession,
@@ -12,7 +10,7 @@ import {
   subscribeToSession,
   touchSession,
 } from "@/store/auth-store";
-import { Role, Session } from "@/types";
+import { Role, Session, Usuario } from "@/types";
 
 const ACTIVITY_EVENTS = ["mousemove", "keydown", "click", "scroll"] as const;
 const CHECK_INTERVAL_MS = 15 * 1000;
@@ -26,6 +24,41 @@ interface LoginResult {
   ok: boolean;
   error?: string;
   rol?: Role;
+}
+
+type RolBackend = "ADM" | "PROF" | "ALU";
+
+interface UsuarioBackend {
+  id: string;
+  usuario: string;
+  nombre: string;
+  rol: RolBackend;
+  estudianteId?: string;
+}
+
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  usuario: UsuarioBackend;
+}
+
+// El backend guarda el rol como código corto (tabla `usuarios`, check constraint
+// ADM/PROF/ALU); el front usa el nombre completo en rutas y permisos.
+const ROL_BACKEND_A_FRONTEND: Record<RolBackend, Role> = {
+  ADM: "administrador",
+  PROF: "profesor",
+  ALU: "alumno",
+};
+
+function mapearUsuarioBackend(usuario: UsuarioBackend): Usuario {
+  return {
+    id: usuario.id,
+    usuario: usuario.usuario,
+    nombre: usuario.nombre,
+    rol: ROL_BACKEND_A_FRONTEND[usuario.rol],
+    estudianteId: usuario.estudianteId,
+  };
 }
 
 function normalizarCredencial(value: string): string {
@@ -44,71 +77,35 @@ export function useAuth() {
     () => false,
   );
   const parsedSession = useMemo(() => parseSessionSnapshot(snapshot), [snapshot]);
-  const isRecognizedSession = useMemo(() => {
-    if (!parsedSession) return false;
-
-    const usuariosReconocidos = [
-      ...MOCK_USUARIOS,
-      ...obtenerProfesores().map((profesor) => ({
-        id: profesor.id,
-        usuario: profesor.usuario,
-        nombre: profesor.nombre,
-        password: profesor.password,
-        rol: "profesor" as const,
-        estudianteId: undefined,
-      })),
-    ];
-
-    return usuariosReconocidos.some(
-      (usuario) =>
-        usuario.id === parsedSession.usuario.id &&
-        usuario.usuario === parsedSession.usuario.usuario &&
-        usuario.rol === parsedSession.usuario.rol &&
-        usuario.estudianteId === parsedSession.usuario.estudianteId,
-    );
-  }, [parsedSession]);
   const session: Session | null =
-    parsedSession && isRecognizedSession && !isSessionExpired(parsedSession)
-      ? parsedSession
-      : null;
+    parsedSession && !isSessionExpired(parsedSession) ? parsedSession : null;
   const isLoading = !isHydrated;
   const lastTouchRef = useRef(0);
 
-  const login = useCallback(({ usuario, password }: LoginParams): LoginResult => {
+  const login = useCallback(async ({ usuario, password }: LoginParams): Promise<LoginResult> => {
     const cleanUsuario = normalizarCredencial(usuario);
     const cleanPassword = normalizarCredencial(password);
-    const profesoresRegistrados = obtenerProfesores().map((profesor) => ({
-      id: profesor.id,
-      usuario: profesor.usuario,
-      password: profesor.password,
-      nombre: profesor.nombre,
-      rol: "profesor" as const,
-      estudianteId: undefined,
-    }));
-    const match = [...MOCK_USUARIOS, ...profesoresRegistrados].find(
-      (u) => u.usuario === cleanUsuario && u.password === cleanPassword
-    );
 
-    if (!match) {
-      return { ok: false, error: "Usuario o contraseña incorrectos." };
+    try {
+      const result = await apiFetch<LoginResponse>("/auth/login", {
+        method: "POST",
+        body: { usuario: cleanUsuario, password: cleanPassword },
+        skipAuth: true,
+      });
+
+      const usuario = mapearUsuarioBackend(result.usuario);
+
+      saveSession(usuario, {
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      });
+
+      return { ok: true, rol: usuario.rol };
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : "No se pudo iniciar sesión. Intenta de nuevo.";
+      return { ok: false, error: message };
     }
-
-    const usuarioSinPassword = {
-      id: match.id,
-      usuario: match.usuario,
-      nombre: match.estudianteId
-        ? (() => {
-            const alumno = obtenerAlumnoPorId(match.estudianteId);
-            return alumno
-              ? `${alumno.nombres} ${alumno.apellidos}`
-              : match.nombre;
-          })()
-        : match.nombre,
-      rol: match.rol,
-      estudianteId: match.estudianteId,
-    };
-    saveSession(usuarioSinPassword);
-    return { ok: true, rol: usuarioSinPassword.rol };
   }, []);
 
   const logout = useCallback(() => {
@@ -121,10 +118,10 @@ export function useAuth() {
 
   useEffect(() => {
     if (isLoading || !snapshot) return;
-    if (!parsedSession || !isRecognizedSession || isSessionExpired(parsedSession)) {
+    if (!parsedSession || isSessionExpired(parsedSession)) {
       clearSession();
     }
-  }, [isLoading, snapshot, parsedSession, isRecognizedSession]);
+  }, [isLoading, snapshot, parsedSession]);
 
   // Reinicia el contador de inactividad ante actividad del usuario
   useEffect(() => {

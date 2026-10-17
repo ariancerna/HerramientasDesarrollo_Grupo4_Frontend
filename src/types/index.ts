@@ -12,6 +12,8 @@ export interface Session {
   usuario: Usuario;
   loginTime: number;
   lastActivity: number;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface Horario {

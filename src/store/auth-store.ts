@@ -23,6 +23,8 @@ function isValidSession(obj: unknown): obj is Session {
   if (!isPlainObject(obj)) return false;
   if (!isUsuario(obj.usuario)) return false;
   if (!isFiniteNumber(obj.loginTime) || !isFiniteNumber(obj.lastActivity)) return false;
+  if (typeof obj.accessToken !== "string" || !obj.accessToken) return false;
+  if (typeof obj.refreshToken !== "string" || !obj.refreshToken) return false;
 
   const now = Date.now();
   if (obj.loginTime > now + 60_000 || obj.lastActivity > now + 60_000) return false;
@@ -74,9 +76,18 @@ export function parseSessionSnapshot(snapshot: string | null): Session | null {
   }
 }
 
-export function saveSession(usuario: Usuario): Session {
+export function saveSession(
+  usuario: Usuario,
+  tokens: { accessToken: string; refreshToken: string },
+): Session {
   const now = Date.now();
-  const session: Session = { usuario, loginTime: now, lastActivity: now };
+  const session: Session = {
+    usuario,
+    loginTime: now,
+    lastActivity: now,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  };
   if (isBrowser()) {
     localStorage.setItem(SESSION_KEY, encodeSession(session));
     notifySessionChange();
