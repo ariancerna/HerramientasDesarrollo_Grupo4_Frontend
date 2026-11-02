@@ -13,7 +13,8 @@ export type IconName =
     | "calendar"
     | "payments"
     | "evaluation"
-    | "announcement";
+    | "announcement"
+    | "qr";
 
 export interface NavItem {
     label: string;
@@ -46,6 +47,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
     ],
     alumno: [
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/alumno", icon: "home" },
+        { label: "Mi QR de ingreso", shortLabel: "Ingreso", href: "/dashboard/alumno/ingreso", icon: "qr" },
         { label: "Mi perfil", shortLabel: "Perfil", href: "/dashboard/alumno/perfil", icon: "profile" },
         { label: "Mi historial", shortLabel: "Historial", href: "/dashboard/alumno/historial", icon: "attendance" },
         { label: "Mis pagos", shortLabel: "Pagos", href: "/dashboard/alumno/pagos", icon: "payments" },
@@ -62,6 +64,15 @@ export const ROLE_LABELS: Record<Role, string> = {
 
 export function NavIcon({ name, className }: { name: IconName; className?: string }) {
     const cls = className ?? "h-5 w-5 shrink-0";
+    if (name === "qr")
+        return (
+            <Icon className={cls}>
+                <rect x="4" y="4" width="6" height="6" rx="1" />
+                <rect x="14" y="4" width="6" height="6" rx="1" />
+                <rect x="4" y="14" width="6" height="6" rx="1" />
+                <path d="M14 14h2v2h-2zM18 14h2M14 18v2M17 17h3v3h-3z" />
+            </Icon>
+        );
     if (name === "home")
         return (
             <Icon className={cls}>

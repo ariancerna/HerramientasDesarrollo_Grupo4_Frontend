@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { AtSign, BadgeCheck, Camera, IdCard, Layers, Loader2, Pencil, X } from "lucide-react";
+import { AtSign, BadgeCheck, Camera, IdCard, Layers, Loader2, Pencil, QrCode, X } from "lucide-react";
 import UserAvatar from "@/components/shared/user-avatar";
-import { QrIngreso } from "@/components/shared/qr-ingreso";
 import { ROLE_LABELS } from "@/constants/nav-items";
 import { useFotoPerfil } from "@/hooks/use-foto-perfil";
 import { useAlumnos } from "@/store/alumnos-store";
@@ -155,13 +154,19 @@ export default function ProfileModal({ session, onClose }: ProfileModalProps) {
           </dl>
 
           {alumno && (
-            <section className="mt-6 rounded-xl bg-surface-muted p-5 text-center">
-              <h3 className="text-sm font-bold text-ink">Tu código de ingreso</h3>
-              <p className="mx-auto mb-4 mt-1 max-w-xs text-xs leading-5 text-body">
-                Muéstralo al profesor al llegar al entrenamiento para registrar tu asistencia.
-              </p>
-              <QrIngreso dni={alumno.dni} nombre={usuario.nombre} tamano={180} />
-            </section>
+            <Link
+              href="/dashboard/alumno/ingreso"
+              onClick={onClose}
+              className="mt-5 flex items-center gap-3 rounded-xl border border-line px-4 py-3 transition-colors hover:bg-surface-muted"
+            >
+              <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-green-soft text-brand-green dark:text-brand-lime-light">
+                <QrCode className="h-[18px] w-[18px]" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-ink">Mi QR de ingreso</span>
+                <span className="block text-xs text-body">Muéstralo al profesor para registrar tu asistencia.</span>
+              </span>
+            </Link>
           )}
 
           {usuario.rol === "alumno" && (

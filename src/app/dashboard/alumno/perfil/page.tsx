@@ -3,7 +3,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import UserAvatar from "@/components/shared/user-avatar";
-import { QrIngreso } from "@/components/shared/qr-ingreso";
 import { useAuth } from "@/hooks/use-auth";
 import { mensajeError } from "@/lib/api";
 import {
@@ -242,14 +241,6 @@ function PerfilForm({
           <DatoSoloLectura etiqueta="DNI" valor={alumno.dni} />
           <DatoSoloLectura etiqueta="Estado" valor={alumno.estado} capitalizar />
         </dl>
-
-        <div className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">Código de ingreso</h3>
-          <p className="mb-4 mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-            Muéstralo al profesor para registrar tu asistencia en cada entrenamiento.
-          </p>
-          <QrIngreso dni={alumno.dni} nombre={`${alumno.nombres} ${alumno.apellidos}`} tamano={168} />
-        </div>
       </aside>
 
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
