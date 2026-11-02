@@ -5,9 +5,9 @@ import {
   MetodoAsistencia,
   RegistroAsistencia,
 } from "@/types/asistencia";
-import { MOCK_ASISTENCIAS } from "@/lib/mock/asistencias.mock";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isRegistroAsistencia } from "@/lib/storage-validators";
+import { api, ApiError } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
+import { obtenerCategorias } from "@/store/categorias-store";
 
 export type {
   DatosCorreccionAsistencia,
@@ -17,26 +17,14 @@ export type {
   RegistroAsistencia,
 } from "@/types/asistencia";
 
-const STORAGE_KEY = "kickstamp-asistencias";
+// El backend ya responde con el formato de RegistroAsistencia, del más reciente al más antiguo.
+// Para un alumno solo devuelve sus propios registros.
+const asistencias = crearColeccionRemota<RegistroAsistencia>("asistencias", () =>
+  api<RegistroAsistencia[]>("/asistencias"),
+);
 
-function leerRegistros(): RegistroAsistencia[] {
-  if (typeof window === "undefined") return MOCK_ASISTENCIAS;
-  return readJsonList(STORAGE_KEY, MOCK_ASISTENCIAS, isRegistroAsistencia);
-}
-
-function guardarRegistros(registros: RegistroAsistencia[]) {
-  if (typeof window !== "undefined") {
-    writeJson(STORAGE_KEY, registros);
-  }
-}
-
-function crearId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
+export const suscribirAsistencias = asistencias.suscribir;
+export const useRegistrosAsistencia = () => useColeccion(asistencias);
 
 function fechaLocal(fechaHora: string) {
   const fecha = new Date(fechaHora);
@@ -46,57 +34,60 @@ function fechaLocal(fechaHora: string) {
   return `${year}-${month}-${day}`;
 }
 
-export function registrarAsistencia(
+interface AlumnoPorDniApi {
+  id: string;
+  dni: string;
+  nombres: string;
+  apellidos: string;
+  categoria_id: string | null;
+  estado: "activo" | "inactivo";
+}
+
+/** Busca un alumno por DNI para registrar su asistencia; undefined si no existe. */
+export async function buscarEstudiantePorDni(dni: string): Promise<EstudianteAsistencia | undefined> {
+  try {
+    const alumno = await api<AlumnoPorDniApi>(`/alumnos/dni/${dni}`);
+    const categoria = obtenerCategorias().find((item) => item.id === alumno.categoria_id);
+    return {
+      id: alumno.id,
+      dni: alumno.dni,
+      nombres: alumno.nombres,
+      apellidos: alumno.apellidos,
+      categoria: categoria?.nombre ?? "",
+      activo: alumno.estado === "activo",
+    };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return undefined;
+    throw error;
+  }
+}
+
+export async function registrarAsistencia(
   estudiante: EstudianteAsistencia,
   metodo: MetodoAsistencia,
   fechaHora = new Date().toISOString(),
-): RegistroAsistencia {
-  if (typeof window === "undefined") {
-    throw new Error("El registro solo está disponible en el navegador.");
-  }
-
-  const fecha = new Date(fechaHora);
-  if (Number.isNaN(fecha.getTime())) {
+): Promise<RegistroAsistencia> {
+  if (Number.isNaN(new Date(fechaHora).getTime())) {
     throw new Error("La fecha u hora de asistencia no es válida.");
   }
 
-  const registros = leerRegistros();
-  const fechaRegistro = fechaLocal(fechaHora);
-  const duplicado = registros.some(
-    (registro) =>
-      registro.estudianteId === estudiante.id &&
-      fechaLocal(registro.fechaHora) === fechaRegistro,
-  );
-
-  if (duplicado) {
-    throw new Error("Este estudiante ya tiene asistencia registrada en esa fecha.");
-  }
-
-  const registro: RegistroAsistencia = {
-    id: crearId(),
-    estudianteId: estudiante.id,
-    dni: estudiante.dni,
-    estudiante: `${estudiante.nombres} ${estudiante.apellidos}`,
-    categoria: estudiante.categoria,
-    fechaHora,
-    metodo,
-  };
-
-  guardarRegistros([registro, ...registros]);
-
+  // El backend rechaza un segundo registro del mismo alumno en el mismo día.
+  const registro = await api<RegistroAsistencia>("/asistencias", {
+    method: "POST",
+    body: { alumnoId: estudiante.id, metodo, fechaHora },
+  });
+  asistencias.establecer([registro, ...asistencias.obtener()]);
   return registro;
 }
 
 export function obtenerRegistrosAsistencia(): RegistroAsistencia[] {
-  return [...leerRegistros()].sort(
-    (a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime(),
-  );
+  return asistencias.obtener();
 }
 
 export function obtenerAsistenciasPorEstudiante(
   estudianteId: string,
 ): RegistroAsistencia[] {
-  return leerRegistros().filter(
+  return asistencias.obtener().filter(
     (registro) => registro.estudianteId === estudianteId,
   );
 }
@@ -122,47 +113,21 @@ export function filtrarAsistencias(
   });
 }
 
-export function corregirAsistencia(
+export async function corregirAsistencia(
   id: string,
   datos: DatosCorreccionAsistencia,
-): RegistroAsistencia {
-  if (typeof window === "undefined") {
-    throw new Error("La corrección solo está disponible en el navegador.");
-  }
-
-  const registros = leerRegistros();
-  const indice = registros.findIndex((registro) => registro.id === id);
-
-  if (indice === -1) {
-    throw new Error("No se encontró el registro de asistencia.");
-  }
-
+): Promise<RegistroAsistencia> {
   const fechaHora = new Date(datos.fechaHora);
   if (Number.isNaN(fechaHora.getTime())) {
     throw new Error("La fecha u hora seleccionada no es válida.");
   }
 
-  const registroActual = registros[indice];
-  const fechaRegistro = fechaLocal(datos.fechaHora);
-  const duplicado = registros.some(
-    (registro) =>
-      registro.id !== id &&
-      registro.estudianteId === registroActual.estudianteId &&
-      fechaLocal(registro.fechaHora) === fechaRegistro,
+  const actualizado = await api<RegistroAsistencia>(`/asistencias/${id}`, {
+    method: "PATCH",
+    body: { fechaHora: fechaHora.toISOString(), metodo: datos.metodo },
+  });
+  asistencias.establecer(
+    asistencias.obtener().map((registro) => (registro.id === id ? actualizado : registro)),
   );
-
-  if (duplicado) {
-    throw new Error("Este estudiante ya tiene asistencia registrada en esa fecha.");
-  }
-
-  const actualizado: RegistroAsistencia = {
-    ...registroActual,
-    fechaHora: datos.fechaHora,
-    metodo: datos.metodo,
-  };
-  const nuevaLista = [...registros];
-  nuevaLista[indice] = actualizado;
-  guardarRegistros(nuevaLista);
-
   return actualizado;
 }

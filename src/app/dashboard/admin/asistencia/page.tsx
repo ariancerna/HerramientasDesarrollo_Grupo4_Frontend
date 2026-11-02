@@ -4,19 +4,21 @@ import { useMemo, useState } from "react";
 import AsistenciaForm from "@/components/forms/asistencia-form";
 import { AsistenciaLista } from "@/components/shared/asistencia-lista";
 import { RoleGuard } from "@/components/shared/role-guard";
-import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { ErrorBanner } from "@/components/shared/error-banner";
+import { mensajeError } from "@/lib/api";
 import {
   corregirAsistencia,
   filtrarAsistencias,
-  obtenerRegistrosAsistencia,
   RegistroAsistencia,
+  useRegistrosAsistencia,
 } from "@/store/asistencia-store";
+import { useNombresCategorias } from "@/store/categorias-store";
 import { DatosCorreccionAsistencia } from "@/types/asistencia";
 
 export default function AsistenciaAdminPage() {
-  const [registros, setRegistros] = useState<RegistroAsistencia[]>(
-    obtenerRegistrosAsistencia,
-  );
+  const registros = useRegistrosAsistencia();
+  const nombresCategorias = useNombresCategorias();
+  const [error, setError] = useState<string | null>(null);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [fecha, setFecha] = useState("");
@@ -29,13 +31,17 @@ export default function AsistenciaAdminPage() {
     [registros, texto, categoria, fecha],
   );
 
-  const handleCorregir = (datos: DatosCorreccionAsistencia) => {
+  const handleCorregir = async (datos: DatosCorreccionAsistencia) => {
     if (!registroACorregir) return;
 
-    corregirAsistencia(registroACorregir.id, datos);
-    setRegistros(obtenerRegistrosAsistencia());
-    setRegistroACorregir(null);
-    setMensajeExito("La asistencia fue corregida correctamente.");
+    setError(null);
+    try {
+      await corregirAsistencia(registroACorregir.id, datos);
+      setRegistroACorregir(null);
+      setMensajeExito("La asistencia fue corregida correctamente.");
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo corregir la asistencia."));
+    }
   };
 
   return (
@@ -73,7 +79,7 @@ export default function AsistenciaAdminPage() {
               className="w-full min-w-0 max-w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
               <option value="todas">Todas las categorías</option>
-              {NOMBRES_CATEGORIAS.map((nombre) => (
+              {nombresCategorias.map((nombre) => (
                 <option key={nombre} value={nombre}>
                   {nombre}
                 </option>
@@ -93,6 +99,10 @@ export default function AsistenciaAdminPage() {
             />
           </label>
         </section>
+
+        <div className="mb-5">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
+        </div>
 
         {mensajeExito && (
           <div

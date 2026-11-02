@@ -6,10 +6,11 @@ import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
-import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
+import { useRegistrosAsistencia } from "@/store/asistencia-store";
 
 export default function HistorialAlumnoPage() {
   useDatosRemotos();
+  const asistencias = useRegistrosAsistencia();
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
   const [metodo, setMetodo] = useState<"todos" | "ESCANEO" | "MANUAL">(
@@ -23,12 +24,14 @@ export default function HistorialAlumnoPage() {
   const registros = useMemo(
     () =>
       estudianteId
-        ? [...obtenerAsistenciasPorEstudiante(estudianteId)].sort(
-            (a, b) =>
-              new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime(),
-          )
+        ? asistencias
+            .filter((registro) => registro.estudianteId === estudianteId)
+            .sort(
+              (a, b) =>
+                new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime(),
+            )
         : [],
-    [estudianteId],
+    [asistencias, estudianteId],
   );
   const registrosFiltrados = useMemo(
     () =>

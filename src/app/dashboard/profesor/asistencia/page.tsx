@@ -3,7 +3,9 @@
 import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Pdf417Scanner from "@/components/scanner/pdf417-scanner";
+import { mensajeError as textoError } from "@/lib/api";
 import {
+  buscarEstudiantePorDni,
   EstudianteAsistencia,
   MetodoAsistencia,
   RegistroAsistencia,
@@ -11,33 +13,6 @@ import {
 } from "@/store/asistencia-store";
 
 type Vista = "ESCANEO" | "MANUAL";
-
-const ESTUDIANTES_DEMO: EstudianteAsistencia[] = [
-  {
-    id: "alu-001",
-    dni: "76543210",
-    nombres: "Valentina",
-    apellidos: "Rojas Pérez",
-    categoria: "Sub-17 femenino",
-    activo: true,
-  },
-  {
-    id: "alu-002",
-    dni: "71234567",
-    nombres: "Diego",
-    apellidos: "Mendoza Ruiz",
-    categoria: "Sub-19 masculino",
-    activo: true,
-  },
-  {
-    id: "alu-003",
-    dni: "70456789",
-    nombres: "Camila",
-    apellidos: "Torres Silva",
-    categoria: "Mayores femenino",
-    activo: true,
-  },
-];
 
 function extraerDni(rawValue: string) {
   const exactValue = rawValue.trim();
@@ -80,10 +55,16 @@ export default function AsistenciaProfesorPage() {
     setUltimoRegistro(null);
   };
 
-  const buscarEstudiante = (dni: string) =>
-    ESTUDIANTES_DEMO.find((estudiante) => estudiante.dni === dni);
+  const buscarEstudiante = async (dni: string) => {
+    try {
+      return await buscarEstudiantePorDni(dni);
+    } catch (error) {
+      setMensajeError(textoError(error, "No se pudo buscar al estudiante."));
+      return null;
+    }
+  };
 
-  const procesarLectura = (rawValue: string) => {
+  const procesarLectura = async (rawValue: string) => {
     limpiarMensajes();
     const dni = extraerDni(rawValue);
 
@@ -93,7 +74,8 @@ export default function AsistenciaProfesorPage() {
       return;
     }
 
-    const estudiante = buscarEstudiante(dni);
+    const estudiante = await buscarEstudiante(dni);
+    if (estudiante === null) return;
     if (!estudiante) {
       setEstudianteEscaneado(null);
       setMensajeError(`No existe un estudiante registrado con el DNI ${dni}.`);
@@ -109,7 +91,7 @@ export default function AsistenciaProfesorPage() {
     setEstudianteEscaneado(estudiante);
   };
 
-  const guardarRegistro = (
+  const guardarRegistro = async (
     estudiante: EstudianteAsistencia,
     metodo: MetodoAsistencia,
     fechaHora?: string,
@@ -117,7 +99,7 @@ export default function AsistenciaProfesorPage() {
     limpiarMensajes();
 
     try {
-      const registro = registrarAsistencia(estudiante, metodo, fechaHora);
+      const registro = await registrarAsistencia(estudiante, metodo, fechaHora);
       setUltimoRegistro(registro);
       setEstudianteEscaneado(null);
       setDniManual("");
@@ -130,7 +112,7 @@ export default function AsistenciaProfesorPage() {
     }
   };
 
-  const registrarManual = (event: FormEvent<HTMLFormElement>) => {
+  const registrarManual = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     limpiarMensajes();
 
@@ -139,7 +121,8 @@ export default function AsistenciaProfesorPage() {
       return;
     }
 
-    const estudiante = buscarEstudiante(dniManual);
+    const estudiante = await buscarEstudiante(dniManual);
+    if (estudiante === null) return;
     if (!estudiante) {
       setMensajeError(
         `No existe un estudiante registrado con el DNI ${dniManual}.`,
@@ -158,7 +141,12 @@ export default function AsistenciaProfesorPage() {
       return;
     }
 
-    guardarRegistro(estudiante, "MANUAL", fechaHora.toISOString());
+    if (!estudiante.activo) {
+      setMensajeError("El estudiante encontrado no está activo.");
+      return;
+    }
+
+    await guardarRegistro(estudiante, "MANUAL", fechaHora.toISOString());
   };
 
   const cambiarVista = (nextView: Vista) => {
