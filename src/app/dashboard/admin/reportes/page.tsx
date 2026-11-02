@@ -5,7 +5,7 @@ import IndicadoresAsistenciaPanel from "@/components/reportes/indicadores-asiste
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { descargarCsvReporteAsistencia } from "@/lib/exportar-reporte-asistencia";
-import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { useNombresCategorias } from "@/store/categorias-store";
 import {
   FILTROS_REPORTE_INICIALES,
   FiltrosReporteAsistencia,
@@ -13,10 +13,12 @@ import {
   generarReporteAsistencia,
   validarPeriodoReporte,
 } from "@/lib/reportes-asistencia";
-import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
+import { useRegistrosAsistencia } from "@/store/asistencia-store";
 import type { RegistroAsistencia } from "@/types/asistencia";
 
 export default function ReportesPage() {
+  const todosLosRegistros = useRegistrosAsistencia();
+  const nombresCategorias = useNombresCategorias();
   const [filtros, setFiltros] = useState<FiltrosReporteAsistencia>({
     ...FILTROS_REPORTE_INICIALES,
   });
@@ -46,7 +48,7 @@ export default function ReportesPage() {
     }
 
     const nuevosRegistros = generarReporteAsistencia(
-      obtenerRegistrosAsistencia(),
+      todosLosRegistros,
       filtrosAUsar,
     );
     setRegistros(nuevosRegistros);
@@ -137,7 +139,7 @@ export default function ReportesPage() {
                 className={INPUT_CLASS}
               >
                 <option value="todas">Todas las categorías</option>
-                {NOMBRES_CATEGORIAS.map((categoria) => (
+                {nombresCategorias.map((categoria) => (
                   <option key={categoria} value={categoria}>
                     {categoria}
                   </option>
