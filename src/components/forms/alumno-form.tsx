@@ -192,6 +192,9 @@ export default function AlumnoForm({
               onChange={(e) => setForm({ ...form, categoria: e.target.value })}
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
+              <option value="" disabled>
+                {categorias.length ? "Selecciona una categoría" : "Primero registra una categoría"}
+              </option>
               {categorias.map((c) => (
                 <option key={c} value={c}>
                   {c}
