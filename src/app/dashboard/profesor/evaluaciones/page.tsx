@@ -6,7 +6,7 @@ import EvaluacionForm from "@/components/evaluaciones/evaluacion-form";
 import { EvaluacionLista } from "@/components/evaluaciones/evaluacion-lista";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
-import { obtenerAlumnos } from "@/store/alumnos-store";
+import { useAlumnos } from "@/store/alumnos-store";
 import {
   actualizarEvaluacion,
   crearEvaluacion,
@@ -14,13 +14,12 @@ import {
   obtenerEvaluacionesPorProfesor,
 } from "@/store/evaluaciones-store";
 import { Evaluacion, EvaluacionFormData } from "@/types/evaluacion";
-import { Student } from "@/types/student";
 
 export default function EvaluacionesProfesorPage() {
   const { session } = useAuth();
   const { confirm, dialog } = useConfirm();
   const profesorId = session?.usuario.id ?? "";
-  const [alumnos] = useState<Student[]>(obtenerAlumnos);
+  const alumnos = useAlumnos();
   const [evaluaciones, setEvaluaciones] = useState<Evaluacion[]>(() =>
     obtenerEvaluacionesPorProfesor(profesorId),
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import { useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
@@ -19,6 +20,7 @@ const FILTROS: Array<{ valor: FiltroActividad; etiqueta: string }> = [
 ];
 
 export default function CalendarioAlumnoPage() {
+  useDatosRemotos();
   const [filtro, setFiltro] = useState<FiltroActividad>("todos");
   const { session } = useAuth();
   const estudianteId = session?.usuario.estudianteId;

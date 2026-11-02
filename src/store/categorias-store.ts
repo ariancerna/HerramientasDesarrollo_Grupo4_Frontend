@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Categoria, Horario } from "@/types";
 import { api } from "@/lib/api";
 import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
@@ -32,6 +33,12 @@ export const obtenerCategorias = categorias.obtener;
 export const suscribirCategorias = categorias.suscribir;
 export const recargarCategorias = categorias.recargar;
 export const useCategorias = () => useColeccion(categorias);
+
+/** Nombres de las categorías registradas, para selects y filtros. */
+export function useNombresCategorias(): string[] {
+  const lista = useCategorias();
+  return useMemo(() => lista.map((categoria) => categoria.nombre), [lista]);
+}
 
 function datosHorario({ dia, horaInicio, horaFin, cancha, estado }: Horario) {
   return { dia, horaInicio, horaFin, cancha: cancha || undefined, estado };

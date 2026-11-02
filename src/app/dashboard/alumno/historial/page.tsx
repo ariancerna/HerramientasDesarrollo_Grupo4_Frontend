@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import { useMemo, useState } from "react";
 import AsistenciaTabla from "@/components/shared/asistencia-tabla";
 import { RoleGuard } from "@/components/shared/role-guard";
@@ -8,6 +9,7 @@ import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
 
 export default function HistorialAlumnoPage() {
+  useDatosRemotos();
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
   const [metodo, setMetodo] = useState<"todos" | "ESCANEO" | "MANUAL">(

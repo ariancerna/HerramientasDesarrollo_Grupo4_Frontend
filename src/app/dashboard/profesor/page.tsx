@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import Link from "next/link";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
@@ -10,6 +11,7 @@ import { obtenerProximasActividades } from "@/store/calendario-store";
 import { obtenerEvaluacionesPorProfesor } from "@/store/evaluaciones-store";
 
 export default function ProfesorDashboardPage() {
+  useDatosRemotos();
   const { session } = useAuth();
   const primerNombre = session?.usuario.nombre.split(" ")[0] ?? "Profesor";
   const profesorId = session?.usuario.id ?? "";

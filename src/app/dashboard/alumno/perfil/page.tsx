@@ -4,9 +4,12 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import UserAvatar from "@/components/shared/user-avatar";
 import { useAuth } from "@/hooks/use-auth";
+import { mensajeError } from "@/lib/api";
 import {
+  actualizarFotoPerfil,
   actualizarPerfilAlumno,
-  obtenerAlumnoPorId,
+  alumnosCargados,
+  useAlumnos,
 } from "@/store/alumnos-store";
 import type { Student, StudentProfileData } from "@/types/student";
 
@@ -20,7 +23,8 @@ type ErroresPerfil = Partial<
 export default function PerfilAlumnoPage() {
   const { session, actualizarUsuarioActual } = useAuth();
   const estudianteId = session?.usuario.estudianteId;
-  const alumno = estudianteId ? obtenerAlumnoPorId(estudianteId) : undefined;
+  const alumnos = useAlumnos();
+  const alumno = estudianteId ? alumnos.find((item) => item.id === estudianteId) : undefined;
 
   return (
     <RoleGuard allowedRoles={["alumno"]}>
@@ -35,7 +39,9 @@ export default function PerfilAlumnoPage() {
           </p>
         </header>
 
-        {!alumno ? (
+        {!alumno && !alumnosCargados() ? (
+          <p className="text-sm text-slate-500 dark:text-slate-400">Cargando tu perfil...</p>
+        ) : !alumno ? (
           <div
             role="alert"
             className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
@@ -67,6 +73,9 @@ function PerfilForm({
     useState<StudentProfileData>(datosIniciales);
   const [errores, setErrores] = useState<ErroresPerfil>({});
   const [mensaje, setMensaje] = useState("");
+  // La vista previa usa un data URL; el archivo original es el que se sube al backend.
+  const [archivoFoto, setArchivoFoto] = useState<File | null>(null);
+  const [guardando, setGuardando] = useState(false);
   const hayCambios = JSON.stringify(form) !== JSON.stringify(datosGuardados);
 
   const actualizarCampo = <K extends keyof StudentProfileData>(
@@ -102,6 +111,7 @@ function PerfilForm({
     const lector = new FileReader();
     lector.onload = () => {
       if (typeof lector.result !== "string") return;
+      setArchivoFoto(archivo);
       actualizarCampo("fotoUrl", lector.result);
       setErrores((actuales) => ({ ...actuales, foto: undefined }));
     };
@@ -136,7 +146,7 @@ function PerfilForm({
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validar()) return;
 
@@ -147,22 +157,30 @@ function PerfilForm({
       email: form.email.trim(),
       telefono: form.telefono?.trim() || undefined,
     };
-    const actualizado = actualizarPerfilAlumno(alumno.id, datosNormalizados);
 
-    if (!actualizado) {
+    setGuardando(true);
+    try {
+      const actualizado = await actualizarPerfilAlumno(datosNormalizados);
+      if (form.fotoUrl !== datosGuardados.fotoUrl) {
+        await actualizarFotoPerfil(form.fotoUrl ? archivoFoto : null);
+        setArchivoFoto(null);
+      }
+
+      setForm(datosNormalizados);
+      setDatosGuardados(datosNormalizados);
+      setErrores({});
+      setMensaje("Tus datos se actualizaron correctamente.");
+      onNombreActualizado(`${actualizado.nombres} ${actualizado.apellidos}`);
+    } catch (error) {
       setMensaje("");
-      setErrores({ nombres: "No se pudo actualizar el perfil." });
-      return;
+      setErrores({ nombres: mensajeError(error, "No se pudo actualizar el perfil.") });
+    } finally {
+      setGuardando(false);
     }
-
-    setForm(datosNormalizados);
-    setDatosGuardados(datosNormalizados);
-    setErrores({});
-    setMensaje("Tus datos se actualizaron correctamente.");
-    onNombreActualizado(`${actualizado.nombres} ${actualizado.apellidos}`);
   };
 
   const restaurar = () => {
+    setArchivoFoto(null);
     setForm(datosGuardados);
     setErrores({});
     setMensaje("");
@@ -307,10 +325,10 @@ function PerfilForm({
             {/* 🎨 CAMBIO: bg-[#16794C] hover:bg-[#12613D] focus:ring-[#16794C] → bg-brand-green hover:bg-brand-green-dark focus:ring-brand-green */}
             <button
               type="submit"
-              disabled={!hayCambios}
+              disabled={!hayCambios || guardando}
               className="rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 dark:focus:ring-offset-slate-900"
             >
-              Guardar cambios
+              {guardando ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         </form>

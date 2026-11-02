@@ -12,11 +12,14 @@ import {
   crearAlumno,
   eliminarAlumno,
   filtrarAlumnos,
-  obtenerAlumnos,
+  useAlumnos,
 } from "@/store/alumnos-store";
+import { mensajeError } from "@/lib/api";
+import { ErrorBanner } from "@/components/shared/error-banner";
 
 export default function AlumnosAdminPage() {
-  const [alumnos, setAlumnos] = useState<Student[]>(obtenerAlumnos);
+  const alumnos = useAlumnos();
+  const [error, setError] = useState<string | null>(null);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
@@ -58,18 +61,26 @@ export default function AlumnosAdminPage() {
     });
     if (!confirmado) return;
 
-    eliminarAlumno(alumno.id);
-    setAlumnos(obtenerAlumnos());
+    setError(null);
+    try {
+      await eliminarAlumno(alumno.id);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo eliminar el alumno."));
+    }
   };
 
-  const handleGuardar = (data: StudentFormData, id?: string) => {
-    if (id) {
-      actualizarAlumno(id, data);
-    } else {
-      crearAlumno(data);
+  const handleGuardar = async (data: StudentFormData, id?: string) => {
+    setError(null);
+    try {
+      if (id) {
+        await actualizarAlumno(id, data);
+      } else {
+        await crearAlumno(data);
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar el alumno."));
     }
-    setAlumnos(obtenerAlumnos());
-    setIsModalOpen(false);
   };
 
   return (
@@ -81,7 +92,8 @@ export default function AlumnosAdminPage() {
           </h1>
         </header>
 
-        <div className="mb-5">
+        <div className="mb-5 space-y-3">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
           <AlumnoFiltros
             texto={texto}
             onTextoChange={setTexto}

@@ -5,6 +5,9 @@ import { isBrowser } from "@/lib/storage";
 /** Se emite al iniciar o cerrar sesión (no en cada renovación de actividad). */
 export const AUTH_CHANGE_EVENT = "kickstamp:auth-change";
 
+const DATOS_CHANGE_EVENT = "kickstamp:datos-remotos-change";
+let versionDatos = 0;
+
 export interface ColeccionRemota<T> {
   /** Snapshot actual; la primera lectura con sesión dispara la carga desde el API. */
   obtener: () => T[];
@@ -14,6 +17,8 @@ export interface ColeccionRemota<T> {
   recargar: () => Promise<T[]>;
   /** Reemplaza la caché local tras una mutación confirmada por el API. */
   establecer: (items: T[]) => void;
+  /** true cuando terminó la carga (con o sin error); útil para no mostrar "vacío" mientras carga. */
+  cargada: () => boolean;
 }
 
 /**
@@ -32,7 +37,10 @@ export function crearColeccionRemota<T>(
   let peticion: Promise<T[]> | null = null;
 
   function notificar() {
-    if (isBrowser()) window.dispatchEvent(new Event(evento));
+    if (!isBrowser()) return;
+    versionDatos += 1;
+    window.dispatchEvent(new Event(evento));
+    window.dispatchEvent(new Event(DATOS_CHANGE_EVENT));
   }
 
   function establecer(items: T[]) {
@@ -91,7 +99,22 @@ export function crearColeccionRemota<T>(
     suscribir,
     recargar,
     establecer,
+    cargada: () => estado === "lista" || estado === "error",
   };
+}
+
+function suscribirDatos(onStoreChange: () => void) {
+  if (!isBrowser()) return () => undefined;
+  window.addEventListener(DATOS_CHANGE_EVENT, onStoreChange);
+  return () => window.removeEventListener(DATOS_CHANGE_EVENT, onStoreChange);
+}
+
+/**
+ * Re-renderiza el componente cuando cambia cualquier colección remota. Útil en
+ * vistas que combinan varios stores con funciones derivadas (resúmenes de inicio).
+ */
+export function useDatosRemotos(): number {
+  return useSyncExternalStore(suscribirDatos, () => versionDatos, () => 0);
 }
 
 /** Mantiene el componente sincronizado con la caché de la colección. */

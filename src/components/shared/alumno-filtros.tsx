@@ -1,7 +1,7 @@
 "use client";
 
 import { Student } from "@/types/student";
-import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { useNombresCategorias } from "@/store/categorias-store";
 
 interface AlumnoFiltrosProps {
   texto: string;
@@ -22,8 +22,10 @@ export default function AlumnoFiltros({
   estado,
   onEstadoChange,
   onNuevoAlumno,
-  categorias = NOMBRES_CATEGORIAS,
+  categorias: categoriasProp,
 }: AlumnoFiltrosProps) {
+  const nombresCategorias = useNombresCategorias();
+  const categorias = categoriasProp ?? nombresCategorias;
   return (
     <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex flex-1 flex-col gap-3 lg:flex-row">

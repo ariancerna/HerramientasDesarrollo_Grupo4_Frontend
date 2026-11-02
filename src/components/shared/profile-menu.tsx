@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import UserAvatar from "@/components/shared/user-avatar";
@@ -13,6 +14,7 @@ interface ProfileMenuProps {
 }
 
 export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
+  useDatosRemotos();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 

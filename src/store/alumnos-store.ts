@@ -3,93 +3,141 @@ import {
   StudentFormData,
   StudentProfileData,
 } from "@/types/student";
-import { MOCK_ALUMNOS } from "@/lib/mock/alumnos.mock";
-import { readJsonList, writeJson } from "@/lib/storage";
+import { api } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
 import { isStudent } from "@/lib/storage-validators";
+import { getSession } from "@/store/auth-store";
+import { obtenerCategorias } from "@/store/categorias-store";
 
-const STORAGE_KEY = "kickstamp-alumnos";
-
-function isBrowser() {
-  return typeof window !== "undefined";
+/** Fila de `alumnos` tal como la devuelve el backend. */
+interface AlumnoApi {
+  id: string;
+  dni: string;
+  codigo: string | null;
+  nombres: string;
+  apellidos: string;
+  email: string | null;
+  telefono: string | null;
+  estado: Student["estado"];
+  foto_url: string | null;
+  /** En la lista viene la fila embebida; en el perfil, solo el nombre. */
+  categorias?: { nombre: string } | null;
+  categoria?: string | null;
 }
 
-function crearId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
+interface PaginaAlumnos {
+  data: AlumnoApi[];
+  total: number;
+}
+
+const LIMITE_PAGINA = 100;
+
+function aStudent(alumno: AlumnoApi): Student {
+  return {
+    id: alumno.id,
+    dni: alumno.dni,
+    codigo: alumno.codigo ?? "",
+    nombres: alumno.nombres,
+    apellidos: alumno.apellidos,
+    email: alumno.email ?? "",
+    telefono: alumno.telefono ?? undefined,
+    fotoUrl: alumno.foto_url ?? undefined,
+    categoria: alumno.categorias?.nombre ?? alumno.categoria ?? "",
+    estado: alumno.estado,
+  };
+}
+
+async function cargarAlumnos(): Promise<Student[]> {
+  // Un alumno no puede listar a los demás: solo se carga su propio perfil.
+  if (getSession()?.usuario.rol === "alumno") {
+    const perfil = await api<AlumnoApi | null>("/alumnos/me/perfil");
+    return perfil ? [aStudent(perfil)] : [];
   }
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const alumnos: AlumnoApi[] = [];
+  for (let page = 1; ; page += 1) {
+    const pagina = await api<PaginaAlumnos>(`/alumnos?page=${page}&limit=${LIMITE_PAGINA}`);
+    alumnos.push(...pagina.data);
+    if (pagina.data.length < LIMITE_PAGINA || alumnos.length >= pagina.total) break;
+  }
+  return alumnos.map(aStudent);
 }
 
-/**
- * Obtiene la lista de alumnos desde localStorage. La primera vez que se
- * llama, siembra el storage con los datos de ejemplo (MOCK_ALUMNOS).
- */
-export function obtenerAlumnos(): Student[] {
-  if (!isBrowser()) return MOCK_ALUMNOS;
-  return readJsonList(STORAGE_KEY, MOCK_ALUMNOS, isStudent);
-}
+const alumnos = crearColeccionRemota<Student>("alumnos", cargarAlumnos);
+
+/** Snapshot actual de alumnos (ADM/PROF: los visibles para su rol; ALU: su perfil). */
+export const obtenerAlumnos = alumnos.obtener;
+export const suscribirAlumnos = alumnos.suscribir;
+export const useAlumnos = () => useColeccion(alumnos);
+export const alumnosCargados = alumnos.cargada;
 
 export function obtenerAlumnoPorId(id: string): Student | undefined {
   return obtenerAlumnos().find((alumno) => alumno.id === id);
 }
 
-function guardarAlumnos(alumnos: Student[]) {
-  if (isBrowser()) {
-    writeJson(STORAGE_KEY, alumnos);
+function categoriaIdPorNombre(nombre: string): string {
+  const categoria = obtenerCategorias().find((item) => item.nombre === nombre);
+  if (!categoria) {
+    throw new Error("Selecciona una categoría registrada antes de guardar el alumno.");
   }
+  return categoria.id;
 }
 
-/** US-04: crea un nuevo alumno. */
-export function crearAlumno(data: StudentFormData): Student {
-  const nuevo: Student = { ...data, id: crearId() };
-  guardarAlumnos([nuevo, ...obtenerAlumnos()]);
-  return nuevo;
-}
-
-/** US-04: actualiza los datos de un alumno existente. */
-export function actualizarAlumno(
-  id: string,
-  data: StudentFormData,
-): Student | null {
-  const alumnos = obtenerAlumnos();
-  const index = alumnos.findIndex((a) => a.id === id);
-  if (index === -1) return null;
-
-  const actualizado: Student = { ...alumnos[index], ...data, id };
-  const nuevaLista = [...alumnos];
-  nuevaLista[index] = actualizado;
-  guardarAlumnos(nuevaLista);
-  return actualizado;
-}
-
-/** Actualiza únicamente los datos que el alumno puede gestionar desde su perfil. */
-export function actualizarPerfilAlumno(
-  id: string,
-  data: StudentProfileData,
-): Student | null {
-  const alumnos = obtenerAlumnos();
-  const index = alumnos.findIndex((alumno) => alumno.id === id);
-
-  if (index === -1) return null;
-
-  const actualizado: Student = {
-    ...alumnos[index],
+function cuerpoAlumno(data: StudentFormData) {
+  return {
+    dni: data.dni.trim(),
+    codigo: data.codigo.trim(),
     nombres: data.nombres.trim(),
     apellidos: data.apellidos.trim(),
     email: data.email.trim(),
-    telefono: data.telefono?.trim() || undefined,
-    fotoUrl: data.fotoUrl || undefined,
+    categoriaId: categoriaIdPorNombre(data.categoria),
+    estado: data.estado,
   };
-  const nuevaLista = [...alumnos];
-  nuevaLista[index] = actualizado;
-  guardarAlumnos(nuevaLista);
+}
 
-  return actualizado;
+/** US-04: crea un nuevo alumno. */
+export async function crearAlumno(data: StudentFormData): Promise<void> {
+  await api("/alumnos", { method: "POST", body: cuerpoAlumno(data) });
+  await alumnos.recargar();
+}
+
+/** US-04: actualiza los datos de un alumno existente. */
+export async function actualizarAlumno(id: string, data: StudentFormData): Promise<void> {
+  await api(`/alumnos/${id}`, { method: "PUT", body: cuerpoAlumno(data) });
+  await alumnos.recargar();
+}
+
+/** Actualiza únicamente los datos que el alumno puede gestionar desde su perfil. */
+export async function actualizarPerfilAlumno(data: StudentProfileData): Promise<Student> {
+  const perfil = await api<AlumnoApi>("/alumnos/me/perfil", {
+    method: "PATCH",
+    body: {
+      nombres: data.nombres.trim(),
+      apellidos: data.apellidos.trim(),
+      email: data.email.trim(),
+      telefono: data.telefono?.trim() || undefined,
+    },
+  });
+  await alumnos.recargar();
+  return aStudent(perfil);
+}
+
+/** Sube (o quita, con null) la foto de perfil del alumno autenticado. */
+export async function actualizarFotoPerfil(foto: File | null): Promise<void> {
+  if (foto) {
+    const formData = new FormData();
+    formData.append("foto", foto);
+    await api("/alumnos/me/perfil/foto", { method: "PUT", body: formData });
+  } else {
+    await api("/alumnos/me/perfil/foto", { method: "DELETE" });
+  }
+  await alumnos.recargar();
 }
 
 /** US-04: elimina un alumno por id. */
-export function eliminarAlumno(id: string): void {
-  guardarAlumnos(obtenerAlumnos().filter((a) => a.id !== id));
+export async function eliminarAlumno(id: string): Promise<void> {
+  await api(`/alumnos/${id}`, { method: "DELETE" });
+  alumnos.establecer(obtenerAlumnos().filter((alumno) => alumno.id !== id));
 }
 
 /** US-05: busca por texto (nombres, apellidos, DNI o código) y filtra por categoría/estado. */

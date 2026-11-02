@@ -4,13 +4,15 @@ import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
-import { obtenerCategorias } from "@/store/categorias-store";
+import { useCategorias } from "@/store/categorias-store";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
 import { AlumnoLista } from "@/components/shared/alumno-lista";
 import AlumnoForm from "@/components/forms/alumno-form";
+import { ErrorBanner } from "@/components/shared/error-banner";
+import { mensajeError } from "@/lib/api";
 import { Student, StudentFormData } from "@/types/student";
 import {
-  obtenerAlumnos,
+  useAlumnos,
   filtrarAlumnos,
   crearAlumno,
   actualizarAlumno,
@@ -19,11 +21,18 @@ import {
 
 export default function AlumnosProfesorPage() {
   const { session } = useAuth();
-  const [categoriasAsignadas] = useState(() =>
-    obtenerCategorias().filter((categoria) => categoria.profesorIds?.includes(session?.usuario.id ?? "")),
+  const categorias = useCategorias();
+  const profesorId = session?.usuario.id ?? "";
+  const nombresCategoriasAsignadas = useMemo(
+    () =>
+      categorias
+        .filter((categoria) => categoria.profesorIds?.includes(profesorId))
+        .map((categoria) => categoria.nombre),
+    [categorias, profesorId],
   );
-  const nombresCategoriasAsignadas = categoriasAsignadas.map((categoria) => categoria.nombre);
-  const [alumnos, setAlumnos] = useState<Student[]>(obtenerAlumnos);
+  // El backend ya limita la lista a los alumnos de las categorías del profesor.
+  const alumnos = useAlumnos();
+  const [error, setError] = useState<string | null>(null);
   const [texto, setTexto] = useState("");
   const [categoria, setCategoria] = useState("todas");
   const [estado, setEstado] = useState<Student["estado"] | "todos">("todos");
@@ -51,20 +60,18 @@ export default function AlumnosProfesorPage() {
     setAlumnoAEditar(null);
   };
 
-  const guardarAlumno = (data: StudentFormData, id?: string) => {
-    if (id) {
-      const actualizado = actualizarAlumno(id, data);
-      if (actualizado) {
-        setAlumnos((actuales) =>
-          actuales.map((alumno) => (alumno.id === id ? actualizado : alumno)),
-        );
+  const guardarAlumno = async (data: StudentFormData, id?: string) => {
+    setError(null);
+    try {
+      if (id) {
+        await actualizarAlumno(id, data);
+      } else {
+        await crearAlumno(data);
       }
-    } else {
-      const nuevo = crearAlumno(data);
-      setAlumnos((actuales) => [nuevo, ...actuales]);
+      cerrarFormulario();
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar el alumno."));
     }
-
-    cerrarFormulario();
   };
 
   const handleEliminar = async (alumno: Student) => {
@@ -85,8 +92,12 @@ export default function AlumnosProfesorPage() {
     });
     if (!confirmado) return;
 
-    eliminarAlumno(alumno.id);
-    setAlumnos((actuales) => actuales.filter((a) => a.id !== alumno.id));
+    setError(null);
+    try {
+      await eliminarAlumno(alumno.id);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo eliminar el alumno."));
+    }
   };
 
   return (
@@ -105,7 +116,8 @@ export default function AlumnosProfesorPage() {
           </button>
         </header>
 
-        <div className="mb-5">
+        <div className="mb-5 space-y-3">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
           <AlumnoFiltros
             texto={texto}
             onTextoChange={setTexto}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import Link from "next/link";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
@@ -11,6 +12,7 @@ import { obtenerMensualidadActual, obtenerPagosPorEstudiante } from "@/store/pag
 import { obtenerProximasActividades } from "@/store/calendario-store";
 
 export default function AlumnoDashboardPage() {
+  useDatosRemotos();
   const { session } = useAuth();
   const primerNombre = session?.usuario.nombre.split(" ")[0] ?? "Alumno";
   const estudianteId = session?.usuario.estudianteId;

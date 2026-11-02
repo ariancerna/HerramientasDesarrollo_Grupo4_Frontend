@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Student, StudentFormData } from "@/types/student";
-import { NOMBRES_CATEGORIAS } from "@/lib/mock/categorias.mock";
+import { useNombresCategorias } from "@/store/categorias-store";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface AlumnoFormProps {
@@ -18,7 +18,7 @@ const formularioVacio: StudentFormData = {
   nombres: "",
   apellidos: "",
   email: "",
-  categoria: NOMBRES_CATEGORIAS[0],
+  categoria: "",
   carrera: "",
   ciclo: undefined,
   estado: "activo",
@@ -32,9 +32,10 @@ export default function AlumnoForm({
   onClose,
   onGuardar,
 }: AlumnoFormProps) {
-  const categorias = categoriasDisponibles?.length ? categoriasDisponibles : NOMBRES_CATEGORIAS;
+  const nombresCategorias = useNombresCategorias();
+  const categorias = categoriasDisponibles?.length ? categoriasDisponibles : nombresCategorias;
   const [form, setForm] = useState<StudentFormData>(() => {
-    if (!alumnoAEditar) return { ...formularioVacio, categoria: categorias[0] };
+    if (!alumnoAEditar) return { ...formularioVacio, categoria: categorias[0] ?? "" };
 
     return {
       dni: alumnoAEditar.dni,

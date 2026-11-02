@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { PagosLista } from "@/components/shared/pagos-lista";
@@ -33,6 +34,7 @@ function periodoActual() {
 }
 
 export default function PagosAdminPage() {
+  useDatosRemotos();
   useSyncExternalStore(suscribirPagos, obtenerPagos, obtenerPagosIniciales);
   const alumnos: Student[] = obtenerAlumnos();
   const [texto, setTexto] = useState("");

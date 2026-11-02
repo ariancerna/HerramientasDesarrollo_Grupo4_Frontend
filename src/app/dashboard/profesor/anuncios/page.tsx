@@ -6,7 +6,7 @@ import AnuncioForm from "@/components/anuncios/anuncio-form";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
-import { obtenerAlumnos } from "@/store/alumnos-store";
+import { useAlumnos } from "@/store/alumnos-store";
 import { obtenerCategorias } from "@/store/categorias-store";
 import {
   actualizarAnuncio,
@@ -16,13 +16,12 @@ import {
 } from "@/store/anuncios-store";
 import { Anuncio, AnuncioFormData, EstadoAnuncio } from "@/types/anuncio";
 import { Categoria } from "@/types";
-import { Student } from "@/types/student";
 
 export default function AnunciosProfesorPage() {
   const { session } = useAuth();
   const { confirm, dialog } = useConfirm();
   const profesorId = session?.usuario.id ?? "";
-  const [alumnos] = useState<Student[]>(obtenerAlumnos);
+  const alumnos = useAlumnos();
   const [categorias] = useState<Categoria[]>(obtenerCategorias);
   const categoriasAsignadas = categorias.filter((categoria) => categoria.profesorIds?.includes(profesorId));
   const alumnosAsignados = alumnos.filter((alumno) => categoriasAsignadas.some((categoria) => categoria.nombre === alumno.categoria));
