@@ -58,24 +58,24 @@ export async function crearProfesor(datos: DatosProfesor, categoriaIds: string[]
   }
 }
 
-// ACTUALIZAR: perfil, categorías y (opcional) contraseña usan endpoints distintos.
+// ACTUALIZAR
 export async function actualizarProfesor(
   id: string,
   datos: DatosProfesor,
   categoriaIds: string[],
 ): Promise<void> {
   try {
+    // PRF-04: un solo PUT actualiza perfil, categorías y (si se envía) la contraseña.
     await api(`/profesores/${id}`, {
       method: "PUT",
-      body: { nombre: datos.nombre, usuario: datos.usuario, sedeId: datos.sedeId },
+      body: {
+        nombre: datos.nombre,
+        usuario: datos.usuario,
+        sedeId: datos.sedeId,
+        categoriaIds,
+        password: datos.password || undefined,
+      },
     });
-    await api(`/profesores/${id}/categorias`, { method: "PUT", body: { categoriaIds } });
-    if (datos.password) {
-      await api(`/usuarios/${id}/reset-password`, {
-        method: "POST",
-        body: { nuevaPassword: datos.password },
-      });
-    }
   } finally {
     await Promise.all([profesores.recargar(), recargarCategorias()]);
   }

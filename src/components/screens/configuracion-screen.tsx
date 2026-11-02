@@ -105,11 +105,12 @@ function ClubTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"
 
   useEffect(() => {
     let vigente = true;
-    api<{ montoMensualidad: number; diaVencimiento: number }>("/configuracion/club")
+    // GET /configuracion/club responde con las columnas de la tabla (snake_case).
+    api<{ monto_mensualidad: number; dia_vencimiento: number }>("/configuracion/club")
       .then((config) => {
         if (!vigente) return;
-        setMonto(String(config.montoMensualidad));
-        setDia(String(config.diaVencimiento));
+        setMonto(String(config.monto_mensualidad));
+        setDia(String(config.dia_vencimiento));
       })
       .catch((err) => vigente && setError(mensajeError(err, "No se pudo cargar la configuración del club.")))
       .finally(() => vigente && setCargando(false));

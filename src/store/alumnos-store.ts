@@ -3,13 +3,13 @@ import {
   StudentFormData,
   StudentProfileData,
 } from "@/types/student";
-import { api } from "@/lib/api";
+import { api, apiTodasLasPaginas } from "@/lib/api";
 import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
 import { isStudent } from "@/lib/storage-validators";
 import { getSession } from "@/store/auth-store";
 import { obtenerCategorias } from "@/store/categorias-store";
 
-/** Fila de `alumnos` tal como la devuelve el backend. */
+/** Alumno tal como lo devuelve el backend (contrato v1, camelCase). */
 interface AlumnoApi {
   id: string;
   dni: string;
@@ -19,18 +19,9 @@ interface AlumnoApi {
   email: string | null;
   telefono: string | null;
   estado: Student["estado"];
-  foto_url: string | null;
-  /** En la lista viene la fila embebida; en el perfil, solo el nombre. */
-  categorias?: { nombre: string } | null;
-  categoria?: string | null;
+  fotoUrl: string | null;
+  categoria: string | null;
 }
-
-interface PaginaAlumnos {
-  data: AlumnoApi[];
-  total: number;
-}
-
-const LIMITE_PAGINA = 100;
 
 function aStudent(alumno: AlumnoApi): Student {
   return {
@@ -41,8 +32,8 @@ function aStudent(alumno: AlumnoApi): Student {
     apellidos: alumno.apellidos,
     email: alumno.email ?? "",
     telefono: alumno.telefono ?? undefined,
-    fotoUrl: alumno.foto_url ?? undefined,
-    categoria: alumno.categorias?.nombre ?? alumno.categoria ?? "",
+    fotoUrl: alumno.fotoUrl ?? undefined,
+    categoria: alumno.categoria ?? "",
     estado: alumno.estado,
   };
 }
@@ -50,17 +41,10 @@ function aStudent(alumno: AlumnoApi): Student {
 async function cargarAlumnos(): Promise<Student[]> {
   // Un alumno no puede listar a los demás: solo se carga su propio perfil.
   if (getSession()?.usuario.rol === "alumno") {
-    const perfil = await api<AlumnoApi | null>("/alumnos/me/perfil");
+    const perfil = await api<AlumnoApi | null>("/me/perfil");
     return perfil ? [aStudent(perfil)] : [];
   }
-
-  const alumnos: AlumnoApi[] = [];
-  for (let page = 1; ; page += 1) {
-    const pagina = await api<PaginaAlumnos>(`/alumnos?page=${page}&limit=${LIMITE_PAGINA}`);
-    alumnos.push(...pagina.data);
-    if (pagina.data.length < LIMITE_PAGINA || alumnos.length >= pagina.total) break;
-  }
-  return alumnos.map(aStudent);
+  return (await apiTodasLasPaginas<AlumnoApi>("/alumnos")).map(aStudent);
 }
 
 const alumnos = crearColeccionRemota<Student>("alumnos", cargarAlumnos);
@@ -86,7 +70,8 @@ function categoriaIdPorNombre(nombre: string): string {
 function cuerpoAlumno(data: StudentFormData) {
   return {
     dni: data.dni.trim(),
-    codigo: data.codigo.trim(),
+    // El código es opcional: si se omite, el backend genera uno (GC-AAAA-NNN).
+    codigo: data.codigo.trim() || undefined,
     nombres: data.nombres.trim(),
     apellidos: data.apellidos.trim(),
     email: data.email.trim(),
@@ -109,7 +94,7 @@ export async function actualizarAlumno(id: string, data: StudentFormData): Promi
 
 /** Actualiza únicamente los datos que el alumno puede gestionar desde su perfil. */
 export async function actualizarPerfilAlumno(data: StudentProfileData): Promise<Student> {
-  const perfil = await api<AlumnoApi>("/alumnos/me/perfil", {
+  const perfil = await api<AlumnoApi>("/me/perfil", {
     method: "PATCH",
     body: {
       nombres: data.nombres.trim(),
@@ -127,9 +112,9 @@ export async function actualizarFotoPerfil(foto: File | null): Promise<void> {
   if (foto) {
     const formData = new FormData();
     formData.append("foto", foto);
-    await api("/alumnos/me/perfil/foto", { method: "PUT", body: formData });
+    await api("/me/perfil/foto", { method: "PUT", body: formData });
   } else {
-    await api("/alumnos/me/perfil/foto", { method: "DELETE" });
+    await api("/me/perfil/foto", { method: "DELETE" });
   }
   await alumnos.recargar();
 }

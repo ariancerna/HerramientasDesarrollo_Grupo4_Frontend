@@ -19,8 +19,6 @@ const formularioVacio: StudentFormData = {
   apellidos: "",
   email: "",
   categoria: "",
-  carrera: "",
-  ciclo: undefined,
   estado: "activo",
 };
 
@@ -44,8 +42,6 @@ export default function AlumnoForm({
       apellidos: alumnoAEditar.apellidos,
       email: alumnoAEditar.email,
       categoria: alumnoAEditar.categoria,
-      carrera: alumnoAEditar.carrera,
-      ciclo: alumnoAEditar.ciclo,
       estado: alumnoAEditar.estado,
     };
   });
@@ -57,9 +53,6 @@ export default function AlumnoForm({
 
     if (!/^\d{8}$/.test(form.dni)) {
       nuevosErrores.dni = "El DNI debe tener exactamente 8 dígitos.";
-    }
-    if (!form.codigo.trim()) {
-      nuevosErrores.codigo = "El código es obligatorio.";
     }
     if (!form.nombres.trim()) {
       nuevosErrores.nombres = "Los nombres son obligatorios.";
@@ -134,10 +127,11 @@ export default function AlumnoForm({
 
           <label>
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Código
+              Código <span className="text-slate-400 dark:text-slate-500">(opcional)</span>
             </span>
             <input
               value={form.codigo}
+              placeholder="Se genera automáticamente"
               onChange={(e) => setForm({ ...form, codigo: e.target.value })}
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
@@ -222,35 +216,6 @@ export default function AlumnoForm({
             </select>
           </label>
 
-          <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Carrera <span className="text-slate-400 dark:text-slate-500">(opcional)</span>
-            </span>
-            <input
-              value={form.carrera ?? ""}
-              onChange={(e) => setForm({ ...form, carrera: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-            />
-          </label>
-
-          <label>
-            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Ciclo <span className="text-slate-400 dark:text-slate-500">(opcional)</span>
-            </span>
-            <input
-              type="number"
-              min={1}
-              max={10}
-              value={form.ciclo ?? ""}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  ciclo: e.target.value ? Number(e.target.value) : undefined,
-                })
-              }
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-            />
-          </label>
 
           <div className="mt-2 flex justify-end gap-3 sm:col-span-2">
             <button

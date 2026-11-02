@@ -98,10 +98,10 @@ function mensajeDeError(payload: unknown, status: number): { message: string; co
 }
 
 /**
- * Llama al API REST del backend y devuelve el contenido de `data`.
+ * Llama al API REST y devuelve la respuesta completa (`{ data, meta? }`).
  * Adjunta el token, lo renueva una vez si expiró y traduce los errores a ApiError.
  */
-export async function api<T>(path: string, options: RequestOptions = {}, reintento = true): Promise<T> {
+async function solicitar(path: string, options: RequestOptions = {}, reintento = true): Promise<unknown> {
   const { method = "GET", body, auth = true } = options;
   const headers: Record<string, string> = {};
   const esFormData = typeof FormData !== "undefined" && body instanceof FormData;
@@ -124,10 +124,10 @@ export async function api<T>(path: string, options: RequestOptions = {}, reinten
   }
 
   if (res.status === 401 && auth && reintento && (await refrescarTokens())) {
-    return api<T>(path, options, false);
+    return solicitar(path, options, false);
   }
 
-  if (res.status === 204) return undefined as T;
+  if (res.status === 204) return undefined;
 
   const payload: unknown = await res.json().catch(() => null);
   if (!res.ok) {
@@ -138,7 +138,32 @@ export async function api<T>(path: string, options: RequestOptions = {}, reinten
     throw new ApiError(res.status, message, code);
   }
 
+  return payload;
+}
+
+/** Llama al API REST del backend y devuelve el contenido de `data`. */
+export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const payload = await solicitar(path, options);
   return (isPlainObject(payload) ? payload.data : payload) as T;
+}
+
+const LIMITE_PAGINA = 100;
+
+/**
+ * Recorre todas las páginas de una lista paginada
+ * (`{ data: [...], meta: { page, limit, total } }`, máximo 100 por página).
+ */
+export async function apiTodasLasPaginas<T>(path: string): Promise<T[]> {
+  const separador = path.includes("?") ? "&" : "?";
+  const items: T[] = [];
+  for (let page = 1; ; page += 1) {
+    const payload = await solicitar(`${path}${separador}page=${page}&limit=${LIMITE_PAGINA}`);
+    const datos = isPlainObject(payload) && Array.isArray(payload.data) ? (payload.data as T[]) : [];
+    const meta = isPlainObject(payload) && isPlainObject(payload.meta) ? payload.meta : null;
+    items.push(...datos);
+    const total = meta && typeof meta.total === "number" ? meta.total : items.length;
+    if (datos.length < LIMITE_PAGINA || items.length >= total) return items;
+  }
 }
 
 export function mensajeError(error: unknown, fallback = "Ocurrió un error inesperado."): string {

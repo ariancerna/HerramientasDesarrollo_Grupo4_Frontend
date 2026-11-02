@@ -41,78 +41,31 @@ export function useNombresCategorias(): string[] {
 }
 
 function datosHorario({ dia, horaInicio, horaFin, cancha, estado }: Horario) {
-  return { dia, horaInicio, horaFin, cancha: cancha || undefined, estado };
+  return { dia, horaInicio, horaFin, cancha: cancha || null, estado: estado ?? "activo" };
 }
 
-function horarioCambio(antes: Horario, despues: Horario) {
-  return (
-    antes.dia !== despues.dia ||
-    antes.horaInicio !== despues.horaInicio ||
-    antes.horaFin !== despues.horaFin ||
-    (antes.cancha ?? "") !== (despues.cancha ?? "") ||
-    (antes.estado ?? "activo") !== (despues.estado ?? "activo")
-  );
-}
-
-/**
- * Los horarios se gestionan con sus propios endpoints: primero se eliminan
- * los quitados (libera sus días), luego se editan y al final se crean los nuevos.
- */
-async function sincronizarHorarios(categoriaId: string, anteriores: Horario[], nuevos: Horario[]) {
-  const base = `/categorias/${categoriaId}/horarios`;
-  const idsNuevos = new Set(nuevos.map((horario) => horario.id));
-  const porId = new Map(anteriores.map((horario) => [horario.id, horario]));
-
-  for (const horario of anteriores) {
-    if (!idsNuevos.has(horario.id)) {
-      await api(`${base}/${horario.id}`, { method: "DELETE" });
-    }
-  }
-  for (const horario of nuevos) {
-    const anterior = porId.get(horario.id);
-    if (anterior && horarioCambio(anterior, horario)) {
-      await api(`${base}/${horario.id}`, { method: "PUT", body: datosHorario(horario) });
-    }
-  }
-  for (const horario of nuevos) {
-    if (!porId.has(horario.id)) {
-      await api(base, { method: "POST", body: datosHorario(horario) });
-    }
-  }
+/** El backend acepta los horarios en el mismo cuerpo; en la edición reemplazan la lista completa. */
+function cuerpoCategoria(categoria: Partial<Categoria>) {
+  return {
+    nombre: categoria.nombre,
+    descripcion: categoria.descripcion?.trim() || null,
+    horarios: categoria.horarios?.map(datosHorario),
+  };
 }
 
 // CREAR
 export async function crearCategoria(categoria: Omit<Categoria, "id">): Promise<Categoria> {
   const nueva = aCategoria(
-    await api<CategoriaApi>("/categorias", {
-      method: "POST",
-      body: { nombre: categoria.nombre, descripcion: categoria.descripcion || undefined },
-    }),
+    await api<CategoriaApi>("/categorias", { method: "POST", body: cuerpoCategoria(categoria) }),
   );
-  try {
-    await sincronizarHorarios(nueva.id, [], categoria.horarios);
-  } finally {
-    await categorias.recargar();
-  }
+  await categorias.recargar();
   return nueva;
 }
 
 // ACTUALIZAR
-export async function actualizarCategoria(
-  id: string,
-  cambios: Partial<Categoria>,
-): Promise<void> {
-  const actual = categorias.obtener().find((categoria) => categoria.id === id);
+export async function actualizarCategoria(id: string, cambios: Partial<Categoria>): Promise<void> {
   try {
-    if (cambios.nombre !== undefined || cambios.descripcion !== undefined) {
-      await api(`/categorias/${id}`, {
-        method: "PUT",
-        body: { nombre: cambios.nombre, descripcion: cambios.descripcion ?? "" },
-      });
-    }
-    if (cambios.horarios) {
-      await sincronizarHorarios(id, actual?.horarios ?? [], cambios.horarios);
-    }
+    await api(`/categorias/${id}`, { method: "PUT", body: cuerpoCategoria(cambios) });
   } finally {
     await categorias.recargar();
   }

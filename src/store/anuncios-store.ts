@@ -1,10 +1,39 @@
 import { Anuncio, AnuncioFormData, EstadoAnuncio } from "@/types/anuncio";
-import { api } from "@/lib/api";
+import { api, apiTodasLasPaginas } from "@/lib/api";
 import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
+import { getSession } from "@/store/auth-store";
 
-// El backend responde con el formato de Anuncio y ya filtra por rol
-// (el profesor recibe los suyos; el alumno, los enviados a él).
-const anuncios = crearColeccionRemota<Anuncio>("anuncios", () => api<Anuncio[]>("/anuncios"));
+/** Anuncio tal como lo devuelve el backend (en /me/anuncios no trae destinatarios). */
+interface AnuncioApi extends Omit<Anuncio, "categoriaId" | "destinatarios"> {
+  categoriaId: string | null;
+  destinatarios?: string[];
+}
+
+function aAnuncio(anuncio: AnuncioApi, destinatariosPorDefecto: string[] = []): Anuncio {
+  return {
+    id: anuncio.id,
+    profesorId: anuncio.profesorId,
+    titulo: anuncio.titulo,
+    mensaje: anuncio.mensaje,
+    fechaCreacion: anuncio.fechaCreacion,
+    estado: anuncio.estado,
+    categoriaId: anuncio.categoriaId ?? undefined,
+    destinatarios: anuncio.destinatarios ?? destinatariosPorDefecto,
+  };
+}
+
+// El profesor gestiona los suyos en /anuncios; el alumno recibe los enviados a él en /me/anuncios.
+const anuncios = crearColeccionRemota<Anuncio>("anuncios", async () => {
+  const usuario = getSession()?.usuario;
+  if (usuario?.rol === "alumno") {
+    const propios = usuario.estudianteId ? [usuario.estudianteId] : [];
+    return (await api<AnuncioApi[]>("/me/anuncios?limite=100")).map((anuncio) => aAnuncio(anuncio, propios));
+  }
+  if (usuario?.rol === "profesor") {
+    return (await apiTodasLasPaginas<AnuncioApi>("/anuncios")).map((anuncio) => aAnuncio(anuncio));
+  }
+  return [];
+});
 
 export const useAnuncios = () => useColeccion(anuncios);
 
@@ -30,7 +59,7 @@ function cuerpoAnuncio(data: AnuncioFormData, estado: EstadoAnuncio) {
 
 /** El profesor se toma del token en el backend. */
 export async function crearAnuncio(data: AnuncioFormData, estado: EstadoAnuncio): Promise<Anuncio> {
-  const nuevo = await api<Anuncio>("/anuncios", { method: "POST", body: cuerpoAnuncio(data, estado) });
+  const nuevo = aAnuncio(await api<AnuncioApi>("/anuncios", { method: "POST", body: cuerpoAnuncio(data, estado) }));
   anuncios.establecer([nuevo, ...obtenerAnuncios()]);
   return nuevo;
 }
@@ -40,10 +69,9 @@ export async function actualizarAnuncio(
   data: AnuncioFormData,
   estado: EstadoAnuncio,
 ): Promise<Anuncio> {
-  const actualizado = await api<Anuncio>(`/anuncios/${id}`, {
-    method: "PUT",
-    body: cuerpoAnuncio(data, estado),
-  });
+  const actualizado = aAnuncio(
+    await api<AnuncioApi>(`/anuncios/${id}`, { method: "PUT", body: cuerpoAnuncio(data, estado) }),
+  );
   anuncios.establecer(obtenerAnuncios().map((anuncio) => (anuncio.id === id ? actualizado : anuncio)));
   return actualizado;
 }
@@ -53,18 +81,9 @@ export async function eliminarAnuncio(id: string): Promise<void> {
   anuncios.establecer(obtenerAnuncios().filter((anuncio) => anuncio.id !== id));
 }
 
-export async function enviarAnuncio(id: string): Promise<Anuncio | null> {
-  const anuncio = obtenerAnuncios().find((actual) => actual.id === id);
-  if (!anuncio) return null;
-
-  return actualizarAnuncio(
-    id,
-    {
-      titulo: anuncio.titulo,
-      mensaje: anuncio.mensaje,
-      destinatarios: anuncio.destinatarios,
-      categoriaId: anuncio.categoriaId,
-    },
-    "enviado",
-  );
+/** Pasa un borrador a enviado; el backend genera las notificaciones de los alumnos. */
+export async function enviarAnuncio(id: string): Promise<Anuncio> {
+  const enviado = aAnuncio(await api<AnuncioApi>(`/anuncios/${id}/enviar`, { method: "POST" }));
+  anuncios.establecer(obtenerAnuncios().map((anuncio) => (anuncio.id === id ? enviado : anuncio)));
+  return enviado;
 }

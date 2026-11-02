@@ -4,9 +4,24 @@ import type { Horario } from "@/types";
 import { api } from "@/lib/api";
 import { crearColeccionRemota } from "@/lib/remote-collection";
 
-// El backend responde con el formato de EventoClub (incluye el nombre de la categoría).
-const eventos = crearColeccionRemota<EventoClub>("eventos", () =>
-  api<EventoClub[]>("/calendario"),
+/** Evento tal como lo devuelve /eventos (campos opcionales llegan como null). */
+interface EventoApi extends Omit<EventoClub, "horaFin" | "categoria" | "descripcion"> {
+  horaFin: string | null;
+  categoria: string | null;
+  descripcion: string | null;
+}
+
+function aEvento(evento: EventoApi): EventoClub {
+  return {
+    ...evento,
+    horaFin: evento.horaFin ?? undefined,
+    categoria: evento.categoria ?? undefined,
+    descripcion: evento.descripcion ?? "",
+  };
+}
+
+const eventos = crearColeccionRemota<EventoClub>("eventos", async () =>
+  (await api<EventoApi[]>("/eventos")).map(aEvento),
 );
 
 export const obtenerEventosIniciales = eventos.obtenerInicial;
@@ -19,6 +34,7 @@ export const suscribirEventos = eventos.suscribir;
 function cuerpoEvento(evento: Partial<EventoClub>) {
   const { categoria, ...resto } = evento;
   delete resto.id;
+  delete (resto as { categoriaId?: string }).categoriaId;
   if (categoria === undefined) return resto;
   const categoriaId = obtenerCategorias().find((item) => item.nombre === categoria)?.id ?? null;
   return { ...resto, horaFin: resto.horaFin || null, categoriaId };
@@ -26,20 +42,24 @@ function cuerpoEvento(evento: Partial<EventoClub>) {
 
 // CREAR — "programar horario/evento" (módulo de Calendario del admin)
 export async function crearEvento(evento: Omit<EventoClub, "id">): Promise<EventoClub> {
-  const nuevo = await api<EventoClub>("/calendario", {
-    method: "POST",
-    body: cuerpoEvento({ ...evento, categoria: evento.categoria ?? "" }),
-  });
+  const nuevo = aEvento(
+    await api<EventoApi>("/eventos", {
+      method: "POST",
+      body: cuerpoEvento({ ...evento, categoria: evento.categoria ?? "" }),
+    }),
+  );
   eventos.establecer([...eventos.obtener(), nuevo]);
   return nuevo;
 }
 
 // ACTUALIZAR
 export async function actualizarEvento(id: string, cambios: Partial<EventoClub>): Promise<EventoClub> {
-  const actualizado = await api<EventoClub>(`/calendario/${id}`, {
-    method: "PUT",
-    body: cuerpoEvento({ ...cambios, categoria: cambios.categoria ?? "" }),
-  });
+  const actualizado = aEvento(
+    await api<EventoApi>(`/eventos/${id}`, {
+      method: "PUT",
+      body: cuerpoEvento({ ...cambios, categoria: cambios.categoria ?? "" }),
+    }),
+  );
   eventos.establecer(eventos.obtener().map((evento) => (evento.id === id ? actualizado : evento)));
   return actualizado;
 }
@@ -119,7 +139,7 @@ export function obtenerProximasActividades(
 
 // ELIMINAR
 export async function eliminarEvento(id: string): Promise<void> {
-  await api(`/calendario/${id}`, { method: "DELETE" });
+  await api(`/eventos/${id}`, { method: "DELETE" });
   eventos.establecer(eventos.obtener().filter((evento) => evento.id !== id));
 }
 

@@ -5,9 +5,9 @@ import {
   MetodoAsistencia,
   RegistroAsistencia,
 } from "@/types/asistencia";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError, apiTodasLasPaginas } from "@/lib/api";
 import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
-import { obtenerCategorias } from "@/store/categorias-store";
+import { getSession } from "@/store/auth-store";
 
 export type {
   DatosCorreccionAsistencia,
@@ -17,11 +17,18 @@ export type {
   RegistroAsistencia,
 } from "@/types/asistencia";
 
-// El backend ya responde con el formato de RegistroAsistencia, del más reciente al más antiguo.
-// Para un alumno solo devuelve sus propios registros.
-const asistencias = crearColeccionRemota<RegistroAsistencia>("asistencias", () =>
-  api<RegistroAsistencia[]>("/asistencias"),
-);
+/** Registro tal como lo devuelve el backend (la categoría puede faltar). */
+type RegistroApi = Omit<RegistroAsistencia, "categoria"> & { categoria: string | null };
+
+function aRegistro(registro: RegistroApi): RegistroAsistencia {
+  return { ...registro, categoria: registro.categoria ?? "" };
+}
+
+// ADM y PROF consultan todos los registros; el alumno, solo los suyos en /me/asistencias.
+const asistencias = crearColeccionRemota<RegistroAsistencia>("asistencias", async () => {
+  const ruta = getSession()?.usuario.rol === "alumno" ? "/me/asistencias" : "/asistencias";
+  return (await apiTodasLasPaginas<RegistroApi>(ruta)).map(aRegistro);
+});
 
 export const suscribirAsistencias = asistencias.suscribir;
 export const useRegistrosAsistencia = () => useColeccion(asistencias);
@@ -39,7 +46,7 @@ interface AlumnoPorDniApi {
   dni: string;
   nombres: string;
   apellidos: string;
-  categoria_id: string | null;
+  categoria: string | null;
   estado: "activo" | "inactivo";
 }
 
@@ -47,13 +54,12 @@ interface AlumnoPorDniApi {
 export async function buscarEstudiantePorDni(dni: string): Promise<EstudianteAsistencia | undefined> {
   try {
     const alumno = await api<AlumnoPorDniApi>(`/alumnos/dni/${dni}`);
-    const categoria = obtenerCategorias().find((item) => item.id === alumno.categoria_id);
     return {
       id: alumno.id,
       dni: alumno.dni,
       nombres: alumno.nombres,
       apellidos: alumno.apellidos,
-      categoria: categoria?.nombre ?? "",
+      categoria: alumno.categoria ?? "",
       activo: alumno.estado === "activo",
     };
   } catch (error) {
@@ -72,10 +78,12 @@ export async function registrarAsistencia(
   }
 
   // El backend rechaza un segundo registro del mismo alumno en el mismo día.
-  const registro = await api<RegistroAsistencia>("/asistencias", {
-    method: "POST",
-    body: { alumnoId: estudiante.id, metodo, fechaHora },
-  });
+  const registro = aRegistro(
+    await api<RegistroApi>("/asistencias", {
+      method: "POST",
+      body: { estudianteId: estudiante.id, metodo, fechaHora },
+    }),
+  );
   asistencias.establecer([registro, ...asistencias.obtener()]);
   return registro;
 }
@@ -122,10 +130,12 @@ export async function corregirAsistencia(
     throw new Error("La fecha u hora seleccionada no es válida.");
   }
 
-  const actualizado = await api<RegistroAsistencia>(`/asistencias/${id}`, {
-    method: "PATCH",
-    body: { fechaHora: fechaHora.toISOString(), metodo: datos.metodo },
-  });
+  const actualizado = aRegistro(
+    await api<RegistroApi>(`/asistencias/${id}`, {
+      method: "PATCH",
+      body: { fechaHora: fechaHora.toISOString(), metodo: datos.metodo },
+    }),
+  );
   asistencias.establecer(
     asistencias.obtener().map((registro) => (registro.id === id ? actualizado : registro)),
   );

@@ -3,32 +3,32 @@ import { api } from "@/lib/api";
 import { crearColeccionRemota } from "@/lib/remote-collection";
 import { getSession } from "@/store/auth-store";
 
-/** Fila de `pagos` tal como la devuelve el backend. */
+/** Pago tal como lo devuelve el backend (contrato v1, camelCase). */
 interface PagoApi {
   id: string;
-  alumno_id: string;
+  estudianteId: string;
   periodo: string;
   monto: number | string;
   estado: PagoMensualidad["estado"];
-  fecha_pago: string | null;
-  metodo_pago: PagoMensualidad["metodoPago"] | null;
-  codigo_operacion: string | null;
+  fechaPago: string | null;
+  metodoPago: PagoMensualidad["metodoPago"] | null;
+  codigoOperacion: string | null;
   vencimiento: string | null;
 }
 
 function aPago(pago: PagoApi): PagoMensualidad {
   return {
     id: pago.id,
-    estudianteId: pago.alumno_id,
+    estudianteId: pago.estudianteId,
     periodo: pago.periodo,
     concepto: `Mensualidad de ${formatearPeriodo(pago.periodo)}`,
     monto: Number(pago.monto),
     moneda: "PEN",
     vencimiento: pago.vencimiento ?? "",
     estado: pago.estado,
-    fechaPago: pago.fecha_pago ?? undefined,
-    metodoPago: pago.metodo_pago ?? undefined,
-    codigoOperacion: pago.codigo_operacion ?? undefined,
+    fechaPago: pago.fechaPago ?? undefined,
+    metodoPago: pago.metodoPago ?? undefined,
+    codigoOperacion: pago.codigoOperacion ?? undefined,
   };
 }
 
