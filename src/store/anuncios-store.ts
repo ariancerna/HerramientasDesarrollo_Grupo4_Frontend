@@ -1,32 +1,15 @@
-import { MOCK_ANUNCIOS } from "@/lib/mock/anuncios.mock";
 import { Anuncio, AnuncioFormData, EstadoAnuncio } from "@/types/anuncio";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isAnuncio } from "@/lib/storage-validators";
+import { api } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
 
-const STORAGE_KEY = "kickstamp-anuncios";
+// El backend responde con el formato de Anuncio y ya filtra por rol
+// (el profesor recibe los suyos; el alumno, los enviados a él).
+const anuncios = crearColeccionRemota<Anuncio>("anuncios", () => api<Anuncio[]>("/anuncios"));
 
-function esNavegador() {
-  return typeof window !== "undefined";
-}
-
-function crearId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-function guardarAnuncios(anuncios: Anuncio[]) {
-  if (esNavegador()) {
-    writeJson(STORAGE_KEY, anuncios);
-  }
-}
+export const useAnuncios = () => useColeccion(anuncios);
 
 export function obtenerAnuncios(): Anuncio[] {
-  if (!esNavegador()) return MOCK_ANUNCIOS;
-
-  return readJsonList(STORAGE_KEY, MOCK_ANUNCIOS, isAnuncio);
+  return anuncios.obtener();
 }
 
 export function obtenerAnunciosPorProfesor(profesorId: string): Anuncio[] {
@@ -35,43 +18,42 @@ export function obtenerAnunciosPorProfesor(profesorId: string): Anuncio[] {
     .sort((a, b) => b.fechaCreacion.localeCompare(a.fechaCreacion));
 }
 
-export function crearAnuncio(
-  data: AnuncioFormData,
-  profesorId: string,
-  estado: EstadoAnuncio,
-): Anuncio {
-  const nuevo: Anuncio = {
-    ...data,
-    id: crearId(),
-    profesorId,
-    fechaCreacion: new Date().toISOString(),
+function cuerpoAnuncio(data: AnuncioFormData, estado: EstadoAnuncio) {
+  return {
+    titulo: data.titulo,
+    mensaje: data.mensaje,
+    destinatarios: data.destinatarios,
+    categoriaId: data.categoriaId || null,
     estado,
   };
-  guardarAnuncios([nuevo, ...obtenerAnuncios()]);
+}
+
+/** El profesor se toma del token en el backend. */
+export async function crearAnuncio(data: AnuncioFormData, estado: EstadoAnuncio): Promise<Anuncio> {
+  const nuevo = await api<Anuncio>("/anuncios", { method: "POST", body: cuerpoAnuncio(data, estado) });
+  anuncios.establecer([nuevo, ...obtenerAnuncios()]);
   return nuevo;
 }
 
-export function actualizarAnuncio(
+export async function actualizarAnuncio(
   id: string,
   data: AnuncioFormData,
   estado: EstadoAnuncio,
-): Anuncio | null {
-  const anuncios = obtenerAnuncios();
-  const indice = anuncios.findIndex((anuncio) => anuncio.id === id);
-  if (indice === -1) return null;
-
-  const actualizado: Anuncio = { ...anuncios[indice], ...data, estado };
-  const nuevosAnuncios = [...anuncios];
-  nuevosAnuncios[indice] = actualizado;
-  guardarAnuncios(nuevosAnuncios);
+): Promise<Anuncio> {
+  const actualizado = await api<Anuncio>(`/anuncios/${id}`, {
+    method: "PUT",
+    body: cuerpoAnuncio(data, estado),
+  });
+  anuncios.establecer(obtenerAnuncios().map((anuncio) => (anuncio.id === id ? actualizado : anuncio)));
   return actualizado;
 }
 
-export function eliminarAnuncio(id: string): void {
-  guardarAnuncios(obtenerAnuncios().filter((anuncio) => anuncio.id !== id));
+export async function eliminarAnuncio(id: string): Promise<void> {
+  await api(`/anuncios/${id}`, { method: "DELETE" });
+  anuncios.establecer(obtenerAnuncios().filter((anuncio) => anuncio.id !== id));
 }
 
-export function enviarAnuncio(id: string): Anuncio | null {
+export async function enviarAnuncio(id: string): Promise<Anuncio | null> {
   const anuncio = obtenerAnuncios().find((actual) => actual.id === id);
   if (!anuncio) return null;
 
