@@ -8,7 +8,6 @@ import GlobalSearch from "./global-search";
 import InstallAppButton from "./install-app-button";
 import NotificationBell from "./notification-bell";
 import QuickAccess from "./quick-access";
-import QuickHelp from "./quick-help";
 import ProfileMenu from "./profile-menu";
 import { ThemeMenu } from "./theme-menu";
 
@@ -40,7 +39,6 @@ export default function Navbar() {
           <InstallAppButton />
           <QuickAccess />
           <ThemeMenu />
-          <QuickHelp />
           <NotificationBell />
           <div className="mx-1.5 hidden h-6 w-px bg-line md:block" />
           <ProfileMenu session={session} onLogout={handleLogout} />
