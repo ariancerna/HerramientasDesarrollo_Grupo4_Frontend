@@ -4,24 +4,19 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
 import MobileBottomNav from "@/components/shared/mobile-bottom-nav";
-import { useSettings } from "@/hooks/use-settings";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { settings } = useSettings();
-  const dataTheme = settings.tema === "oscuro" ? "dark" : "light";
-
   return (
     <RoleGuard>
-      {/* 🎨 CAMBIO: bg-slate-50 dark:bg-slate-950 → bg-bg-app dark:bg-bg-app-dark */}
-      <div data-theme={dataTheme} className="min-h-screen min-h-dvh bg-bg-app dark:bg-bg-app-dark">
+      <div className="min-h-screen min-h-dvh bg-bg-app dark:bg-bg-app-dark">
         <Sidebar />
-        <div className="min-w-0 lg:pl-72">
+        <div className="min-w-0 lg:pl-64">
           <Navbar />
-          <main className="mx-auto min-w-0 max-w-[1600px] px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
+          <main className="mx-auto min-w-0 max-w-[1440px] animate-fade-up px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
             {children}
           </main>
         </div>

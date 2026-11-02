@@ -1,110 +1,114 @@
 @import "tailwindcss";
 
-/* Modo oscuro manual (toggle en Configuración), aplicado solo dentro del
-   layout del dashboard: las pantallas de auth mantienen su paleta fija. */
+/* El tema se aplica en <html data-theme="light|dark"> (ThemeSync + script inicial),
+   así que el modo oscuro alcanza también a las pantallas de acceso. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ============================================
-   BASE
+   SISTEMA DE DISEÑO — EL GOLAZO CLUB
+   Azul marino institucional sobre neutros fríos.
+   Todos los colores viven aquí como tokens; el modo
+   oscuro redefine sus propios pasos para mantener
+   el contraste (WCAG AA en textos y botones).
    ============================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   color-scheme: light;
+
+  /* --- Superficies de la aplicación --- */
+  --background: #f4f6fb;
+  --foreground: #0f1b33;
+  --color-bg-app: #f4f6fb;
+  --color-bg-app-dark: #070d1a;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef2f8;
+  --color-line: #e3e8f0;
+
+  /* --- Texto --- */
+  --color-ink: #0f1b33;
+  --color-body: #4b5872;
+  --color-muted: #7a869c;
+  --color-border: #e3e8f0;
+
+  /* --- Marca (auth y acciones principales) --- */
+  --color-primary: #1e3a8a;
+  --color-primary-hover: #172e6e;
+  --color-primary-dark: #172554;
+  --color-primary-light: #2563eb;
+  --color-primary-soft: #e3ebfb;
+  --color-bg-auth: #eef2f8;
+  --color-contrast: #061a2e;
+
+  /* --- Estados --- */
+  --color-danger: #c81e1e;
+  --color-danger-light: #fdecec;
+  --color-info: #2563eb;
+  --color-warning: #b45309;
+  --color-success: #15803d;
+
+  /* --- Shell (barra lateral siempre en azul marino) --- */
+  --color-navy: #0b1b3a;
+  --color-navy-dark: #071330;
+  --color-navy-shell: #0b1730;
+  --color-sidebar: #0b1730;
+  --color-sidebar-accent: #15264a;
+  --color-sidebar-border: #1a2b4f;
+  --color-sidebar-text: #b7c3d9;
+  --color-sidebar-muted: #6f7f9f;
+
+  /* --- Gráficos --- */
+  --color-chart-win: #16a34a;
+  --color-chart-draw: #2563eb;
+  --color-chart-loss: #94a3b8;
+
+  /* --- Acciones del panel --- */
+  --color-brand-green: #1e3a8a;
+  --color-brand-green-dark: #172e6e;
+  --color-brand-green-soft: #e3ebfb;
+  --color-brand-lime: #2563eb;
+  --color-brand-lime-light: #93c5fd;
 }
 
-html,
-body {
-  max-width: 100%;
-  overflow-x: clip;
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #070d1a;
+  --foreground: #e7ecf5;
+  --color-surface: #0f1a2e;
+  --color-surface-muted: #15223a;
+  --color-line: #1e2c47;
+
+  --color-ink: #e7ecf5;
+  --color-body: #a9b4c8;
+  --color-muted: #7f8ba3;
+  --color-border: #1e2c47;
+
+  --color-primary: #3b6fe0;
+  --color-primary-hover: #2f5fcc;
+  --color-primary-soft: #16264a;
+  --color-bg-auth: #070d1a;
+
+  --color-danger: #f26b6b;
+  --color-danger-light: #3a1416;
+
+  --color-sidebar: #060c19;
+  --color-sidebar-accent: #121f3b;
+  --color-sidebar-border: #142039;
+
+  /* Azul más luminoso para que destaque sobre el fondo oscuro sin perder
+     contraste con el texto blanco de los botones. */
+  --color-brand-green: #2563eb;
+  --color-brand-green-dark: #1d4ed8;
+  --color-brand-green-soft: #16264a;
+  --color-brand-lime: #3b82f6;
+  --color-brand-lime-light: #9cc3ff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-input[type="date"],
-input[type="time"],
-input[type="number"] {
-  min-width: 0;
-  max-width: 100%;
-}
-
-/* ============================================
-   PALETA INSTITUCIONAL EL GOLAZO CLUB
-   ============================================ */
-:root {
-  /* --- AUTH --- */
-  --color-primary: #1e3a8a;
-  --color-primary-hover: #172554;
-  --color-primary-dark: #172554;
-  --color-primary-light: #2563eb;
-  --color-primary-soft: #dbeafe;
-
-  /* --- Superficies --- */
-  --color-ink: #10233f;
-  --color-body: #64748b;
-  --color-muted: #94a3b8;
-  --color-border: #e2e8f0;
-  --color-surface: #ffffff;
-  --color-bg-auth: #f5f7fa;
-  --color-contrast: #061a2e;
-
-  /* --- Estados --- */
-  --color-danger: #dc2626;
-  --color-danger-light: #fef2f2;
-  --color-info: #2563eb;
-  --color-warning: #f59e0b;
-
-  /* --- Navy del shell --- */
-  --color-navy: #061a2e;
-  --color-navy-dark: #041426;
-  --color-navy-shell: #061a2e;
-
-  /* --- Charts --- */
-  --color-chart-win: #16a34a;
-  --color-chart-draw: #2563eb;
-  --color-chart-loss: #94a3b8;
-
-  /* ============================================
-     DASHBOARD - AZUL ADAPTATIVO
-     - Modo claro: azul oscuro (sobrio)
-     - Modo oscuro: azul brillante (sobrescribe abajo)
-     ============================================ */
-
-  /* Fondo del área principal */
-  --color-bg-app: #f7f8ff;               /* Claro: blanco con tinte celeste */
-  --color-bg-app-dark: #0a1628;         /* Oscuro: navy profundo */
-
-  /* 🎨 Modo CLARO: azul oscuro elegante */
-  --color-brand-green: #1e3a8a;         /* Azul marino oscuro (botones, activos) */
-  --color-brand-green-dark: #172554;    /* Hover - aún más oscuro */
-  --color-brand-green-soft: #dbeafe;    /* Fondo suave azul claro */
-  --color-brand-lime: #2563eb;          /* Azul medio (barras de progreso) */
-  --color-brand-lime-light: #93c5fd;    /* Azul cielo claro (textos sobre oscuro) */
-}
-
-/* 🎨 Modo OSCURO: sobrescribimos el azul a uno MÁS BRILLANTE
-   para que resalte sobre el fondo navy. */
-[data-theme="dark"] {
-  --color-brand-green: #2563eb;         /* Azul brillante */
-  --color-brand-green-dark: #1d4ed8;    /* Hover - un poco más oscuro */
-  --color-brand-green-soft: #1e3a8a;    /* Fondo suave (en oscuro es navy) */
-  --color-brand-lime: #3b82f6;          /* Azul medio brillante */
-  --color-brand-lime-light: #93c5fd;    /* Azul cielo claro */
-}
-
-@theme inline {
-  /* Mapeo Auth (NO TOCAR) */
   --color-primary: var(--color-primary);
   --color-primary-hover: var(--color-primary-hover);
   --color-primary-dark: var(--color-primary-dark);
@@ -114,21 +118,28 @@ input[type="number"] {
   --color-body: var(--color-body);
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
+  --color-line: var(--color-line);
   --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
   --color-bg-auth: var(--color-bg-auth);
   --color-contrast: var(--color-contrast);
   --color-danger: var(--color-danger);
   --color-danger-light: var(--color-danger-light);
   --color-info: var(--color-info);
   --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
   --color-navy: var(--color-navy);
   --color-navy-dark: var(--color-navy-dark);
   --color-navy-shell: var(--color-navy-shell);
+  --color-sidebar: var(--color-sidebar);
+  --color-sidebar-accent: var(--color-sidebar-accent);
+  --color-sidebar-border: var(--color-sidebar-border);
+  --color-sidebar-text: var(--color-sidebar-text);
+  --color-sidebar-muted: var(--color-sidebar-muted);
   --color-chart-win: var(--color-chart-win);
   --color-chart-draw: var(--color-chart-draw);
   --color-chart-loss: var(--color-chart-loss);
 
-  /* Mapeo Dashboard */
   --color-bg-app: var(--color-bg-app);
   --color-bg-app-dark: var(--color-bg-app-dark);
   --color-brand-green: var(--color-brand-green);
@@ -136,4 +147,85 @@ input[type="number"] {
   --color-brand-green-soft: var(--color-brand-green-soft);
   --color-brand-lime: var(--color-brand-lime);
   --color-brand-lime-light: var(--color-brand-lime-light);
+}
+
+/* Los grises oscuros de Tailwind toman un matiz azul marino para que el
+   modo oscuro se sienta parte de la marca (tarjetas, bordes, campos). */
+@theme {
+  --color-slate-700: #2a3954;
+  --color-slate-800: #17233b;
+  --color-slate-900: #0f1a2e;
+  --color-slate-950: #08101f;
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-primary-light) 22%, transparent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+input[type="date"],
+input[type="time"],
+input[type="number"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   UTILIDADES DEL SISTEMA
+   ============================================ */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.35s ease-out both;
 }

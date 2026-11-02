@@ -1,6 +1,6 @@
 import { isPlainObject, writeJson } from "@/lib/storage";
 
-export type Tema = "claro" | "oscuro";
+export type Tema = "claro" | "oscuro" | "sistema";
 
 export interface Settings {
   tema: Tema;
@@ -12,7 +12,8 @@ export const DEFAULT_SETTINGS: Settings = {
   notificacionesSilenciadas: false,
 };
 
-const STORAGE_KEY = "kickstamp-settings";
+/** Lo lee también el script inline del layout raíz para aplicar el tema antes de pintar. */
+export const STORAGE_KEY = "kickstamp-settings";
 const SETTINGS_CHANGE_EVENT = "kickstamp:settings-change";
 
 function isBrowser() {
@@ -46,7 +47,7 @@ export function parseSettingsSnapshot(snapshot: string | null): Settings {
     if (!isPlainObject(parsed)) return DEFAULT_SETTINGS;
 
     return {
-      tema: parsed.tema === "oscuro" ? "oscuro" : "claro",
+      tema: parsed.tema === "oscuro" || parsed.tema === "sistema" ? parsed.tema : "claro",
       notificacionesSilenciadas:
         typeof parsed.notificacionesSilenciadas === "boolean"
           ? parsed.notificacionesSilenciadas
