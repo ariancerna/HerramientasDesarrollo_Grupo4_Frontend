@@ -138,7 +138,7 @@ export function LoginForm() {
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setSubmitError("");
@@ -147,20 +147,18 @@ export function LoginForm() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const result = login(form);
+    const result = await login(form);
 
-      setLoading(false);
+    setLoading(false);
 
-      if (!result.ok) {
-        setSubmitError(result.error ?? "No se pudo iniciar sesión.");
-        return;
-      }
+    if (!result.ok) {
+      setSubmitError(result.error ?? "No se pudo iniciar sesión.");
+      return;
+    }
 
-      if (result.rol) {
-        router.push(ROLE_HOME_ROUTE[result.rol]);
-      }
-    }, 400);
+    if (result.rol) {
+      router.push(ROLE_HOME_ROUTE[result.rol]);
+    }
   }
 
   return (

@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
-import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
-import { obtenerAlumnoPorId } from "@/store/alumnos-store";
-import { obtenerProfesores } from "@/store/profesores-store";
+import { api, clearTokens, getTokens, mensajeError, saveTokens } from "@/lib/api";
 import {
   actualizarUsuarioSesion,
   clearSession,
@@ -12,7 +10,7 @@ import {
   subscribeToSession,
   touchSession,
 } from "@/store/auth-store";
-import { Role, Session } from "@/types";
+import { Role, Session, Usuario } from "@/types";
 
 const ACTIVITY_EVENTS = ["mousemove", "keydown", "click", "scroll"] as const;
 const CHECK_INTERVAL_MS = 15 * 1000;
@@ -28,8 +26,28 @@ interface LoginResult {
   rol?: Role;
 }
 
+/** Usuario autenticado tal como lo devuelve GET /auth/me. */
+interface UsuarioApi {
+  id: string;
+  usuario: string;
+  nombre: string;
+  rol: "ADM" | "PROF" | "ALU";
+  estudianteId?: string;
+}
+
+const ROLES_API: Record<UsuarioApi["rol"], Role> = {
+  ADM: "administrador",
+  PROF: "profesor",
+  ALU: "alumno",
+};
+
 function normalizarCredencial(value: string): string {
   return value.trim();
+}
+
+function cerrarSesionLocal() {
+  clearTokens();
+  clearSession();
 }
 
 export function useAuth() {
@@ -44,29 +62,11 @@ export function useAuth() {
     () => false,
   );
   const parsedSession = useMemo(() => parseSessionSnapshot(snapshot), [snapshot]);
-  const isRecognizedSession = useMemo(() => {
-    if (!parsedSession) return false;
-
-    const usuariosReconocidos = [
-      ...MOCK_USUARIOS,
-      ...obtenerProfesores().map((profesor) => ({
-        id: profesor.id,
-        usuario: profesor.usuario,
-        nombre: profesor.nombre,
-        password: profesor.password,
-        rol: "profesor" as const,
-        estudianteId: undefined,
-      })),
-    ];
-
-    return usuariosReconocidos.some(
-      (usuario) =>
-        usuario.id === parsedSession.usuario.id &&
-        usuario.usuario === parsedSession.usuario.usuario &&
-        usuario.rol === parsedSession.usuario.rol &&
-        usuario.estudianteId === parsedSession.usuario.estudianteId,
-    );
-  }, [parsedSession]);
+  // Una sesión solo es válida si conserva los tokens emitidos por el backend.
+  const isRecognizedSession = useMemo(
+    () => Boolean(parsedSession && getTokens()),
+    [parsedSession],
+  );
   const session: Session | null =
     parsedSession && isRecognizedSession && !isSessionExpired(parsedSession)
       ? parsedSession
@@ -74,45 +74,36 @@ export function useAuth() {
   const isLoading = !isHydrated;
   const lastTouchRef = useRef(0);
 
-  const login = useCallback(({ usuario, password }: LoginParams): LoginResult => {
-    const cleanUsuario = normalizarCredencial(usuario);
-    const cleanPassword = normalizarCredencial(password);
-    const profesoresRegistrados = obtenerProfesores().map((profesor) => ({
-      id: profesor.id,
-      usuario: profesor.usuario,
-      password: profesor.password,
-      nombre: profesor.nombre,
-      rol: "profesor" as const,
-      estudianteId: undefined,
-    }));
-    const match = [...MOCK_USUARIOS, ...profesoresRegistrados].find(
-      (u) => u.usuario === cleanUsuario && u.password === cleanPassword
-    );
+  const login = useCallback(async ({ usuario, password }: LoginParams): Promise<LoginResult> => {
+    try {
+      const tokens = await api<{ accessToken: string; refreshToken: string }>("/auth/login", {
+        method: "POST",
+        body: { usuario: normalizarCredencial(usuario), password: normalizarCredencial(password) },
+        auth: false,
+      });
+      saveTokens(tokens);
 
-    if (!match) {
-      return { ok: false, error: "Usuario o contraseña incorrectos." };
+      const me = await api<UsuarioApi>("/auth/me");
+      const usuarioSesion: Usuario = {
+        id: me.id,
+        usuario: me.usuario,
+        nombre: me.nombre,
+        rol: ROLES_API[me.rol],
+        estudianteId: me.estudianteId,
+      };
+      saveSession(usuarioSesion);
+      return { ok: true, rol: usuarioSesion.rol };
+    } catch (error) {
+      clearTokens();
+      return { ok: false, error: mensajeError(error, "Usuario o contraseña incorrectos.") };
     }
-
-    const usuarioSinPassword = {
-      id: match.id,
-      usuario: match.usuario,
-      nombre: match.estudianteId
-        ? (() => {
-            const alumno = obtenerAlumnoPorId(match.estudianteId);
-            return alumno
-              ? `${alumno.nombres} ${alumno.apellidos}`
-              : match.nombre;
-          })()
-        : match.nombre,
-      rol: match.rol,
-      estudianteId: match.estudianteId,
-    };
-    saveSession(usuarioSinPassword);
-    return { ok: true, rol: usuarioSinPassword.rol };
   }, []);
 
   const logout = useCallback(() => {
-    clearSession();
+    if (getTokens()) {
+      void api("/auth/logout", { method: "POST" }).catch(() => undefined);
+    }
+    cerrarSesionLocal();
   }, []);
 
   const actualizarUsuarioActual = useCallback((nombre: string) => {
@@ -122,9 +113,15 @@ export function useAuth() {
   useEffect(() => {
     if (isLoading || !snapshot) return;
     if (!parsedSession || !isRecognizedSession || isSessionExpired(parsedSession)) {
-      clearSession();
+      cerrarSesionLocal();
     }
   }, [isLoading, snapshot, parsedSession, isRecognizedSession]);
+
+  // Si el backend rechaza el token y no se pudo renovar, se cierra la sesión.
+  useEffect(() => {
+    window.addEventListener("kickstamp:unauthorized", cerrarSesionLocal);
+    return () => window.removeEventListener("kickstamp:unauthorized", cerrarSesionLocal);
+  }, []);
 
   // Reinicia el contador de inactividad ante actividad del usuario
   useEffect(() => {
@@ -150,7 +147,7 @@ export function useAuth() {
     const interval = setInterval(() => {
       const current = parseSessionSnapshot(getSessionSnapshot());
       if (isSessionExpired(current)) {
-        clearSession();
+        cerrarSesionLocal();
       }
     }, CHECK_INTERVAL_MS);
 

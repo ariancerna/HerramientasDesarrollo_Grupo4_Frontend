@@ -7,6 +7,7 @@ import {
   isPlainObject,
 } from "@/lib/storage";
 import { isUsuario } from "@/lib/storage-validators";
+import { AUTH_CHANGE_EVENT } from "@/lib/remote-collection";
 
 const SESSION_KEY = "kickstamp_session";
 const SESSION_CHANGE_EVENT = "kickstamp:session-change";
@@ -16,6 +17,12 @@ export const SESSION_TIMEOUT_MS = 15 * 60 * 1000;
 function notifySessionChange() {
   if (isBrowser()) {
     window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
+  }
+}
+
+function notifyAuthChange() {
+  if (isBrowser()) {
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
   }
 }
 
@@ -79,6 +86,7 @@ export function saveSession(usuario: Usuario): Session {
   const session: Session = { usuario, loginTime: now, lastActivity: now };
   if (isBrowser()) {
     localStorage.setItem(SESSION_KEY, encodeSession(session));
+    notifyAuthChange();
     notifySessionChange();
   }
   return session;
@@ -133,6 +141,7 @@ export function actualizarUsuarioSesion(
 export function clearSession(): void {
   if (isBrowser()) {
     localStorage.removeItem(SESSION_KEY);
+    notifyAuthChange();
     notifySessionChange();
   }
 }
