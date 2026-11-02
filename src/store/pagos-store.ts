@@ -1,50 +1,48 @@
-import { MOCK_PAGOS } from "@/lib/mock/pagos.mock";
 import type { PagoMensualidad } from "@/types/pago";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isPagoMensualidad } from "@/lib/storage-validators";
+import { api } from "@/lib/api";
+import { crearColeccionRemota } from "@/lib/remote-collection";
+import { getSession } from "@/store/auth-store";
 
-const STORAGE_KEY = "kickstamp-pagos";
-const PAGOS_CHANGE_EVENT = "kickstamp:pagos-change";
-
-let pagosCache: PagoMensualidad[] | null = null;
-
-function isBrowser() {
-  return typeof window !== "undefined";
+/** Fila de `pagos` tal como la devuelve el backend. */
+interface PagoApi {
+  id: string;
+  alumno_id: string;
+  periodo: string;
+  monto: number | string;
+  estado: PagoMensualidad["estado"];
+  fecha_pago: string | null;
+  metodo_pago: PagoMensualidad["metodoPago"] | null;
+  codigo_operacion: string | null;
+  vencimiento: string | null;
 }
 
-export function obtenerPagosIniciales(): PagoMensualidad[] {
-  return MOCK_PAGOS;
+function aPago(pago: PagoApi): PagoMensualidad {
+  return {
+    id: pago.id,
+    estudianteId: pago.alumno_id,
+    periodo: pago.periodo,
+    concepto: `Mensualidad de ${formatearPeriodo(pago.periodo)}`,
+    monto: Number(pago.monto),
+    moneda: "PEN",
+    vencimiento: pago.vencimiento ?? "",
+    estado: pago.estado,
+    fechaPago: pago.fecha_pago ?? undefined,
+    metodoPago: pago.metodo_pago ?? undefined,
+    codigoOperacion: pago.codigo_operacion ?? undefined,
+  };
 }
+
+const pagos = crearColeccionRemota<PagoMensualidad>("pagos", async () => {
+  // El alumno solo puede consultar su propio historial.
+  const ruta = getSession()?.usuario.rol === "alumno" ? "/me/pagos" : "/pagos";
+  return (await api<PagoApi[]>(ruta)).map(aPago);
+});
+
+export const obtenerPagosIniciales = pagos.obtenerInicial;
 
 // LEER
-export function obtenerPagos(): PagoMensualidad[] {
-  if (!isBrowser()) return obtenerPagosIniciales();
-  if (pagosCache) return pagosCache;
-
-  const pagos = readJsonList(STORAGE_KEY, MOCK_PAGOS, isPagoMensualidad);
-  pagosCache = pagos;
-  return pagosCache;
-}
-
-export function suscribirPagos(onStoreChange: () => void) {
-  if (!isBrowser()) return () => undefined;
-
-  const handleChange = () => {
-    pagosCache = null;
-    onStoreChange();
-  };
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) handleChange();
-  };
-
-  window.addEventListener("storage", handleStorage);
-  window.addEventListener(PAGOS_CHANGE_EVENT, handleChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorage);
-    window.removeEventListener(PAGOS_CHANGE_EVENT, handleChange);
-  };
-}
+export const obtenerPagos = pagos.obtener;
+export const suscribirPagos = pagos.suscribir;
 
 export function obtenerPagosPorEstudiante(estudianteId: string): PagoMensualidad[] {
   return obtenerPagos()
@@ -56,58 +54,27 @@ export function obtenerMensualidadActual(estudianteId: string): PagoMensualidad 
   return obtenerPagosPorEstudiante(estudianteId)[0];
 }
 
-// CREAR (registrar un pago nuevo, ej. la mensualidad del mes)
-export function crearPago(pago: Omit<PagoMensualidad, "id">): PagoMensualidad {
-  const nuevo: PagoMensualidad = { ...pago, id: crypto.randomUUID() };
-  const todos = obtenerPagos();
-  guardarPagos([...todos, nuevo]);
-  return nuevo;
-}
-
-// ACTUALIZAR (ej. marcar un pago pendiente como pagado, con fecha y método)
-export function actualizarPago(id: string, cambios: Partial<PagoMensualidad>): PagoMensualidad | null {
-  const pagos = obtenerPagos();
-  const index = pagos.findIndex((p) => p.id === id);
-  if (index === -1) return null;
-
-  const actualizado = { ...pagos[index], ...cambios };
-  guardarPagos(pagos.map((pago, indice) => (indice === index ? actualizado : pago)));
-  return actualizado;
-}
-
 /**
- * Registra el pago de una mensualidad ya existente: la marca como "pagado"
- * con fecha de hoy, método de pago y código de operación.
+ * Registra el pago de la mensualidad de un alumno: el backend actualiza el
+ * cargo del período si existe o lo crea ya pagado.
  */
-export function registrarPagoMensualidad(
-  id: string,
-  metodoPago: PagoMensualidad["metodoPago"],
+export async function registrarPagoAlumno(
+  estudianteId: string,
+  periodo: string,
+  metodoPago: NonNullable<PagoMensualidad["metodoPago"]>,
   codigoOperacion?: string,
-): PagoMensualidad | null {
-  return actualizarPago(id, {
-    estado: "pagado",
-    fechaPago: new Date().toISOString().slice(0, 10),
-    metodoPago,
-    codigoOperacion,
+): Promise<void> {
+  await api("/pagos/registrar", {
+    method: "POST",
+    body: { estudianteId, periodo, metodoPago, codigoOperacion: codigoOperacion || undefined },
   });
+  await pagos.recargar();
 }
 
-// ELIMINAR
-export function eliminarPago(id: string): boolean {
-  const pagos = obtenerPagos();
-  const nuevos = pagos.filter((p) => p.id !== id);
-  if (nuevos.length === pagos.length) return false;
-
-  guardarPagos(nuevos);
-  return true;
-}
-
-function guardarPagos(pagos: PagoMensualidad[]) {
-  if (isBrowser()) {
-    pagosCache = pagos;
-    writeJson(STORAGE_KEY, pagos);
-    window.dispatchEvent(new Event(PAGOS_CHANGE_EVENT));
-  }
+/** Revierte un pago registrado por error: vuelve a quedar como deuda pendiente. */
+export async function marcarPagoPendiente(id: string): Promise<void> {
+  await api(`/pagos/${id}/marcar-pendiente`, { method: "POST" });
+  await pagos.recargar();
 }
 
 export function formatearMonto(monto: number) {

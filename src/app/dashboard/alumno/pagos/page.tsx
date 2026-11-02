@@ -1,5 +1,6 @@
 "use client";
 
+import { useDatosRemotos } from "@/lib/remote-collection";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -34,6 +35,7 @@ const ESTADO_CONFIG: Record<
 };
 
 export default function PagosAlumnoPage() {
+  useDatosRemotos();
   const { session } = useAuth();
   const estudianteId = session?.usuario.estudianteId;
   const pagos = estudianteId ? obtenerPagosPorEstudiante(estudianteId) : [];

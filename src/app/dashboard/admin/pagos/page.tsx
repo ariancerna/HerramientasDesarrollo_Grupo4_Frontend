@@ -1,20 +1,18 @@
 "use client";
 
 import { useDatosRemotos } from "@/lib/remote-collection";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { PagosLista } from "@/components/shared/pagos-lista";
+import { ErrorBanner } from "@/components/shared/error-banner";
+import { mensajeError } from "@/lib/api";
 import { Student } from "@/types/student";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import type { PagoMensualidad } from "@/types/pago";
 import {
-  obtenerPagos,
-  obtenerPagosIniciales,
-  suscribirPagos,
   obtenerMensualidadActual,
-  crearPago,
-  registrarPagoMensualidad,
-  actualizarPago,
+  registrarPagoAlumno,
+  marcarPagoPendiente,
   formatearMonto,
   formatearPeriodo,
 } from "@/store/pagos-store";
@@ -34,12 +32,13 @@ function periodoActual() {
 }
 
 export default function PagosAdminPage() {
-  useDatosRemotos();
-  useSyncExternalStore(suscribirPagos, obtenerPagos, obtenerPagosIniciales);
+  const version = useDatosRemotos();
   const alumnos: Student[] = obtenerAlumnos();
   const [texto, setTexto] = useState("");
   const [filtro, setFiltro] = useState<FiltroPago>("todos");
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
   const [modalAlumno, setModalAlumno] = useState<Student | null>(null);
   const [metodoSeleccionado, setMetodoSeleccionado] = useState<NonNullable<PagoMensualidad["metodoPago"]>>("Yape");
   const [codigoOperacion, setCodigoOperacion] = useState("");
@@ -66,7 +65,9 @@ export default function PagosAdminPage() {
           (filtro === "pendientes" && !pagado);
         return coincideTexto && coincideFiltro;
       });
-  }, [alumnos, texto, filtro]);
+    // version: los pagos se leen del store, así que se recalcula cuando cambian.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alumnos, texto, filtro, version]);
 
   const pagados = alumnos.filter((a) => obtenerMensualidadActual(a.id)?.estado === "pagado").length;
   const pendientes = alumnos.length - pagados;
@@ -82,39 +83,30 @@ export default function PagosAdminPage() {
     setCodigoOperacion("");
   };
 
-  const confirmarRegistroPago = () => {
+  const confirmarRegistroPago = async () => {
     if (!modalAlumno) return;
-    const pagoExistente = obtenerMensualidadActual(modalAlumno.id);
 
-    if (pagoExistente && pagoExistente.estado !== "pagado") {
-      registrarPagoMensualidad(pagoExistente.id, metodoSeleccionado, codigoOperacion || undefined);
-    } else {
-      crearPago({
-        estudianteId: modalAlumno.id,
-        periodo,
-        concepto: `Mensualidad de ${formatearPeriodo(periodo)}`,
-        monto: MONTO_MENSUALIDAD,
-        moneda: "PEN",
-        vencimiento: `${periodo}-10`,
-        estado: "pagado",
-        fechaPago: new Date().toISOString().slice(0, 10),
-        metodoPago: metodoSeleccionado,
-        codigoOperacion: codigoOperacion || undefined,
-      });
+    setError(null);
+    setGuardando(true);
+    try {
+      await registrarPagoAlumno(modalAlumno.id, periodo, metodoSeleccionado, codigoOperacion);
+      mostrarMensaje(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
+      setModalAlumno(null);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo registrar el pago."));
+    } finally {
+      setGuardando(false);
     }
-
-    mostrarMensaje(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
-    setModalAlumno(null);
   };
 
-  const marcarComoDeuda = (pago: PagoMensualidad, alumno: Student) => {
-    actualizarPago(pago.id, {
-      estado: "pendiente",
-      fechaPago: undefined,
-      metodoPago: undefined,
-      codigoOperacion: undefined,
-    });
-    mostrarMensaje(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
+  const marcarComoDeuda = async (pago: PagoMensualidad, alumno: Student) => {
+    setError(null);
+    try {
+      await marcarPagoPendiente(pago.id);
+      mostrarMensaje(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo actualizar el pago."));
+    }
   };
 
   return (
@@ -133,6 +125,10 @@ export default function PagosAdminPage() {
             {mensaje}
           </div>
         )}
+
+        <div className="mb-5">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
+        </div>
 
         <dl className="mb-5 grid gap-3 sm:grid-cols-3">
           <Resumen label="Alumnos" valor={alumnos.length} />
@@ -212,9 +208,10 @@ export default function PagosAdminPage() {
                 </button>
                 <button
                   onClick={confirmarRegistroPago}
-                  className="rounded-lg bg-brand-green px-4 py-2 text-sm font-bold text-white hover:bg-brand-green-dark"
+                  disabled={guardando}
+                  className="rounded-lg bg-brand-green px-4 py-2 text-sm font-bold text-white hover:bg-brand-green-dark disabled:opacity-60"
                 >
-                  Confirmar pago
+                  {guardando ? "Registrando..." : "Confirmar pago"}
                 </button>
               </div>
             </div>
