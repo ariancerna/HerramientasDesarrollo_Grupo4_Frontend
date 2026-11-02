@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { ROLE_LABELS } from "@/constants/nav-items";
 import { ROUTES } from "@/constants/routes";
@@ -10,17 +10,36 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useSettings } from "@/hooks/use-settings";
 import { api, mensajeError } from "@/lib/api";
 
-type TabId = "club" | "apariencia" | "cuenta" | "seguridad";
+type TabId = "club" | "notificaciones" | "cuenta" | "seguridad";
 
 const TABS: { id: TabId; label: string; icon: (className: string) => React.ReactNode }[] = [
   { id: "club", label: "Club", icon: (c) => <BuildingIcon className={c} /> },
-  { id: "apariencia", label: "Apariencia", icon: (c) => <PaletteIcon className={c} /> },
+  { id: "notificaciones", label: "Notificaciones", icon: (c) => <BellIcon className={c} /> },
   { id: "cuenta", label: "Cuenta", icon: (c) => <UserIcon className={c} /> },
   { id: "seguridad", label: "Seguridad", icon: (c) => <ShieldIcon className={c} /> },
 ];
 
+function esTab(valor: string | null): valor is TabId {
+  return TABS.some((tab) => tab.id === valor);
+}
+
+// useSearchParams exige un límite de Suspense en las páginas prerenderizadas.
 export default function ConfiguracionScreen() {
-  const [activeTab, setActiveTab] = useState<TabId>("club");
+  return (
+    <Suspense>
+      <ConfiguracionContenido />
+    </Suspense>
+  );
+}
+
+function ConfiguracionContenido() {
+  const tabInicial = useSearchParams().get("tab");
+  const { session } = useAuth();
+  const esAdmin = session?.usuario.rol === "administrador";
+  const tabs = esAdmin ? TABS : TABS.filter((tab) => tab.id !== "club");
+  const [activeTab, setActiveTab] = useState<TabId>(
+    esTab(tabInicial) && tabs.some((tab) => tab.id === tabInicial) ? tabInicial : tabs[0].id,
+  );
   const { confirm, dialog } = useConfirm();
 
   return (
@@ -40,7 +59,7 @@ export default function ConfiguracionScreen() {
           className="inline-flex min-w-max gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 dark:border-slate-700 dark:bg-slate-800"
           aria-label="Pestañas de configuración"
         >
-          {TABS.map((tab) => {
+          {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
@@ -61,8 +80,8 @@ export default function ConfiguracionScreen() {
         </nav>
       </div>
 
-      {activeTab === "club" && <ClubTab confirm={confirm} />}
-      {activeTab === "apariencia" && <AparienciaTab />}
+      {activeTab === "club" && esAdmin && <ClubTab confirm={confirm} />}
+      {activeTab === "notificaciones" && <NotificacionesTab />}
       {activeTab === "cuenta" && <CuentaTab />}
       {activeTab === "seguridad" && <SeguridadTab confirm={confirm} />}
 
@@ -78,144 +97,120 @@ export default function ConfiguracionScreen() {
    generales de contacto para mostrar en el sistema.
 ============================================================ */
 function ClubTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"] }) {
-  const [form, setForm] = useState({
-    nombre: "El Golazo Club",
-    direccion: "",
-    telefono: "",
-    correo: "",
-    horarioAtencion: "Lunes a Sábado, 3pm - 9pm",
-    montoMensualidad: "180",
-    diaVencimiento: "10",
-  });
+  const [monto, setMonto] = useState("");
+  const [dia, setDia] = useState("");
+  const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
 
-  function update<K extends keyof typeof form>(key: K, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
+  useEffect(() => {
+    let vigente = true;
+    api<{ montoMensualidad: number; diaVencimiento: number }>("/configuracion/club")
+      .then((config) => {
+        if (!vigente) return;
+        setMonto(String(config.montoMensualidad));
+        setDia(String(config.diaVencimiento));
+      })
+      .catch((err) => vigente && setError(mensajeError(err, "No se pudo cargar la configuración del club.")))
+      .finally(() => vigente && setCargando(false));
+    return () => {
+      vigente = false;
+    };
+  }, []);
 
   async function handleGuardar() {
-    await confirm({
-      title: "Datos guardados",
-      message:
-        "Cuando el backend esté conectado, esto se guardará en la tabla configuracion_club.",
-      confirmLabel: "Entendido",
-      hideCancel: true,
-    });
+    const montoMensualidad = Number(monto);
+    const diaVencimiento = Number(dia);
+    if (!Number.isFinite(montoMensualidad) || montoMensualidad <= 0) {
+      setError("El monto de la mensualidad debe ser mayor que cero.");
+      return;
+    }
+    if (!Number.isInteger(diaVencimiento) || diaVencimiento < 1 || diaVencimiento > 28) {
+      setError("El día de vencimiento debe estar entre 1 y 28.");
+      return;
+    }
+
+    setError("");
+    setGuardando(true);
+    try {
+      await api("/configuracion/club", { method: "PUT", body: { montoMensualidad, diaVencimiento } });
+      await confirm({
+        title: "Configuración guardada",
+        message: "Las reglas de mensualidad se actualizaron correctamente.",
+        confirmLabel: "Entendido",
+        hideCancel: true,
+      });
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar la configuración."));
+    } finally {
+      setGuardando(false);
+    }
   }
-
-  return (
-    <SettingsCard
-      title="Datos del club"
-      description="Información general y reglas de mensualidad del club."
-      icon={<BuildingIcon className="h-5 w-5" />}
-    >
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <Field label="Nombre del club">
-          <input
-            value={form.nombre}
-            onChange={(e) => update("nombre", e.target.value)}
-            className={inputClass}
-          />
-        </Field>
-
-        <Field label="Teléfono / WhatsApp">
-          <input
-            value={form.telefono}
-            onChange={(e) => update("telefono", e.target.value)}
-            placeholder="+51 999 999 999"
-            className={inputClass}
-          />
-        </Field>
-
-        <Field label="Correo de contacto">
-          <input
-            type="email"
-            value={form.correo}
-            onChange={(e) => update("correo", e.target.value)}
-            placeholder="contacto@elgolazoclub.pe"
-            className={inputClass}
-          />
-        </Field>
-
-        <Field label="Dirección">
-          <input
-            value={form.direccion}
-            onChange={(e) => update("direccion", e.target.value)}
-            placeholder="Av. Ejemplo 123"
-            className={inputClass}
-          />
-        </Field>
-
-        <Field label="Horario de atención" full>
-          <input
-            value={form.horarioAtencion}
-            onChange={(e) => update("horarioAtencion", e.target.value)}
-            className={inputClass}
-          />
-        </Field>
-      </div>
-
-      <div className="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
-          Reglas de mensualidad
-        </p>
-        <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field label="Monto de mensualidad (S/)">
-            <input
-              type="number"
-              min={0}
-              value={form.montoMensualidad}
-              onChange={(e) => update("montoMensualidad", e.target.value)}
-              className={inputClass}
-            />
-          </Field>
-
-          <Field label="Día de vencimiento (1-28)">
-            <input
-              type="number"
-              min={1}
-              max={28}
-              value={form.diaVencimiento}
-              onChange={(e) => update("diaVencimiento", e.target.value)}
-              className={inputClass}
-            />
-          </Field>
-        </div>
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <button
-          type="button"
-          onClick={handleGuardar}
-          className="rounded-lg bg-brand-green px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark"
-        >
-          Guardar cambios
-        </button>
-      </div>
-    </SettingsCard>
-  );
-}
-
-/* ============================================================
-   TAB: APARIENCIA (lo que ya existía, reorganizado)
-============================================================ */
-function AparienciaTab() {
-  const { settings, setTema, setNotificacionesSilenciadas } = useSettings();
 
   return (
     <div className="space-y-6">
       <SettingsCard
-        title="Apariencia"
-        description="Elige cómo se ve el panel en este dispositivo."
-        icon={<PaletteIcon className="h-5 w-5" />}
+        title="Mensualidades"
+        description="Monto base y día de vencimiento que se aplican a los nuevos cargos."
+        icon={<BuildingIcon className="h-5 w-5" />}
       >
-        <ToggleRow
-          label="Modo oscuro"
-          description="Cambia los colores del panel a un tema oscuro."
-          checked={settings.tema === "oscuro"}
-          onChange={(checked) => setTema(checked ? "oscuro" : "claro")}
-        />
+        {cargando ? (
+          <p className="text-sm text-slate-500 dark:text-slate-400">Cargando configuración…</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Monto de mensualidad (S/)">
+              <input type="number" min="1" step="0.5" value={monto} onChange={(e) => setMonto(e.target.value)} className={inputClass} />
+            </Field>
+            <Field label="Día de vencimiento (1 a 28)">
+              <input type="number" min="1" max="28" value={dia} onChange={(e) => setDia(e.target.value)} className={inputClass} />
+            </Field>
+          </div>
+        )}
+        {error && <p className="mt-4 text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="button"
+            onClick={handleGuardar}
+            disabled={cargando || guardando}
+            className="rounded-lg bg-brand-green px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark disabled:opacity-60"
+          >
+            {guardando ? "Guardando…" : "Guardar cambios"}
+          </button>
+        </div>
       </SettingsCard>
 
+      <SettingsCard
+        title="Datos de contacto"
+        description="Información pública del club que se muestra en la pantalla de acceso."
+        icon={<BuildingIcon className="h-5 w-5" />}
+      >
+        <dl className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+          {[
+            ["Nombre", "El Golazo Club"],
+            ["Teléfonos", "994 796 381 · 998 678 259"],
+            ["Dirección", "Plaza Cívica Pro, Los Olivos. Av. Honestidad Mz. D Lt. 7"],
+            ["Horario de atención", "Lunes a sábado, de 3:00 p. m. a 9:00 p. m."],
+          ].map(([etiqueta, valor]) => (
+            <div key={etiqueta}>
+              <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">{etiqueta}</dt>
+              <dd className="mt-0.5 font-semibold text-slate-800 dark:text-slate-100">{valor}</dd>
+            </div>
+          ))}
+        </dl>
+      </SettingsCard>
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB: NOTIFICACIONES
+   (La apariencia clara/oscura se elige desde la barra superior.)
+============================================================ */
+function NotificacionesTab() {
+  const { settings, setNotificacionesSilenciadas } = useSettings();
+
+  return (
+    <div className="space-y-6">
       <SettingsCard
         title="Notificaciones"
         description="Controla los avisos que muestra la campana del panel."
@@ -475,21 +470,6 @@ function BuildingIcon({ className }: { className: string }) {
       <path d="M4 21V5a1 1 0 0 1 1-1h6v17" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
       <path d="M14 21V10a1 1 0 0 1 1-1h5v12" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
       <path d="M3 21h18M7 7h1m-1 3.5h1M7 14h1m5-4h1m-1 3.5h1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function PaletteIcon({ className }: { className: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <path
-        d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1.1.9-2 2-2h2a3 3 0 0 0 3-3c0-5-3.6-8.5-8-8.5Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <circle cx="7.5" cy="10.5" r="1.2" fill="currentColor" />
-      <circle cx="9" cy="15" r="1.2" fill="currentColor" />
-      <circle cx="14.5" cy="7.5" r="1.2" fill="currentColor" />
     </svg>
   );
 }
