@@ -1,84 +1,47 @@
 import { Sede } from "@/types";
-import { MOCK_SEDES } from "@/lib/mock/sedes.mock";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isSede } from "@/lib/storage-validators";
+import { api } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
 
-const STORAGE_KEY = "kickstamp-sedes";
-const SEDES_CHANGE_EVENT = "kickstamp:sedes-change";
-
-let sedesCache: Sede[] | null = null;
-
-function isBrowser() {
-  return typeof window !== "undefined";
+interface SedeApi {
+  id: string;
+  nombre: string;
+  direccion?: string | null;
 }
 
-export function obtenerSedesIniciales(): Sede[] {
-  return MOCK_SEDES;
+function aSede(sede: SedeApi): Sede {
+  return { id: sede.id, nombre: sede.nombre, direccion: sede.direccion ?? undefined };
 }
+
+const sedes = crearColeccionRemota<Sede>("sedes", async () =>
+  (await api<SedeApi[]>("/sedes")).map(aSede),
+);
+
+export const obtenerSedesIniciales = sedes.obtenerInicial;
 
 // LEER
-export function obtenerSedes(): Sede[] {
-  if (!isBrowser()) return obtenerSedesIniciales();
-  if (sedesCache) return sedesCache;
-
-  const sedes = readJsonList(STORAGE_KEY, MOCK_SEDES, isSede);
-  sedesCache = sedes;
-  return sedesCache;
-}
-
-export function suscribirSedes(onStoreChange: () => void) {
-  if (!isBrowser()) return () => undefined;
-
-  const handleChange = () => {
-    sedesCache = null;
-    onStoreChange();
-  };
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) handleChange();
-  };
-
-  window.addEventListener("storage", handleStorage);
-  window.addEventListener(SEDES_CHANGE_EVENT, handleChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorage);
-    window.removeEventListener(SEDES_CHANGE_EVENT, handleChange);
-  };
-}
+export const obtenerSedes = sedes.obtener;
+export const suscribirSedes = sedes.suscribir;
+export const useSedes = () => useColeccion(sedes);
 
 // CREAR
-export function crearSede(sede: Omit<Sede, "id">): Sede {
-  const nueva: Sede = { ...sede, id: crypto.randomUUID() };
-  const todas = obtenerSedes();
-  guardarSedes([...todas, nueva]);
+export async function crearSede(sede: Omit<Sede, "id">): Promise<Sede> {
+  const nueva = aSede(await api<SedeApi>("/sedes", { method: "POST", body: sede }));
+  sedes.establecer([...sedes.obtener(), nueva]);
   return nueva;
 }
 
 // ACTUALIZAR
-export function actualizarSede(id: string, cambios: Partial<Sede>): Sede | null {
-  const sedes = obtenerSedes();
-  const index = sedes.findIndex((s) => s.id === id);
-  if (index === -1) return null;
-
-  const actualizada = { ...sedes[index], ...cambios };
-  guardarSedes(sedes.map((sede, indice) => (indice === index ? actualizada : sede)));
+export async function actualizarSede(id: string, cambios: Partial<Sede>): Promise<Sede> {
+  const { nombre, direccion } = cambios;
+  const actualizada = aSede(
+    await api<SedeApi>(`/sedes/${id}`, { method: "PUT", body: { nombre, direccion } }),
+  );
+  sedes.establecer(sedes.obtener().map((sede) => (sede.id === id ? actualizada : sede)));
   return actualizada;
 }
 
 // ELIMINAR
-export function eliminarSede(id: string): boolean {
-  const sedes = obtenerSedes();
-  const nuevas = sedes.filter((s) => s.id !== id);
-  if (nuevas.length === sedes.length) return false;
-
-  guardarSedes(nuevas);
-  return true;
-}
-
-function guardarSedes(sedes: Sede[]) {
-  if (isBrowser()) {
-    sedesCache = sedes;
-    writeJson(STORAGE_KEY, sedes);
-    window.dispatchEvent(new Event(SEDES_CHANGE_EVENT));
-  }
+export async function eliminarSede(id: string): Promise<void> {
+  await api(`/sedes/${id}`, { method: "DELETE" });
+  sedes.establecer(sedes.obtener().filter((sede) => sede.id !== id));
 }

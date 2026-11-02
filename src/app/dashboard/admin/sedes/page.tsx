@@ -14,12 +14,15 @@ import {
   actualizarSede,
   eliminarSede,
 } from "@/store/sedes-store";
+import { mensajeError } from "@/lib/api";
+import { ErrorBanner } from "@/components/shared/error-banner";
 
 export default function SedesPage() {
   const sedes = useSyncExternalStore(suscribirSedes, obtenerSedes, obtenerSedesIniciales);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [sedeAEditar, setSedeAEditar] = useState<Sede | null>(null);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
   useEffect(() => {
@@ -39,16 +42,21 @@ export default function SedesPage() {
     setSedeAEditar(null);
   };
 
-  const handleGuardarSede = (data: Omit<Sede, "id">, id?: string) => {
-    if (id) {
-      actualizarSede(id, data);
-      setMensajeExito(`Sede "${data.nombre}" actualizada correctamente`);
-    } else {
-      crearSede(data);
-      setMensajeExito(`Sede "${data.nombre}" creada correctamente`);
+  const handleGuardarSede = async (data: Omit<Sede, "id">, id?: string) => {
+    setError(null);
+    try {
+      if (id) {
+        await actualizarSede(id, data);
+        setMensajeExito(`Sede "${data.nombre}" actualizada correctamente`);
+      } else {
+        await crearSede(data);
+        setMensajeExito(`Sede "${data.nombre}" creada correctamente`);
+      }
+      setMostrarFormulario(false);
+      setSedeAEditar(null);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar la sede."));
     }
-    setMostrarFormulario(false);
-    setSedeAEditar(null);
   };
 
   const handleEditarSede = (sede: Sede) => {
@@ -71,8 +79,13 @@ export default function SedesPage() {
     });
     if (!confirmado) return;
 
-    eliminarSede(sede.id);
-    setMensajeExito(`Sede "${sede.nombre}" eliminada correctamente`);
+    setError(null);
+    try {
+      await eliminarSede(sede.id);
+      setMensajeExito(`Sede "${sede.nombre}" eliminada correctamente`);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo eliminar la sede."));
+    }
   };
 
   return (
@@ -102,6 +115,8 @@ export default function SedesPage() {
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
+
+        <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
 
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <SedesTabla
