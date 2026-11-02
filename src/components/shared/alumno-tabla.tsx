@@ -79,7 +79,7 @@ export default function AlumnoTabla({
                     onClick={() => onEliminar?.(alumno)}
                     className="font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                   >
-                    Eliminar
+                    Dar de baja
                   </button>
                 </td>
               )}

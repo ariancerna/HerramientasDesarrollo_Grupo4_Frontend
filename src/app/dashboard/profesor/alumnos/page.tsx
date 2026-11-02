@@ -76,17 +76,17 @@ export default function AlumnosProfesorPage() {
 
   const handleEliminar = async (alumno: Student) => {
     const confirmado = await confirm({
-      title: "Eliminar alumno",
+      title: "Dar de baja al alumno",
       message: (
         <>
-          ¿Seguro que deseas eliminar a{" "}
+          ¿Seguro que deseas dar de baja a{" "}
           <strong>
             {alumno.nombres} {alumno.apellidos}
           </strong>
-          ? Esta acción no se puede deshacer.
+          ? Quedará como inactivo y se conservará su historial de asistencias y pagos.
         </>
       ),
-      confirmLabel: "Eliminar",
+      confirmLabel: "Dar de baja",
       cancelLabel: "Cancelar",
       variant: "danger",
     });
@@ -96,7 +96,7 @@ export default function AlumnosProfesorPage() {
     try {
       await eliminarAlumno(alumno.id);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo eliminar el alumno."));
+      setError(mensajeError(err, "No se pudo dar de baja al alumno."));
     }
   };
 

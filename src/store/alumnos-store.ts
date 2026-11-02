@@ -134,10 +134,15 @@ export async function actualizarFotoPerfil(foto: File | null): Promise<void> {
   await alumnos.recargar();
 }
 
-/** US-04: elimina un alumno por id. */
+/**
+ * US-04: da de baja a un alumno. El backend no borra el registro: lo deja
+ * inactivo para conservar su historial de asistencias y pagos.
+ */
 export async function eliminarAlumno(id: string): Promise<void> {
   await api(`/alumnos/${id}`, { method: "DELETE" });
-  alumnos.establecer(obtenerAlumnos().filter((alumno) => alumno.id !== id));
+  alumnos.establecer(
+    obtenerAlumnos().map((alumno) => (alumno.id === id ? { ...alumno, estado: "inactivo" } : alumno)),
+  );
 }
 
 /** US-05: busca por texto (nombres, apellidos, DNI o código) y filtra por categoría/estado. */

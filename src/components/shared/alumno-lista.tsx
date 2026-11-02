@@ -108,7 +108,7 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar }: AlumnoListaProps)
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
               >
                 <TrashIcon />
-                Eliminar alumno
+                Dar de baja
               </button>
             </div>
           </div>
