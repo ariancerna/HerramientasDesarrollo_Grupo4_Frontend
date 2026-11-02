@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Categoria, Profesor } from "@/types";
-import { MOCK_USUARIOS } from "@/lib/mock/usuarios.mock";
+import { Categoria, DatosProfesor, Profesor } from "@/types";
 import { usuarioProfesorDisponible } from "@/store/profesores-store";
+import { useSedes } from "@/store/sedes-store";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface ProfesorFormData {
   nombre: string;
   usuario: string;
+  email: string;
+  sedeId: string;
   password: string;
 }
 
@@ -16,7 +18,7 @@ interface ProfesorFormProps {
   profesorAEditar: Profesor | null;
   categorias: Categoria[];
   onClose: () => void;
-  onGuardar: (data: Omit<Profesor, "id">, categoriaIds: string[], id?: string) => void;
+  onGuardar: (data: DatosProfesor, categoriaIds: string[], id?: string) => void;
 }
 
 type Errores = Partial<Record<keyof ProfesorFormData, string>>;
@@ -29,14 +31,17 @@ export default function ProfesorForm({
 }: ProfesorFormProps) {
   const [form, setForm] = useState<ProfesorFormData>(() => {
     if (!profesorAEditar) {
-      return { nombre: "", usuario: "", password: "" };
+      return { nombre: "", usuario: "", email: "", sedeId: "", password: "" };
     }
     return {
       nombre: profesorAEditar.nombre,
       usuario: profesorAEditar.usuario,
+      email: profesorAEditar.email,
+      sedeId: profesorAEditar.sedeId ?? "",
       password: "",
     };
   });
+  const sedes = useSedes();
   const [errores, setErrores] = useState<Errores>({});
   const [categoriaIds, setCategoriaIds] = useState<string[]>(() =>
     profesorAEditar
@@ -58,17 +63,17 @@ export default function ProfesorForm({
       nuevosErrores.usuario = "El usuario es obligatorio.";
     } else if (!/^[a-zA-Z0-9._-]{3,}$/.test(form.usuario.trim())) {
       nuevosErrores.usuario = "Usa al menos 3 caracteres (letras, números, . _ -).";
-    } else {
-      const enUsoPorSistema = MOCK_USUARIOS.some(
-        (u) => u.usuario.toLowerCase() === form.usuario.trim().toLowerCase(),
-      );
-      const enUsoPorProfesor = !usuarioProfesorDisponible(
-        form.usuario.trim(),
-        profesorAEditar?.id,
-      );
-      if (enUsoPorSistema || enUsoPorProfesor) {
-        nuevosErrores.usuario = "Ese usuario ya está en uso.";
-      }
+    } else if (!usuarioProfesorDisponible(form.usuario.trim(), profesorAEditar?.id)) {
+      // El backend también valida contra las cuentas de alumnos y administradores.
+      nuevosErrores.usuario = "Ese usuario ya está en uso.";
+    }
+
+    if (!profesorAEditar && !/^\S+@\S+\.\S+$/.test(form.email.trim())) {
+      nuevosErrores.email = "Ingresa un correo válido.";
+    }
+
+    if (!form.sedeId) {
+      nuevosErrores.sedeId = "Selecciona una sede.";
     }
 
     if (!profesorAEditar && form.password.length < 6) {
@@ -99,10 +104,12 @@ export default function ProfesorForm({
       if (!confirmado) return;
     }
 
-    const datos: Omit<Profesor, "id"> = {
+    const datos: DatosProfesor = {
       nombre: form.nombre.trim(),
-      usuario: form.usuario.trim(),
-      password: form.password ? form.password : profesorAEditar?.password ?? "",
+      usuario: form.usuario.trim().toLowerCase(),
+      email: form.email.trim(),
+      sedeId: form.sedeId,
+      password: form.password || undefined,
     };
     onGuardar(datos, categoriaIds, profesorAEditar?.id);
   };
@@ -147,6 +154,40 @@ export default function ProfesorForm({
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
             {errores.usuario && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.usuario}</p>}
+          </label>
+
+          <label>
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Correo electrónico
+            </span>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              disabled={Boolean(profesorAEditar)}
+              autoComplete="off"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+            />
+            {errores.email && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.email}</p>}
+          </label>
+
+          <label>
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Sede
+            </span>
+            <select
+              value={form.sedeId}
+              onChange={(e) => setForm({ ...form, sedeId: e.target.value })}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+            >
+              <option value="">Selecciona una sede</option>
+              {sedes.map((sede) => (
+                <option key={sede.id} value={sede.id}>
+                  {sede.nombre}
+                </option>
+              ))}
+            </select>
+            {errores.sedeId && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.sedeId}</p>}
           </label>
 
           <label>

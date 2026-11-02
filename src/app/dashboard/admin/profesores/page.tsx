@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import { Profesor } from "@/types";
+import { DatosProfesor, Profesor } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { RoleGuard } from "@/components/shared/role-guard";
 import ProfesorForm from "@/components/forms/profesor-form";
@@ -15,8 +15,9 @@ import {
   eliminarProfesor,
   filtrarProfesores,
 } from "@/store/profesores-store";
+import { mensajeError } from "@/lib/api";
+import { ErrorBanner } from "@/components/shared/error-banner";
 import {
-  asignarCategoriasAProfesor,
   obtenerCategorias,
   obtenerCategoriasIniciales,
   suscribirCategorias,
@@ -37,6 +38,7 @@ export default function ProfesoresPage() {
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [profesorAEditar, setProfesorAEditar] = useState<Profesor | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
   const profesoresFiltrados = useMemo(() => {
@@ -59,16 +61,19 @@ export default function ProfesoresPage() {
     setMostrarFormulario(true);
   };
 
-  const handleGuardar = (data: Omit<Profesor, "id">, categoriaIds: string[], id?: string) => {
-    if (id) {
-      actualizarProfesor(id, data);
-      asignarCategoriasAProfesor(id, categoriaIds);
-    } else {
-      const profesor = crearProfesor(data);
-      asignarCategoriasAProfesor(profesor.id, categoriaIds);
+  const handleGuardar = async (data: DatosProfesor, categoriaIds: string[], id?: string) => {
+    setError(null);
+    try {
+      if (id) {
+        await actualizarProfesor(id, data, categoriaIds);
+      } else {
+        await crearProfesor(data, categoriaIds);
+      }
+      setMostrarFormulario(false);
+      setProfesorAEditar(null);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar el profesor."));
     }
-    setMostrarFormulario(false);
-    setProfesorAEditar(null);
   };
 
   const handleEliminar = async (profesor: Profesor) => {
@@ -86,8 +91,12 @@ export default function ProfesoresPage() {
     });
     if (!confirmado) return;
 
-    eliminarProfesor(profesor.id);
-    asignarCategoriasAProfesor(profesor.id, []);
+    setError(null);
+    try {
+      await eliminarProfesor(profesor.id);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo eliminar el profesor."));
+    }
   };
 
   return (
@@ -98,6 +107,10 @@ export default function ProfesoresPage() {
             Profesores
           </h1>
         </header>
+
+        <div className="mb-5">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
+        </div>
 
         <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center">
           <input

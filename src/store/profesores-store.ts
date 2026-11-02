@@ -1,50 +1,36 @@
-import { Profesor } from "@/types";
-import { MOCK_PROFESORES } from "@/lib/mock/profesores.mock";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isProfesor } from "@/lib/storage-validators";
+import { DatosProfesor, Profesor } from "@/types";
+import { api } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
+import { recargarCategorias } from "@/store/categorias-store";
 
-const STORAGE_KEY = "kickstamp-profesores";
-const PROFESORES_CHANGE_EVENT = "kickstamp:profesores-change";
-
-let profesoresCache: Profesor[] | null = null;
-
-function isBrowser() {
-  return typeof window !== "undefined";
+interface ProfesorApi {
+  id: string;
+  nombre: string;
+  usuario: string | null;
+  email: string | null;
+  sedeId: string | null;
 }
 
-export function obtenerProfesoresIniciales(): Profesor[] {
-  return MOCK_PROFESORES;
+function aProfesor(profesor: ProfesorApi): Profesor {
+  return {
+    id: profesor.id,
+    nombre: profesor.nombre,
+    usuario: profesor.usuario ?? "",
+    email: profesor.email ?? "",
+    sedeId: profesor.sedeId ?? undefined,
+  };
 }
+
+const profesores = crearColeccionRemota<Profesor>("profesores", async () =>
+  (await api<ProfesorApi[]>("/profesores")).map(aProfesor),
+);
+
+export const obtenerProfesoresIniciales = profesores.obtenerInicial;
 
 // LEER
-export function obtenerProfesores(): Profesor[] {
-  if (!isBrowser()) return obtenerProfesoresIniciales();
-  if (profesoresCache) return profesoresCache;
-
-  const profesores = readJsonList(STORAGE_KEY, MOCK_PROFESORES, isProfesor);
-  profesoresCache = profesores;
-  return profesoresCache;
-}
-
-export function suscribirProfesores(onStoreChange: () => void) {
-  if (!isBrowser()) return () => undefined;
-
-  const handleChange = () => {
-    profesoresCache = null;
-    onStoreChange();
-  };
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) handleChange();
-  };
-
-  window.addEventListener("storage", handleStorage);
-  window.addEventListener(PROFESORES_CHANGE_EVENT, handleChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorage);
-    window.removeEventListener(PROFESORES_CHANGE_EVENT, handleChange);
-  };
-}
+export const obtenerProfesores = profesores.obtener;
+export const suscribirProfesores = profesores.suscribir;
+export const useProfesores = () => useColeccion(profesores);
 
 /** Verifica si un nombre de usuario ya está en uso (por otro profesor). */
 export function usuarioProfesorDisponible(usuario: string, idAExcluir?: string): boolean {
@@ -53,35 +39,53 @@ export function usuarioProfesorDisponible(usuario: string, idAExcluir?: string):
   );
 }
 
-// CREAR
-export function crearProfesor(profesor: Omit<Profesor, "id">): Profesor {
-  const nuevo: Profesor = { ...profesor, id: crypto.randomUUID() };
-  const todos = obtenerProfesores();
-  guardarProfesores([...todos, nuevo]);
-  return nuevo;
+// CREAR: el backend crea la cuenta de acceso, el perfil y sus categorías en una transacción.
+export async function crearProfesor(datos: DatosProfesor, categoriaIds: string[]): Promise<void> {
+  try {
+    await api("/profesores", {
+      method: "POST",
+      body: {
+        nombre: datos.nombre,
+        usuario: datos.usuario,
+        email: datos.email,
+        password: datos.password,
+        sedeId: datos.sedeId,
+        categoriaIds,
+      },
+    });
+  } finally {
+    await Promise.all([profesores.recargar(), recargarCategorias()]);
+  }
 }
 
-// ACTUALIZAR
-export function actualizarProfesor(id: string, cambios: Partial<Profesor>): Profesor | null {
-  const profesores = obtenerProfesores();
-  const index = profesores.findIndex((p) => p.id === id);
-  if (index === -1) return null;
-
-  const actualizado = { ...profesores[index], ...cambios };
-  guardarProfesores(
-    profesores.map((profesor, indice) => (indice === index ? actualizado : profesor)),
-  );
-  return actualizado;
+// ACTUALIZAR: perfil, categorías y (opcional) contraseña usan endpoints distintos.
+export async function actualizarProfesor(
+  id: string,
+  datos: DatosProfesor,
+  categoriaIds: string[],
+): Promise<void> {
+  try {
+    await api(`/profesores/${id}`, {
+      method: "PUT",
+      body: { nombre: datos.nombre, usuario: datos.usuario, sedeId: datos.sedeId },
+    });
+    await api(`/profesores/${id}/categorias`, { method: "PUT", body: { categoriaIds } });
+    if (datos.password) {
+      await api(`/usuarios/${id}/reset-password`, {
+        method: "POST",
+        body: { nuevaPassword: datos.password },
+      });
+    }
+  } finally {
+    await Promise.all([profesores.recargar(), recargarCategorias()]);
+  }
 }
 
 // ELIMINAR
-export function eliminarProfesor(id: string): boolean {
-  const profesores = obtenerProfesores();
-  const nuevos = profesores.filter((p) => p.id !== id);
-  if (nuevos.length === profesores.length) return false;
-
-  guardarProfesores(nuevos);
-  return true;
+export async function eliminarProfesor(id: string): Promise<void> {
+  await api(`/profesores/${id}`, { method: "DELETE" });
+  profesores.establecer(profesores.obtener().filter((p) => p.id !== id));
+  await recargarCategorias();
 }
 
 /** Busca por nombre o usuario. */
@@ -93,12 +97,4 @@ export function filtrarProfesores(profesores: Profesor[], texto: string): Profes
     (p) =>
       p.nombre.toLowerCase().includes(termino) || p.usuario.toLowerCase().includes(termino),
   );
-}
-
-function guardarProfesores(profesores: Profesor[]) {
-  if (isBrowser()) {
-    profesoresCache = profesores;
-    writeJson(STORAGE_KEY, profesores);
-    window.dispatchEvent(new Event(PROFESORES_CHANGE_EVENT));
-  }
 }

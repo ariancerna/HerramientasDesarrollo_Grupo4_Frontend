@@ -41,5 +41,11 @@ export interface Profesor {
   id: string;
   nombre: string;
   usuario: string;
-  password: string;
+  email: string;
+  sedeId?: string;
+}
+
+/** Datos del formulario de profesor; la contraseña nunca se guarda en el estado. */
+export interface DatosProfesor extends Omit<Profesor, "id"> {
+  password?: string;
 }

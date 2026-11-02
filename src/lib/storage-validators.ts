@@ -72,7 +72,7 @@ export function isProfesor(value: unknown): value is Profesor {
     isString(value.id) &&
     isString(value.nombre) &&
     isString(value.usuario) &&
-    isString(value.password)
+    isString(value.email)
   );
 }
 
