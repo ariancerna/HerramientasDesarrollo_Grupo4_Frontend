@@ -175,7 +175,7 @@ export default function AsistenciaProfesorPage() {
               Registro de asistencia
             </h1>
             <p className="mt-2 text-sm text-slate-300 sm:text-base">
-              Escanea el DNI o registra la asistencia manualmente.
+              Escanea el QR de ingreso del alumno o registra la asistencia manualmente.
             </p>
           </div>
         </header>
@@ -196,7 +196,7 @@ export default function AsistenciaProfesorPage() {
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
-            Escanear DNI
+            Escanear código
           </button>
           <button
             type="button"
@@ -228,7 +228,7 @@ export default function AsistenciaProfesorPage() {
                 Registro manual
               </h2>
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Completa los datos cuando no sea posible leer el DNI con la cámara.
+                Completa los datos cuando no sea posible leer el código con la cámara.
               </p>
 
               <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -287,10 +287,6 @@ export default function AsistenciaProfesorPage() {
             </section>
           )}
         </div>
-
-        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-          Datos de prueba disponibles: 76543210, 71234567 y 70456789.
-        </p>
 
         {estudianteEscaneado && (
           <section className="mt-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-5 dark:border-brand-green/30 dark:bg-brand-green/10">
