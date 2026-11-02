@@ -97,7 +97,7 @@ export function AnuncioLista({
                     {anuncio.titulo}
                   </p>
                   <p className="mt-0.5 truncate text-xs text-slate-400">
-                    {categoria ?? `${anuncio.destinatarios.length} destinatario(s)`} ·{" "}
+                    {categoria ?? `${anuncio.destinatarios.length} ${anuncio.destinatarios.length === 1 ? "destinatario" : "destinatarios"}`} ·{" "}
                     {formatearFecha(anuncio.fechaCreacion)}
                   </p>
                 </div>

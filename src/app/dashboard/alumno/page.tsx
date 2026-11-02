@@ -65,7 +65,7 @@ export default function AlumnoDashboardPage() {
               <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <dt className="text-xs text-slate-500 dark:text-slate-400">Categoría</dt>
                 <dd className="mt-1 truncate text-lg font-bold text-slate-950 dark:text-white">
-                  {alumno?.categoria ?? "Por asignar"}
+                  {alumno?.categoria || "Por asignar"}
                 </dd>
               </dl>
             </div>

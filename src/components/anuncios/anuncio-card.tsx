@@ -33,7 +33,7 @@ export default function AnuncioCard({
       </div>
       <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-600 dark:text-slate-300">{anuncio.mensaje}</p>
       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-        Destinatarios: {nombreCategoria ?? `${nombresDestinatarios.length} alumno(s)`}
+        Destinatarios: {nombreCategoria ?? `${nombresDestinatarios.length} ${nombresDestinatarios.length === 1 ? "alumno" : "alumnos"}`}
       </p>
       <div className="mt-4 flex justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
         <button type="button" onClick={() => onEditar(anuncio)} className="text-sm font-semibold text-brand-green hover:text-brand-green-dark">Editar</button>

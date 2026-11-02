@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-navy dark:text-white leading-tight">
-                  {pagosPendientes.length + pagosVencidos.length} mensualidad(es) por regularizar
+                  {pagosPendientes.length + pagosVencidos.length === 1 ? "1 mensualidad por regularizar" : `${pagosPendientes.length + pagosVencidos.length} mensualidades por regularizar`}
                 </h2>
               </div>
               <Link 
