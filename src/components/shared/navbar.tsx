@@ -1,12 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
 import GlobalSearch from "./global-search";
 import NotificationBell from "./notification-bell";
+import QuickAccess from "./quick-access";
 import QuickHelp from "./quick-help";
 import ProfileMenu from "./profile-menu";
+import { ThemeMenu } from "./theme-menu";
 
 export default function Navbar() {
   const { session, logout } = useAuth();
@@ -18,17 +21,26 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-      <div className="flex h-16 min-w-0 items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
-        {/* Buscador a la izquierda (como en la imagen profesional) */}
-        <div className="flex flex-1 items-center">
+    <header className="sticky top-0 z-30 border-b border-line bg-surface/85 pt-[env(safe-area-inset-top)] backdrop-blur-md">
+      <div className="flex h-16 min-w-0 items-center gap-3 px-4 sm:px-6 lg:px-8">
+        <Image
+          src="/logo-el-golazo-club.jpg"
+          alt="El Golazo Club"
+          width={32}
+          height={32}
+          className="h-8 w-8 shrink-0 rounded-full object-cover lg:hidden"
+        />
+
+        <div className="flex min-w-0 flex-1 items-center">
           <GlobalSearch />
         </div>
 
-        {/* Acciones a la derecha */}
-        <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1">
+          <QuickAccess />
+          <ThemeMenu />
           <QuickHelp />
           <NotificationBell />
+          <div className="mx-1.5 hidden h-6 w-px bg-line md:block" />
           <ProfileMenu session={session} onLogout={handleLogout} />
         </div>
       </div>

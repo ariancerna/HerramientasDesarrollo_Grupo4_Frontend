@@ -74,7 +74,7 @@ export default function GlobalSearch() {
       <form onSubmit={handleSubmit} className="hidden sm:block">
         <label className="relative block">
           <span className="sr-only">Buscar en el panel</span>
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             value={query}
             onChange={(event) => {
@@ -83,8 +83,8 @@ export default function GlobalSearch() {
             }}
             onFocus={() => setIsOpen(true)}
             type="search"
-            placeholder="Buscar en el panel..."
-            className="h-10 w-36 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-brand-green focus:bg-white focus:ring-2 focus:ring-brand-green/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-800 md:w-52 lg:w-72"
+            placeholder="Buscar alumnos, módulos o acciones…"
+            className="h-10 w-44 rounded-full border border-transparent bg-surface-muted pl-10 pr-4 text-sm text-ink outline-none transition placeholder:text-muted hover:border-line focus:border-brand-lime/60 focus:bg-surface focus:ring-4 focus:ring-brand-lime/15 md:w-72 lg:w-96"
           />
         </label>
       </form>
@@ -98,13 +98,13 @@ export default function GlobalSearch() {
       {isMobileOpen && (
         <div className="fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4rem)] z-40 border-b border-slate-200 bg-white p-3 shadow-md dark:border-slate-700 dark:bg-slate-900 sm:hidden">
           <form onSubmit={handleSubmit} className="relative">
-            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               type="search"
-              placeholder="Buscar en el panel..."
+              placeholder="Buscar alumnos, módulos o acciones…"
               className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-brand-green focus:bg-white focus:ring-2 focus:ring-brand-green/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </form>
