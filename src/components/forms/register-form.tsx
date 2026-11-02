@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 
 import { ROUTES } from "@/constants/routes";
 import { useConfirm } from "@/hooks/use-confirm";
+import { api, mensajeError } from "@/lib/api";
 
 interface FormState {
-  nombre: string;
+  dni: string;
   usuario: string;
   password: string;
   confirmarPassword: string;
 }
 
 interface FormErrors {
-  nombre?: string;
+  dni?: string;
   usuario?: string;
   password?: string;
   confirmarPassword?: string;
@@ -24,7 +25,7 @@ export function RegisterForm() {
   const router = useRouter();
 
   const [form, setForm] = useState<FormState>({
-    nombre: "",
+    dni: "",
     usuario: "",
     password: "",
     confirmarPassword: "",
@@ -32,6 +33,7 @@ export function RegisterForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -54,8 +56,8 @@ export function RegisterForm() {
   function validate() {
     const next: FormErrors = {};
 
-    if (!form.nombre.trim()) {
-      next.nombre = "El nombre es obligatorio.";
+    if (!/^\d{8}$/.test(form.dni.trim())) {
+      next.dni = "El DNI debe tener 8 dígitos.";
     }
 
     if (!form.usuario.trim()) {
@@ -75,26 +77,35 @@ export function RegisterForm() {
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSubmitError("");
 
     if (!validate()) return;
 
     setLoading(true);
 
-    setTimeout(async () => {
-      setLoading(false);
+    try {
+      // El alumno ya debe estar registrado por un administrador: solo se crean sus credenciales.
+      const { mensaje } = await api<{ mensaje: string }>("/auth/register", {
+        method: "POST",
+        body: { dni: form.dni.trim(), usuario: form.usuario.trim(), password: form.password },
+        auth: false,
+      });
 
       await confirm({
         title: "Cuenta creada",
-        message:
-          "Cuando el backend esté listo, esto quedará guardado de verdad.",
+        message: mensaje,
         confirmLabel: "Entendido",
         hideCancel: true,
       });
 
       router.push(ROUTES.LOGIN);
-    }, 500);
+    } catch (error) {
+      setSubmitError(mensajeError(error, "No se pudo crear la cuenta."));
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Solo cálculos para MOSTRAR el medidor de fuerza; no cambian la validación.
@@ -115,31 +126,41 @@ export function RegisterForm() {
   return (
     <>
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        {/* NOMBRE + USUARIO */}
+        {submitError && (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+          >
+            {submitError}
+          </div>
+        )}
+
+        {/* DNI + USUARIO */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label
-              htmlFor="nombre"
+              htmlFor="dni"
               className="mb-1.5 block text-sm font-semibold text-ink"
             >
-              Nombre completo
+              DNI
             </label>
             <div className="relative">
               <UserIcon className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
               <input
-                id="nombre"
-                name="nombre"
+                id="dni"
+                name="dni"
                 type="text"
-                autoComplete="name"
-                value={form.nombre}
+                inputMode="numeric"
+                maxLength={8}
+                value={form.dni}
                 onChange={handleChange}
-                placeholder="Ej. Juan Pérez"
-                className={inputClass(errors.nombre)}
+                placeholder="Ej. 12345678"
+                className={inputClass(errors.dni)}
               />
             </div>
-            {errors.nombre && (
+            {errors.dni && (
               <p className="mt-1.5 text-xs font-medium text-danger">
-                {errors.nombre}
+                {errors.dni}
               </p>
             )}
           </div>
