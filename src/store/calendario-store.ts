@@ -1,76 +1,47 @@
-import { MOCK_EVENTOS_CLUB } from "@/lib/mock/eventos.mock";
 import { obtenerCategorias } from "@/store/categorias-store";
 import type { ActividadCalendario, EventoClub } from "@/types/calendario";
 import type { Horario } from "@/types";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isEventoClub } from "@/lib/storage-validators";
+import { api } from "@/lib/api";
+import { crearColeccionRemota } from "@/lib/remote-collection";
 
-const STORAGE_KEY = "kickstamp-eventos";
-const EVENTOS_CHANGE_EVENT = "kickstamp:eventos-change";
+// El backend responde con el formato de EventoClub (incluye el nombre de la categoría).
+const eventos = crearColeccionRemota<EventoClub>("eventos", () =>
+  api<EventoClub[]>("/calendario"),
+);
 
-let eventosCache: EventoClub[] | null = null;
-
-function isBrowser() {
-  return typeof window !== "undefined";
-}
-
-export function obtenerEventosIniciales(): EventoClub[] {
-  return MOCK_EVENTOS_CLUB;
-}
+export const obtenerEventosIniciales = eventos.obtenerInicial;
 
 // LEER
-export function obtenerEventos(): EventoClub[] {
-  if (!isBrowser()) return obtenerEventosIniciales();
-  if (eventosCache) return eventosCache;
+export const obtenerEventos = eventos.obtener;
+export const suscribirEventos = eventos.suscribir;
 
-  const eventos = readJsonList(STORAGE_KEY, MOCK_EVENTOS_CLUB, isEventoClub);
-  eventosCache = eventos;
-  return eventosCache;
+/** El API identifica la categoría por id; el formulario trabaja con su nombre. */
+function cuerpoEvento(evento: Partial<EventoClub>) {
+  const { categoria, ...resto } = evento;
+  delete resto.id;
+  if (categoria === undefined) return resto;
+  const categoriaId = obtenerCategorias().find((item) => item.nombre === categoria)?.id ?? null;
+  return { ...resto, horaFin: resto.horaFin || null, categoriaId };
 }
 
-export function suscribirEventos(onStoreChange: () => void) {
-  if (!isBrowser()) return () => undefined;
-
-  const handleChange = () => {
-    eventosCache = null;
-    onStoreChange();
-  };
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) handleChange();
-  };
-
-  window.addEventListener("storage", handleStorage);
-  window.addEventListener(EVENTOS_CHANGE_EVENT, handleChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorage);
-    window.removeEventListener(EVENTOS_CHANGE_EVENT, handleChange);
-  };
-}
 // CREAR — "programar horario/evento" (módulo de Calendario del admin)
-export function crearEvento(evento: Omit<EventoClub, "id">): EventoClub {
-  const nuevo: EventoClub = { ...evento, id: crypto.randomUUID() };
-  guardarEventos([...obtenerEventos(), nuevo]);
+export async function crearEvento(evento: Omit<EventoClub, "id">): Promise<EventoClub> {
+  const nuevo = await api<EventoClub>("/calendario", {
+    method: "POST",
+    body: cuerpoEvento({ ...evento, categoria: evento.categoria ?? "" }),
+  });
+  eventos.establecer([...eventos.obtener(), nuevo]);
   return nuevo;
 }
 
 // ACTUALIZAR
-export function actualizarEvento(id: string, cambios: Partial<EventoClub>): EventoClub | null {
-  const eventos = obtenerEventos();
-  const index = eventos.findIndex((e) => e.id === id);
-  if (index === -1) return null;
-
-  const actualizado = { ...eventos[index], ...cambios };
-  guardarEventos(eventos.map((evento, i) => (i === index ? actualizado : evento)));
+export async function actualizarEvento(id: string, cambios: Partial<EventoClub>): Promise<EventoClub> {
+  const actualizado = await api<EventoClub>(`/calendario/${id}`, {
+    method: "PUT",
+    body: cuerpoEvento({ ...cambios, categoria: cambios.categoria ?? "" }),
+  });
+  eventos.establecer(eventos.obtener().map((evento) => (evento.id === id ? actualizado : evento)));
   return actualizado;
-}
-
-function guardarEventos(eventos: EventoClub[]) {
-  if (isBrowser()) {
-    eventosCache = eventos;
-    writeJson(STORAGE_KEY, eventos);
-    window.dispatchEvent(new Event(EVENTOS_CHANGE_EVENT));
-  }
 }
 
 const INDICE_DIA: Record<Horario["dia"], number> = {
@@ -147,13 +118,9 @@ export function obtenerProximasActividades(
 }
 
 // ELIMINAR
-export function eliminarEvento(id: string): boolean {
-  const eventos = obtenerEventos();
-  const nuevos = eventos.filter((e) => e.id !== id);
-  if (nuevos.length === eventos.length) return false;
-
-  guardarEventos(nuevos);
-  return true;
+export async function eliminarEvento(id: string): Promise<void> {
+  await api(`/calendario/${id}`, { method: "DELETE" });
+  eventos.establecer(eventos.obtener().filter((evento) => evento.id !== id));
 }
 
 export function obtenerProximasActividadesTodas(
