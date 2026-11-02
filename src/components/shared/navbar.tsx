@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
 import GlobalSearch from "./global-search";
+import InstallAppButton from "./install-app-button";
 import NotificationBell from "./notification-bell";
 import QuickAccess from "./quick-access";
 import QuickHelp from "./quick-help";
@@ -36,6 +37,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
+          <InstallAppButton />
           <QuickAccess />
           <ThemeMenu />
           <QuickHelp />

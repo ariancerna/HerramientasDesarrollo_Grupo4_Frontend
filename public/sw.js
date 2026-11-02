@@ -1,4 +1,4 @@
-const CACHE_VERSION = "kickstamp-v3";
+const CACHE_VERSION = "elgolazo-v4";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE_ASSETS = [
   "/",
@@ -72,4 +72,20 @@ self.addEventListener("fetch", (event) => {
       )
     );
   }
+});
+
+// Al tocar una notificación del sistema se abre (o enfoca) la aplicación en la ruta indicada.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const destino = new URL(event.notification.data?.url || "/", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((ventanas) => {
+      const abierta = ventanas.find((ventana) => ventana.url.startsWith(self.location.origin));
+      if (abierta) {
+        abierta.navigate(destino);
+        return abierta.focus();
+      }
+      return self.clients.openWindow(destino);
+    })
+  );
 });

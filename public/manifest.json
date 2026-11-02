@@ -1,13 +1,12 @@
 {
-  "name": "KickStamp | El Golazo Club",
-  "short_name": "KickStamp",
-  "description": "Gestión de alumnos y asistencia de El Golazo Club",
-  "start_url": "/",
+  "name": "El Golazo Club | Gestión deportiva",
+  "short_name": "El Golazo",
+  "description": "Gestión de alumnos, asistencia con QR, pagos y actividades de El Golazo Club.",
+  "start_url": "/auth/login",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#ffffff",
-  "theme_color": "#061a2e",
+  "background_color": "#070d1a",
+  "theme_color": "#0b1730",
   "lang": "es",
   "icons": [
     {
@@ -34,5 +33,10 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "categories": [
+    "sports",
+    "education",
+    "productivity"
   ]
 }
