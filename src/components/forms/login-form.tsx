@@ -3,8 +3,10 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
+import { NuevaPasswordForm } from "@/components/forms/nueva-password-form";
 import { useAuth } from "@/hooks/use-auth";
 import { ROLE_HOME_ROUTE } from "@/constants/roles";
+import { api, mensajeError } from "@/lib/api";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
@@ -42,6 +44,7 @@ export function LoginForm() {
   const [codigoError, setCodigoError] = useState("");
   const [codigoEnviado, setCodigoEnviado] = useState(false);
   const [verificado, setVerificado] = useState(false);
+  const [resetToken, setResetToken] = useState("");
   const [enviandoCodigo, setEnviandoCodigo] = useState(false);
   const [verificandoCodigo, setVerificandoCodigo] = useState(false);
   const [cooldown, setCooldown] = useState(0);
@@ -54,6 +57,7 @@ export function LoginForm() {
     setCodigoError("");
     setCodigoEnviado(false);
     setVerificado(false);
+    setResetToken("");
     setCooldown(0);
   }
 
@@ -66,16 +70,17 @@ export function LoginForm() {
     setCorreoError("");
     setEnviandoCodigo(true);
 
-    /*
-     * Aquí posteriormente puedes conectar
-     * el envío real del código mediante tu API.
-     */
-
-    setTimeout(() => {
-      setEnviandoCodigo(false);
-      setCodigoEnviado(true);
-      setCooldown(RESEND_COOLDOWN_SECONDS);
-    }, 700);
+    api("/auth/password/forgot", {
+      method: "POST",
+      body: { correo: correo.trim() },
+      auth: false,
+    })
+      .then(() => {
+        setCodigoEnviado(true);
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      })
+      .catch((err) => setCorreoError(mensajeError(err, "No se pudo enviar el código.")))
+      .finally(() => setEnviandoCodigo(false));
   }
 
   function handleSubmitRecuperar(event: FormEvent) {
@@ -94,15 +99,17 @@ export function LoginForm() {
     setCodigoError("");
     setVerificandoCodigo(true);
 
-    /*
-     * Aquí posteriormente puedes conectar
-     * la validación real del código.
-     */
-
-    setTimeout(() => {
-      setVerificandoCodigo(false);
-      setVerificado(true);
-    }, 700);
+    api<{ resetToken: string }>("/auth/password/verify", {
+      method: "POST",
+      body: { correo: correo.trim(), codigo },
+      auth: false,
+    })
+      .then((data) => {
+        setResetToken(data.resetToken);
+        setVerificado(true);
+      })
+      .catch((err) => setCodigoError(mensajeError(err, "El código no es válido.")))
+      .finally(() => setVerificandoCodigo(false));
   }
 
   // -----------------------------------------------------------
@@ -287,22 +294,10 @@ export function LoginForm() {
 
           {verificado ? (
             <div className="text-center">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-green-100 text-green-600">
+              <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-green-100 text-green-600">
                 <CheckIcon className="h-6 w-6" />
               </div>
-              <p className="mt-3 text-sm font-semibold text-slate-900">
-                Código verificado
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Ya puedes continuar con la recuperación de tu contraseña.
-              </p>
-              <button
-                type="button"
-                onClick={resetRecuperar}
-                className="mt-4 h-10 w-full rounded-lg bg-primary text-sm font-bold text-white transition hover:bg-primary-hover"
-              >
-                Continuar
-              </button>
+              <NuevaPasswordForm resetToken={resetToken} onCompletado={resetRecuperar} />
             </div>
           ) : (
             <form onSubmit={handleSubmitRecuperar} noValidate className="space-y-3">

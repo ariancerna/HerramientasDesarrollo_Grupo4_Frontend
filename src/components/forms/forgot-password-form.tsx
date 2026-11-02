@@ -2,11 +2,18 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+
+import { NuevaPasswordForm } from "@/components/forms/nueva-password-form";
+import { ROUTES } from "@/constants/routes";
+import { api, mensajeError } from "@/lib/api";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
 export function ForgotPasswordForm() {
+  const router = useRouter();
   const [correo, setCorreo] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [codigo, setCodigo] = useState("");
 
   const [error, setError] = useState("");
@@ -42,16 +49,17 @@ export function ForgotPasswordForm() {
     setError("");
     setLoading(true);
 
-    /*
-     * Aquí posteriormente puedes conectar
-     * el envío real del código mediante tu API.
-     */
-
-    setTimeout(() => {
-      setLoading(false);
-      setCodigoEnviado(true);
-      setCooldown(RESEND_COOLDOWN_SECONDS);
-    }, 700);
+    api("/auth/password/forgot", {
+      method: "POST",
+      body: { correo: correo.trim() },
+      auth: false,
+    })
+      .then(() => {
+        setCodigoEnviado(true);
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      })
+      .catch((err) => setError(mensajeError(err, "No se pudo enviar el código.")))
+      .finally(() => setLoading(false));
   }
 
   function handleSubmit(event: FormEvent) {
@@ -70,15 +78,17 @@ export function ForgotPasswordForm() {
     setCodigoError("");
     setVerificando(true);
 
-    /*
-     * Aquí posteriormente puedes conectar
-     * la validación real del código.
-     */
-
-    setTimeout(() => {
-      setVerificando(false);
-      setVerificado(true);
-    }, 700);
+    api<{ resetToken: string }>("/auth/password/verify", {
+      method: "POST",
+      body: { correo: correo.trim(), codigo },
+      auth: false,
+    })
+      .then((data) => {
+        setResetToken(data.resetToken);
+        setVerificado(true);
+      })
+      .catch((err) => setCodigoError(mensajeError(err, "El código no es válido.")))
+      .finally(() => setVerificando(false));
   }
 
   function handleReenviar() {
@@ -91,25 +101,14 @@ export function ForgotPasswordForm() {
     return (
       <div className="text-center">
         {/* Icono */}
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-chart-win/10 text-chart-win">
+        <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full bg-chart-win/10 text-chart-win">
           <CheckIcon />
         </div>
 
-        <h3 className="mt-5 text-lg font-extrabold text-ink">
-          Código verificado
-        </h3>
-
-        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-body">
-          El código fue verificado correctamente. Ya puedes continuar con
-          la recuperación de tu contraseña.
-        </p>
-
-        <button
-          type="button"
-          className="mt-6 h-12 w-full rounded-xl bg-primary text-[15px] font-bold text-white shadow-[0_5px_18px_rgba(30,58,138,0.28)] transition hover:bg-primary-hover"
-        >
-          Continuar
-        </button>
+        <NuevaPasswordForm
+          resetToken={resetToken}
+          onCompletado={() => router.push(ROUTES.LOGIN)}
+        />
       </div>
     );
   }
