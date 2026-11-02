@@ -43,7 +43,8 @@ export function isUsuario(value: unknown): value is Usuario {
     isString(value.usuario) &&
     isString(value.nombre) &&
     isRole(value.rol) &&
-    optionalString(value.estudianteId)
+    optionalString(value.estudianteId) &&
+    optionalString(value.fotoUrl)
   );
 }
 

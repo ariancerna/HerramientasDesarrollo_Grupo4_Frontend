@@ -115,7 +115,7 @@ export function touchSession(): Session | null {
 }
 
 export function actualizarUsuarioSesion(
-  cambios: Partial<Pick<Usuario, "nombre">>,
+  cambios: Partial<Pick<Usuario, "nombre" | "fotoUrl">>,
 ): Session | null {
   const session = getSession();
   if (!session) return null;
@@ -126,6 +126,7 @@ export function actualizarUsuarioSesion(
     usuario: {
       ...session.usuario,
       ...(nombre ? { nombre } : {}),
+      ...("fotoUrl" in cambios ? { fotoUrl: cambios.fotoUrl } : {}),
     },
     lastActivity: Date.now(),
   };

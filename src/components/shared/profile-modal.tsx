@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { AtSign, BadgeCheck, IdCard, Layers, Pencil, X } from "lucide-react";
+import { AtSign, BadgeCheck, Camera, IdCard, Layers, Loader2, Pencil, X } from "lucide-react";
 import UserAvatar from "@/components/shared/user-avatar";
 import { QrIngreso } from "@/components/shared/qr-ingreso";
 import { ROLE_LABELS } from "@/constants/nav-items";
+import { useFotoPerfil } from "@/hooks/use-foto-perfil";
 import { useAlumnos } from "@/store/alumnos-store";
 import { useCategorias } from "@/store/categorias-store";
 import type { Session } from "@/types";
@@ -19,6 +20,9 @@ interface ProfileModalProps {
 /** Ficha del usuario autenticado; el alumno ve además su QR de ingreso. */
 export default function ProfileModal({ session, onClose }: ProfileModalProps) {
   const { usuario } = session;
+  const foto = useFotoPerfil();
+  const inputFoto = useRef<HTMLInputElement>(null);
+  const [arrastrando, setArrastrando] = useState(false);
   const alumnos = useAlumnos();
   const categorias = useCategorias();
   const alumno = usuario.estudianteId ? alumnos.find((item) => item.id === usuario.estudianteId) : undefined;
@@ -75,17 +79,69 @@ export default function ProfileModal({ session, onClose }: ProfileModalProps) {
         </div>
 
         <div className="px-6 pb-6">
-          <UserAvatar
-            nombre={usuario.nombre}
-            fotoUrl={alumno?.fotoUrl}
-            imageAlt={`Foto de ${usuario.nombre}`}
-            className="-mt-10 h-20 w-20 bg-brand-green text-2xl font-bold text-white ring-4 ring-surface"
+          <button
+            type="button"
+            onClick={() => inputFoto.current?.click()}
+            onDragOver={(event) => {
+              event.preventDefault();
+              setArrastrando(true);
+            }}
+            onDragLeave={() => setArrastrando(false)}
+            onDrop={(event) => {
+              event.preventDefault();
+              setArrastrando(false);
+              const archivo = event.dataTransfer.files?.[0];
+              if (archivo) void foto.cambiar(archivo);
+            }}
+            disabled={foto.subiendo}
+            aria-label="Cambiar foto de perfil"
+            className={`group relative -mt-10 block rounded-full ring-4 ring-surface transition ${
+              arrastrando ? "scale-105 ring-brand-lime" : ""
+            }`}
+          >
+            <UserAvatar
+              nombre={usuario.nombre}
+              fotoUrl={foto.fotoUrl}
+              imageAlt={`Foto de ${usuario.nombre}`}
+              className="h-20 w-20 bg-brand-green text-2xl font-bold text-white"
+            />
+            <span
+              className={`absolute inset-0 grid place-items-center rounded-full bg-slate-950/55 text-white transition-opacity ${
+                foto.subiendo || arrastrando ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+              }`}
+            >
+              {foto.subiendo ? <Loader2 className="h-6 w-6 animate-spin" /> : <Camera className="h-6 w-6" />}
+            </span>
+          </button>
+          <input
+            ref={inputFoto}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(event) => {
+              const archivo = event.target.files?.[0];
+              event.target.value = "";
+              if (archivo) void foto.cambiar(archivo);
+            }}
           />
+
           <div className="mt-3 min-w-0">
             <h2 id="perfil-titulo" className="truncate text-lg font-bold text-ink">
               {usuario.nombre}
             </h2>
             <p className="text-sm text-body">{ROLE_LABELS[usuario.rol]}</p>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] font-semibold">
+              <button type="button" onClick={() => inputFoto.current?.click()} disabled={foto.subiendo} className="text-primary-light hover:underline disabled:opacity-60 dark:text-blue-300">
+                {foto.fotoUrl ? "Cambiar foto" : "Subir foto"}
+              </button>
+              {foto.fotoUrl && (
+                <button type="button" onClick={() => void foto.cambiar(null)} disabled={foto.subiendo} className="text-red-600 hover:underline disabled:opacity-60 dark:text-red-400">
+                  Quitar foto
+                </button>
+              )}
+            </div>
+            <p className="mt-1 text-xs text-muted">JPG, PNG o WebP de hasta 1.5 MB. También puedes arrastrarla sobre la foto.</p>
+            {foto.error && <p role="alert" className="mt-2 text-xs font-medium text-danger">{foto.error}</p>}
           </div>
 
           <dl className="mt-5 divide-y divide-line rounded-xl border border-line">

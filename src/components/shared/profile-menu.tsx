@@ -43,7 +43,7 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
       >
         <UserAvatar
           nombre={usuario.nombre}
-          fotoUrl={alumno?.fotoUrl}
+          fotoUrl={alumno?.fotoUrl ?? usuario.fotoUrl}
           className="h-9 w-9 bg-brand-green text-sm font-bold text-white"
         />
         <span className="hidden min-w-0 text-left leading-tight lg:block">
@@ -61,7 +61,7 @@ export default function ProfileMenu({ session, onLogout }: ProfileMenuProps) {
           <div className="flex items-center gap-3 px-2.5 py-2.5">
             <UserAvatar
               nombre={usuario.nombre}
-              fotoUrl={alumno?.fotoUrl}
+              fotoUrl={alumno?.fotoUrl ?? usuario.fotoUrl}
               className="h-10 w-10 bg-brand-green text-sm font-bold text-white"
             />
             <div className="min-w-0">

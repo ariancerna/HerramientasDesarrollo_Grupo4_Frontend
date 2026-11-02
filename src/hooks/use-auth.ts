@@ -33,6 +33,7 @@ interface UsuarioApi {
   nombre: string;
   rol: "ADM" | "PROF" | "ALU";
   estudianteId?: string;
+  fotoUrl?: string;
 }
 
 const ROLES_API: Record<UsuarioApi["rol"], Role> = {
@@ -90,6 +91,7 @@ export function useAuth() {
         nombre: me.nombre,
         rol: ROLES_API[me.rol],
         estudianteId: me.estudianteId,
+        fotoUrl: me.fotoUrl,
       };
       saveSession(usuarioSesion);
       return { ok: true, rol: usuarioSesion.rol };
@@ -108,6 +110,10 @@ export function useAuth() {
 
   const actualizarUsuarioActual = useCallback((nombre: string) => {
     actualizarUsuarioSesion({ nombre });
+  }, []);
+
+  const actualizarFotoActual = useCallback((fotoUrl: string | undefined) => {
+    actualizarUsuarioSesion({ fotoUrl });
   }, []);
 
   useEffect(() => {
@@ -154,5 +160,5 @@ export function useAuth() {
     return () => clearInterval(interval);
   }, [session]);
 
-  return { session, isLoading, login, logout, actualizarUsuarioActual };
+  return { session, isLoading, login, logout, actualizarUsuarioActual, actualizarFotoActual };
 }

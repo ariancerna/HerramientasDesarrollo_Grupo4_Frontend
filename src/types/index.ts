@@ -6,6 +6,8 @@ export interface Usuario {
   nombre: string;
   rol: Role;
   estudianteId?: string;
+  /** Foto de perfil de la cuenta (para alumnos se usa la de su ficha). */
+  fotoUrl?: string;
 }
 
 export interface Session {
