@@ -11,8 +11,10 @@ import {
   actualizarEvaluacion,
   crearEvaluacion,
   eliminarEvaluacion,
-  obtenerEvaluacionesPorProfesor,
+  useEvaluaciones,
 } from "@/store/evaluaciones-store";
+import { ErrorBanner } from "@/components/shared/error-banner";
+import { mensajeError } from "@/lib/api";
 import { Evaluacion, EvaluacionFormData } from "@/types/evaluacion";
 
 export default function EvaluacionesProfesorPage() {
@@ -20,9 +22,12 @@ export default function EvaluacionesProfesorPage() {
   const { confirm, dialog } = useConfirm();
   const profesorId = session?.usuario.id ?? "";
   const alumnos = useAlumnos();
-  const [evaluaciones, setEvaluaciones] = useState<Evaluacion[]>(() =>
-    obtenerEvaluacionesPorProfesor(profesorId),
+  const todasLasEvaluaciones = useEvaluaciones();
+  const evaluaciones = useMemo(
+    () => todasLasEvaluaciones.filter((evaluacion) => evaluacion.profesorId === profesorId),
+    [todasLasEvaluaciones, profesorId],
   );
+  const [error, setError] = useState<string | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [evaluacionAEditar, setEvaluacionAEditar] = useState<Evaluacion | null>(null);
 
@@ -49,19 +54,18 @@ export default function EvaluacionesProfesorPage() {
     setEvaluacionAEditar(null);
   };
 
-  const guardar = (data: EvaluacionFormData, id?: string) => {
-    if (id) {
-      const actualizada = actualizarEvaluacion(id, data);
-      if (actualizada) {
-        setEvaluaciones((actuales) =>
-          actuales.map((evaluacion) => (evaluacion.id === id ? actualizada : evaluacion)),
-        );
+  const guardar = async (data: EvaluacionFormData, id?: string) => {
+    setError(null);
+    try {
+      if (id) {
+        await actualizarEvaluacion(id, data);
+      } else {
+        await crearEvaluacion(data);
       }
-    } else {
-      const nueva = crearEvaluacion(data, profesorId);
-      setEvaluaciones((actuales) => [nueva, ...actuales]);
+      cerrarFormulario();
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo guardar la evaluación."));
     }
-    cerrarFormulario();
   };
 
   const eliminar = async (evaluacion: Evaluacion) => {
@@ -74,8 +78,12 @@ export default function EvaluacionesProfesorPage() {
     });
     if (!confirmado) return;
 
-    eliminarEvaluacion(evaluacion.id);
-    setEvaluaciones((actuales) => actuales.filter((actual) => actual.id !== evaluacion.id));
+    setError(null);
+    try {
+      await eliminarEvaluacion(evaluacion.id);
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo eliminar la evaluación."));
+    }
   };
 
   return (
@@ -94,6 +102,10 @@ export default function EvaluacionesProfesorPage() {
             Registrar evaluación
           </button>
         </header>
+
+        <div className="mb-5">
+          <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
+        </div>
 
         <EvaluacionLista
           evaluaciones={evaluaciones}
