@@ -48,8 +48,8 @@ export function NuevaPasswordForm({ resetToken, onCompletado }: NuevaPasswordFor
   if (listo) {
     return (
       <div className="text-center">
-        <p className="text-sm font-semibold text-slate-900">Contraseña actualizada</p>
-        <p className="mt-1 text-xs text-slate-500">Ya puedes iniciar sesión con tu nueva contraseña.</p>
+        <p className="text-sm font-semibold text-ink">Contraseña actualizada</p>
+        <p className="mt-1 text-xs text-body">Ya puedes iniciar sesión con tu nueva contraseña.</p>
         <button
           type="button"
           onClick={onCompletado}
@@ -62,11 +62,11 @@ export function NuevaPasswordForm({ resetToken, onCompletado }: NuevaPasswordFor
   }
 
   const inputClass =
-    "h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10";
+    "h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-ink outline-none transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary/10";
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-3 text-left">
-      <p className="text-sm font-semibold text-slate-900">Código verificado. Crea tu nueva contraseña.</p>
+      <p className="text-sm font-semibold text-ink">Código verificado. Crea tu nueva contraseña.</p>
       <input
         type="password"
         autoComplete="new-password"
@@ -85,7 +85,7 @@ export function NuevaPasswordForm({ resetToken, onCompletado }: NuevaPasswordFor
         aria-label="Confirmar contraseña"
         className={inputClass}
       />
-      {error && <p className="text-xs font-medium text-red-500">{error}</p>}
+      {error && <p className="text-xs font-medium text-danger">{error}</p>}
       <button
         type="submit"
         disabled={guardando}

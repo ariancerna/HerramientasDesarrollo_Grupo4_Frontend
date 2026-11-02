@@ -114,13 +114,13 @@ export function RegisterForm() {
   const tieneNumero = /[0-9]/.test(form.password);
 
   const inputBase =
-    "h-12 w-full rounded-xl border bg-bg-auth pl-11 pr-4 text-[14px] text-ink outline-none transition placeholder:text-muted focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary-soft";
+    "h-12 w-full rounded-xl border bg-surface pl-11 pr-4 text-[15px] text-ink outline-none transition placeholder:text-muted focus:border-primary-light focus:ring-4 focus:ring-primary-light/15";
 
   const inputClass = (hasError?: string) =>
     `${inputBase} ${
       hasError
-        ? "border-danger focus:border-danger focus:ring-danger-light"
-        : "border-border"
+        ? "border-danger focus:border-danger focus:ring-danger/15"
+        : "border-line"
     }`;
 
   return (
@@ -129,7 +129,7 @@ export function RegisterForm() {
         {submitError && (
           <div
             role="alert"
-            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+            className="rounded-xl border border-danger/30 bg-danger-light px-4 py-3 text-sm font-medium text-danger"
           >
             {submitError}
           </div>

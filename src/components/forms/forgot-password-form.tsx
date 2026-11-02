@@ -135,7 +135,7 @@ export function ForgotPasswordForm() {
             value={correo}
             onChange={handleCorreoChange}
             placeholder="tucorreo@ejemplo.com"
-            className={`h-12 w-full rounded-xl border bg-bg-auth pl-11 pr-4 text-[14px] text-ink outline-none transition placeholder:text-muted focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary-soft ${
+            className={`h-12 w-full rounded-xl border bg-surface pl-11 pr-4 text-[14px] text-ink outline-none transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary-soft ${
               error
                 ? "border-danger focus:border-danger focus:ring-danger-light"
                 : "border-border"
@@ -150,7 +150,7 @@ export function ForgotPasswordForm() {
 
       {/* CÓDIGO */}
       {codigoEnviado && (
-        <div className="rounded-2xl border border-border bg-primary-soft/40 p-4">
+        <div className="rounded-2xl border border-line bg-primary-soft/40 p-4">
           <div className="mb-4">
             <label htmlFor="codigo" className="block text-sm font-bold text-primary">
               Código de verificación
@@ -176,7 +176,7 @@ export function ForgotPasswordForm() {
               value={codigo}
               onChange={handleCodigoChange}
               placeholder="Ingresa el código"
-              className={`h-14 w-full rounded-xl border bg-white pl-11 pr-4 text-center text-[20px] font-bold tracking-[0.35em] text-ink outline-none transition placeholder:text-sm placeholder:tracking-normal placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary-soft ${
+              className={`h-14 w-full rounded-xl border bg-surface pl-11 pr-4 text-center text-[20px] font-bold tracking-[0.35em] text-ink outline-none transition placeholder:text-sm placeholder:tracking-normal placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary-soft ${
                 codigoError ? "border-danger" : "border-border"
               }`}
             />
