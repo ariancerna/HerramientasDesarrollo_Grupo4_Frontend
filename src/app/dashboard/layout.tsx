@@ -16,7 +16,7 @@ export default function DashboardLayout({
         <Sidebar />
         <div className="min-w-0 lg:pl-64">
           <Navbar />
-          <main className="mx-auto min-w-0 max-w-[1440px] animate-fade-up px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
+          <main className="mx-auto min-w-0 max-w-[1440px] animate-fade-in px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
             {children}
           </main>
         </div>

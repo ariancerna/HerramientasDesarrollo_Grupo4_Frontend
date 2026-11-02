@@ -229,3 +229,18 @@ input[type="number"] {
 @utility animate-fade-up {
   animation: fade-up 0.35s ease-out both;
 }
+
+/* Solo opacidad: un transform en el contenedor de la página atraparía los
+   modales con position: fixed (quedaban cortados dentro del contenido). */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}

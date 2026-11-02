@@ -2,23 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { NAV_ITEMS, NavIcon, ROLE_LABELS } from "@/constants/nav-items";
-import { ROUTES } from "@/constants/routes";
-import UserAvatar from "@/components/shared/user-avatar";
+import { NAV_ITEMS, NavIcon } from "@/constants/nav-items";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { session, logout } = useAuth();
+  const { session } = useAuth();
   const items = session ? NAV_ITEMS[session.usuario.rol] : [];
-
-  const cerrarSesion = () => {
-    logout();
-    router.replace(ROUTES.LOGIN);
-  };
 
   return (
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
@@ -67,30 +58,6 @@ export default function Sidebar() {
           })}
         </ul>
       </nav>
-
-      {session && (
-        <div className="border-t border-sidebar-border p-3">
-          <div className="flex items-center gap-3 rounded-lg p-2">
-            <UserAvatar
-              nombre={session.usuario.nombre}
-              className="h-9 w-9 bg-blue-600 text-sm font-bold text-white"
-            />
-            <div className="min-w-0 flex-1 leading-tight">
-              <p className="truncate text-[13px] font-semibold text-white">{session.usuario.nombre}</p>
-              <p className="text-[11px] text-sidebar-muted">{ROLE_LABELS[session.usuario.rol]}</p>
-            </div>
-            <button
-              type="button"
-              onClick={cerrarSesion}
-              title="Cerrar sesión"
-              aria-label="Cerrar sesión"
-              className="rounded-md p-2 text-sidebar-text transition-colors hover:bg-sidebar-accent hover:text-white"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }
