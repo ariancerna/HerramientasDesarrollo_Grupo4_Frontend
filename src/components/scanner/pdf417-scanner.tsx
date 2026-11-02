@@ -2,7 +2,10 @@
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 
-type BarcodeFormat = "pdf417";
+type BarcodeFormat = "pdf417" | "qr_code";
+
+/** QR de ingreso generado en el perfil del alumno y PDF417 del reverso del DNI. */
+const FORMATOS_DESEADOS: BarcodeFormat[] = ["qr_code", "pdf417"];
 
 type BarcodeDetectorResult = {
   rawValue: string;
@@ -41,7 +44,7 @@ export default function Pdf417Scanner({
   const activeRef = useRef(false);
   const [isScanning, setIsScanning] = useState(false);
   const [message, setMessage] = useState(
-    "Activa la cámara y coloca el código PDF417 del DNI dentro del recuadro.",
+    "Activa la cámara y coloca el QR de ingreso del alumno (o el código PDF417 de su DNI) dentro del recuadro.",
   );
   const [testValue, setTestValue] = useState("");
 
@@ -85,15 +88,19 @@ export default function Pdf417Scanner({
       const BarcodeDetectorApi = getBarcodeDetector();
       if (!BarcodeDetectorApi) {
         throw new Error(
-          "Este navegador no reconoce PDF417 de forma nativa. Usa Chrome en Android o la prueba sin cámara.",
+          "Este navegador no puede leer códigos con la cámara. Usa Chrome o Edge, o registra la asistencia de forma manual.",
         );
       }
 
       const supportedFormats =
         (await BarcodeDetectorApi.getSupportedFormats?.()) ?? [];
-      if (supportedFormats.length > 0 && !supportedFormats.includes("pdf417")) {
+      const formatos =
+        supportedFormats.length > 0
+          ? FORMATOS_DESEADOS.filter((formato) => supportedFormats.includes(formato))
+          : FORMATOS_DESEADOS;
+      if (formatos.length === 0) {
         throw new Error(
-          "La cámara de este dispositivo no admite códigos PDF417. Usa la prueba sin cámara.",
+          "Este dispositivo no puede leer códigos QR ni PDF417. Registra la asistencia de forma manual.",
         );
       }
 
@@ -112,10 +119,10 @@ export default function Pdf417Scanner({
       video.srcObject = stream;
       await video.play();
 
-      const detector = new BarcodeDetectorApi({ formats: ["pdf417"] });
+      const detector = new BarcodeDetectorApi({ formats: formatos });
       activeRef.current = true;
       setIsScanning(true);
-      setMessage("Buscando el código PDF417 del DNI…");
+      setMessage("Buscando el código QR o PDF417…");
 
       const scanFrame = async () => {
         if (!activeRef.current) return;
@@ -172,10 +179,10 @@ export default function Pdf417Scanner({
     <section className="space-y-4" aria-labelledby="scanner-title">
       <div>
         <h2 id="scanner-title" className="text-lg font-semibold text-slate-900 dark:text-white">
-          Escanear DNI
+          Escanear código de ingreso
         </h2>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Lee el código PDF417 que se encuentra en el reverso del documento.
+          Lee el QR de ingreso del alumno o el código PDF417 del reverso de su DNI.
         </p>
       </div>
 
