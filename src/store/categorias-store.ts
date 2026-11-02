@@ -1,112 +1,130 @@
-import { Categoria } from "@/types";
-import { MOCK_CATEGORIAS } from "@/lib/mock/categorias.mock";
-import { readJsonList, writeJson } from "@/lib/storage";
-import { isCategoria } from "@/lib/storage-validators";
+import { Categoria, Horario } from "@/types";
+import { api } from "@/lib/api";
+import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
 
-const STORAGE_KEY = "kickstamp-categorias";
-const CATEGORIAS_CHANGE_EVENT = "kickstamp:categorias-change";
-
-let categoriasCache: Categoria[] | null = null;
-
-function isBrowser() {
-  return typeof window !== "undefined";
+interface CategoriaApi extends Omit<Categoria, "descripcion" | "horarios"> {
+  descripcion: string | null;
+  horarios: (Omit<Horario, "cancha"> & { cancha: string | null })[];
 }
 
-export function obtenerCategoriasIniciales(): Categoria[] {
-  return MOCK_CATEGORIAS;
+// GET /categorias ya trae profesorIds y horarios; solo se cambian null por undefined.
+function aCategoria(categoria: CategoriaApi): Categoria {
+  return {
+    ...categoria,
+    descripcion: categoria.descripcion ?? undefined,
+    profesorIds: categoria.profesorIds ?? [],
+    horarios: categoria.horarios.map((horario) => ({
+      ...horario,
+      cancha: horario.cancha ?? undefined,
+      estado: horario.estado ?? "activo",
+    })),
+  };
 }
+
+const categorias = crearColeccionRemota<Categoria>("categorias", async () =>
+  (await api<CategoriaApi[]>("/categorias")).map(aCategoria),
+);
+
+export const obtenerCategoriasIniciales = categorias.obtenerInicial;
 
 // LEER
-export function obtenerCategorias(): Categoria[] {
-  if (!isBrowser()) return obtenerCategoriasIniciales();
-  if (categoriasCache) return categoriasCache;
+export const obtenerCategorias = categorias.obtener;
+export const suscribirCategorias = categorias.suscribir;
+export const recargarCategorias = categorias.recargar;
+export const useCategorias = () => useColeccion(categorias);
 
-  const categorias = readJsonList(STORAGE_KEY, MOCK_CATEGORIAS, isCategoria);
-  categoriasCache = categorias;
-  return categoriasCache;
+function datosHorario({ dia, horaInicio, horaFin, cancha, estado }: Horario) {
+  return { dia, horaInicio, horaFin, cancha: cancha || undefined, estado };
 }
 
-export function suscribirCategorias(onStoreChange: () => void) {
-  if (!isBrowser()) return () => undefined;
+function horarioCambio(antes: Horario, despues: Horario) {
+  return (
+    antes.dia !== despues.dia ||
+    antes.horaInicio !== despues.horaInicio ||
+    antes.horaFin !== despues.horaFin ||
+    (antes.cancha ?? "") !== (despues.cancha ?? "") ||
+    (antes.estado ?? "activo") !== (despues.estado ?? "activo")
+  );
+}
 
-  const handleChange = () => {
-    categoriasCache = null;
-    onStoreChange();
-  };
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) handleChange();
-  };
+/**
+ * Los horarios se gestionan con sus propios endpoints: primero se eliminan
+ * los quitados (libera sus días), luego se editan y al final se crean los nuevos.
+ */
+async function sincronizarHorarios(categoriaId: string, anteriores: Horario[], nuevos: Horario[]) {
+  const base = `/categorias/${categoriaId}/horarios`;
+  const idsNuevos = new Set(nuevos.map((horario) => horario.id));
+  const porId = new Map(anteriores.map((horario) => [horario.id, horario]));
 
-  window.addEventListener("storage", handleStorage);
-  window.addEventListener(CATEGORIAS_CHANGE_EVENT, handleChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorage);
-    window.removeEventListener(CATEGORIAS_CHANGE_EVENT, handleChange);
-  };
+  for (const horario of anteriores) {
+    if (!idsNuevos.has(horario.id)) {
+      await api(`${base}/${horario.id}`, { method: "DELETE" });
+    }
+  }
+  for (const horario of nuevos) {
+    const anterior = porId.get(horario.id);
+    if (anterior && horarioCambio(anterior, horario)) {
+      await api(`${base}/${horario.id}`, { method: "PUT", body: datosHorario(horario) });
+    }
+  }
+  for (const horario of nuevos) {
+    if (!porId.has(horario.id)) {
+      await api(base, { method: "POST", body: datosHorario(horario) });
+    }
+  }
 }
 
 // CREAR
-export function crearCategoria(categoria: Omit<Categoria, "id">): Categoria {
-  const nueva: Categoria = { ...categoria, id: crypto.randomUUID() };
-  const todas = obtenerCategorias();
-  guardarCategorias([...todas, nueva]);
+export async function crearCategoria(categoria: Omit<Categoria, "id">): Promise<Categoria> {
+  const nueva = aCategoria(
+    await api<CategoriaApi>("/categorias", {
+      method: "POST",
+      body: { nombre: categoria.nombre, descripcion: categoria.descripcion || undefined },
+    }),
+  );
+  try {
+    await sincronizarHorarios(nueva.id, [], categoria.horarios);
+  } finally {
+    await categorias.recargar();
+  }
   return nueva;
 }
 
 // ACTUALIZAR
-export function actualizarCategoria(
+export async function actualizarCategoria(
   id: string,
-  cambios: Partial<Categoria>
-): Categoria | null {
-  const categorias = obtenerCategorias();
-  const index = categorias.findIndex((c) => c.id === id);
-  if (index === -1) return null;
-
-  const actualizada = { ...categorias[index], ...cambios };
-  guardarCategorias(
-    categorias.map((categoria, indice) =>
-      indice === index ? actualizada : categoria
-    )
-  );
-  return actualizada;
+  cambios: Partial<Categoria>,
+): Promise<void> {
+  const actual = categorias.obtener().find((categoria) => categoria.id === id);
+  try {
+    if (cambios.nombre !== undefined || cambios.descripcion !== undefined) {
+      await api(`/categorias/${id}`, {
+        method: "PUT",
+        body: { nombre: cambios.nombre, descripcion: cambios.descripcion ?? "" },
+      });
+    }
+    if (cambios.horarios) {
+      await sincronizarHorarios(id, actual?.horarios ?? [], cambios.horarios);
+    }
+  } finally {
+    await categorias.recargar();
+  }
 }
 
 // ELIMINAR
-export function eliminarCategoria(id: string): boolean {
-  const categorias = obtenerCategorias();
-  const nuevas = categorias.filter((c) => c.id !== id);
-  if (nuevas.length === categorias.length) return false;
-
-  guardarCategorias(nuevas);
-  return true;
+export async function eliminarCategoria(id: string): Promise<void> {
+  await api(`/categorias/${id}`, { method: "DELETE" });
+  categorias.establecer(categorias.obtener().filter((categoria) => categoria.id !== id));
 }
 
 /** Sincroniza las categorías asignadas a un profesor. */
-export function asignarCategoriasAProfesor(profesorId: string, categoriaIds: string[]) {
-  const idsSeleccionados = new Set(categoriaIds);
-  const categoriasActualizadas = obtenerCategorias().map((categoria) => {
-    const idsActuales = categoria.profesorIds ?? [];
-    const yaAsignado = idsActuales.includes(profesorId);
-    const debeEstarAsignado = idsSeleccionados.has(categoria.id);
-
-    if (yaAsignado === debeEstarAsignado) return categoria;
-
-    return {
-      ...categoria,
-      profesorIds: debeEstarAsignado
-        ? [...idsActuales, profesorId]
-        : idsActuales.filter((id) => id !== profesorId),
-    };
-  });
-
-  guardarCategorias(categoriasActualizadas);
-}
-
-function guardarCategorias(categorias: Categoria[]) {
-  if (isBrowser()) {
-    categoriasCache = categorias;
-    writeJson(STORAGE_KEY, categorias);
-    window.dispatchEvent(new Event(CATEGORIAS_CHANGE_EVENT));
+export async function asignarCategoriasAProfesor(profesorId: string, categoriaIds: string[]) {
+  try {
+    await api(`/profesores/${profesorId}/categorias`, {
+      method: "PUT",
+      body: { categoriaIds },
+    });
+  } finally {
+    await categorias.recargar();
   }
 }

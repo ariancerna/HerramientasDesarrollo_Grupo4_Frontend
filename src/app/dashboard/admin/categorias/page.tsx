@@ -14,6 +14,8 @@ import {
   actualizarCategoria,
   eliminarCategoria,
 } from "@/store/categorias-store";
+import { mensajeError } from "@/lib/api";
+import { ErrorBanner } from "@/components/shared/error-banner";
 
 export default function CategoriasPage() {
   const categorias = useSyncExternalStore(
@@ -26,6 +28,7 @@ export default function CategoriasPage() {
     null
   );
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
   useEffect(() => {
@@ -45,21 +48,21 @@ export default function CategoriasPage() {
     setCategoriaAEditar(null);
   };
 
-  const handleGuardarCategoria = (
+  const handleGuardarCategoria = async (
     data: Omit<Categoria, "id">,
     id?: string
   ) => {
+    setError(null);
     try {
       if (id) {
-        actualizarCategoria(id, data);
+        await actualizarCategoria(id, data);
         setMensajeExito(`Categoría "${data.nombre}" actualizada correctamente`);
       } else {
-        crearCategoria(data);
+        await crearCategoria(data);
         setMensajeExito(`Categoría "${data.nombre}" creada correctamente`);
       }
-    } catch (error) {
-      console.error("Error al guardar categoría:", error);
-      setMensajeExito("Error al guardar la categoría");
+    } catch (err) {
+      setError(mensajeError(err, "Error al guardar la categoría"));
     }
   };
 
@@ -83,12 +86,12 @@ export default function CategoriasPage() {
     });
     if (!confirmado) return;
 
+    setError(null);
     try {
-      eliminarCategoria(categoria.id);
+      await eliminarCategoria(categoria.id);
       setMensajeExito(`Categoría "${categoria.nombre}" eliminada correctamente`);
-    } catch (error) {
-      console.error("Error al eliminar categoría:", error);
-      setMensajeExito("Error al eliminar la categoría");
+    } catch (err) {
+      setError(mensajeError(err, "Error al eliminar la categoría"));
     }
   };
 
@@ -116,6 +119,8 @@ export default function CategoriasPage() {
             <p className="font-medium">{mensajeExito}</p>
           </div>
         )}
+
+        <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
 
         <CategoriasLista
           categorias={categorias}
