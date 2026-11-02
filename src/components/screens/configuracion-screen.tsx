@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { ROLE_LABELS } from "@/constants/nav-items";
@@ -8,6 +8,7 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useSettings } from "@/hooks/use-settings";
+import { api, mensajeError } from "@/lib/api";
 
 type TabId = "club" | "apariencia" | "cuenta" | "seguridad";
 
@@ -270,16 +271,6 @@ function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["con
     router.replace(ROUTES.LOGIN);
   };
 
-  async function handleCambiarPassword() {
-    await confirm({
-      title: "Próximamente",
-      message:
-        "Cambiar contraseña estará disponible cuando se conecte el backend (endpoint AUTH-10).",
-      confirmLabel: "Entendido",
-      hideCancel: true,
-    });
-  }
-
   return (
     <div className="space-y-6">
       <SettingsCard
@@ -287,13 +278,7 @@ function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["con
         description="Actualiza tu contraseña de acceso."
         icon={<LockIcon className="h-5 w-5" />}
       >
-        <button
-          type="button"
-          onClick={handleCambiarPassword}
-          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
-        >
-          Cambiar contraseña
-        </button>
+        <CambiarPasswordForm confirm={confirm} />
       </SettingsCard>
 
       <SettingsCard
@@ -316,6 +301,76 @@ function SeguridadTab({ confirm }: { confirm: ReturnType<typeof useConfirm>["con
         </div>
       </SettingsCard>
     </div>
+  );
+}
+
+/** AUTH-10: cambia la contraseña de la cuenta autenticada pidiendo la actual. */
+function CambiarPasswordForm({ confirm }: { confirm: ReturnType<typeof useConfirm>["confirm"] }) {
+  const [abierto, setAbierto] = useState(false);
+  const [actual, setActual] = useState("");
+  const [nueva, setNueva] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [error, setError] = useState("");
+  const [guardando, setGuardando] = useState(false);
+
+  const cerrar = () => {
+    setAbierto(false);
+    setActual("");
+    setNueva("");
+    setConfirmar("");
+    setError("");
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!actual) return setError("Ingresa tu contraseña actual.");
+    if (nueva.length < 6) return setError("La nueva contraseña debe tener al menos 6 caracteres.");
+    if (nueva !== confirmar) return setError("Las contraseñas no coinciden.");
+
+    setError("");
+    setGuardando(true);
+    try {
+      const { mensaje } = await api<{ mensaje: string }>("/auth/password", {
+        method: "PATCH",
+        body: { passwordActual: actual, passwordNueva: nueva },
+      });
+      cerrar();
+      await confirm({ title: "Contraseña actualizada", message: mensaje, confirmLabel: "Entendido", hideCancel: true });
+    } catch (err) {
+      setError(mensajeError(err, "No se pudo cambiar la contraseña."));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const botonSecundario =
+    "rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800";
+  const inputClass =
+    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white";
+
+  if (!abierto) {
+    return (
+      <button type="button" onClick={() => setAbierto(true)} className={botonSecundario}>
+        Cambiar contraseña
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="grid max-w-md gap-3">
+      <input type="password" autoComplete="current-password" placeholder="Contraseña actual" aria-label="Contraseña actual" value={actual} onChange={(e) => setActual(e.target.value)} className={inputClass} />
+      <input type="password" autoComplete="new-password" placeholder="Nueva contraseña" aria-label="Nueva contraseña" value={nueva} onChange={(e) => setNueva(e.target.value)} className={inputClass} />
+      <input type="password" autoComplete="new-password" placeholder="Confirmar nueva contraseña" aria-label="Confirmar nueva contraseña" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} className={inputClass} />
+      {error && <p className="text-xs font-medium text-red-600 dark:text-red-400">{error}</p>}
+      <div className="flex gap-3">
+        <button type="submit" disabled={guardando} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-green-dark disabled:opacity-60">
+          {guardando ? "Guardando..." : "Guardar contraseña"}
+        </button>
+        <button type="button" onClick={cerrar} className={botonSecundario}>
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 }
 
