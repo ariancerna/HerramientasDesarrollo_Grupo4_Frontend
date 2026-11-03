@@ -3,7 +3,8 @@
 import { useDatosRemotos } from "@/lib/remote-collection";
 import Link from "next/link";
 import { RoleGuard } from "@/components/shared/role-guard";
-import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
+import { QrCode } from "lucide-react";
+import { SaludoPanel } from "@/components/dashboard/saludo-panel";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
@@ -38,10 +39,14 @@ export default function AlumnoDashboardPage() {
   return (
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
-        <DashboardWelcomeBanner
-          name={primerNombre}
-          description="Consulta tu asistencia, mensualidades y próximas actividades."
-          quote="Disciplina, trabajo en equipo y grandes resultados."
+        <SaludoPanel
+          nombre={primerNombre}
+          descripcion="Tu asistencia, mensualidades y próximas actividades."
+          accion={
+            <Link href="/dashboard/alumno/ingreso" className="inline-flex items-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-green-dark">
+              <QrCode className="h-4 w-4" /> Mi QR de ingreso
+            </Link>
+          }
         />
         
         <section className="mt-6">
@@ -199,9 +204,6 @@ export default function AlumnoDashboardPage() {
 
 function formatearActividad(fecha: string, hora: string) {
   return `${new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`))} · ${hora}`;
-}
-function formatearFechaCorta(fecha: string) {
-  return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`));
 }
 function fechaPeriodo(fecha: Date) {
   return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}`;

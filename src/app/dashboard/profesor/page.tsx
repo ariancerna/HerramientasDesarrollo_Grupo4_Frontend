@@ -3,7 +3,8 @@
 import { useDatosRemotos } from "@/lib/remote-collection";
 import Link from "next/link";
 import { RoleGuard } from "@/components/shared/role-guard";
-import { DashboardWelcomeBanner } from "@/components/shared/dashboard-welcome-banner";
+import { ScanLine } from "lucide-react";
+import { SaludoPanel } from "@/components/dashboard/saludo-panel";
 import { useAuth } from "@/hooks/use-auth";
 import { obtenerCategorias } from "@/store/categorias-store";
 import { obtenerAlumnos } from "@/store/alumnos-store";
@@ -33,16 +34,14 @@ export default function ProfesorDashboardPage() {
   return (
     <RoleGuard allowedRoles={["profesor"]}>
       <div>
-        <DashboardWelcomeBanner
-          name={primerNombre}
-          description="Desde aquí puedes registrar la asistencia del entrenamiento y consultar la información de tus alumnos."
-          quote="Inspirando el talento y la dedicación en cada saque."
-          action={{
-            href: "/dashboard/profesor/asistencia",
-            label: "Registrar asistencia",
-            mobileLabel: "Registrar",
-            icon: <ArrowIcon />,
-          }}
+        <SaludoPanel
+          nombre={primerNombre}
+          descripcion="Tus sesiones, alumnos y evaluaciones pendientes."
+          accion={
+            <Link href="/dashboard/profesor/asistencia" className="inline-flex items-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-green-dark">
+              <ScanLine className="h-4 w-4" /> Registrar asistencia
+            </Link>
+          }
         />
 
           <section className="mt-6 grid gap-4 xl:grid-cols-[1.45fr_0.8fr_0.8fr]">
@@ -125,14 +124,6 @@ function AttendanceIcon() {
       <path d="M7 3v3M17 3v3M4 9h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       <rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.8" />
       <path d="m8.5 15 2 2 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true">
-      <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
