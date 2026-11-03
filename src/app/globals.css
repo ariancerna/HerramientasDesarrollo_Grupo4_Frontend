@@ -244,3 +244,14 @@ input[type="number"] {
 @utility animate-fade-in {
   animation: fade-in 0.3s ease-out both;
 }
+
+@keyframes deslizar {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
