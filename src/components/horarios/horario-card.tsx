@@ -1,4 +1,6 @@
 import { HorarioAsignado, NOMBRES_DIAS } from "@/types/horario";
+import { formatearRangoHoras } from "@/lib/formato";
+import { InsigniaEstado } from "@/components/ui/insignia-estado";
 
 interface HorarioCardProps {
   horario: HorarioAsignado;
@@ -20,14 +22,10 @@ export default function HorarioCard({ horario }: HorarioCardProps) {
             {horario.categoria}
           </h2>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-          estaActivo ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light" : "bg-red-100 text-red-700"
-        }`}>
-          {estaActivo ? "Activo" : "Cancelado"}
-        </span>
+        <InsigniaEstado estado={estaActivo ? "activo" : "inactivo"} etiqueta={estaActivo ? "Activo" : "Cancelado"} />
       </div>
       <p className="mt-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-        {horario.horaInicio} - {horario.horaFin}
+        {formatearRangoHoras(horario.horaInicio, horario.horaFin)}
       </p>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         {horario.cancha ?? "Cancha por confirmar"}

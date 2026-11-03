@@ -1,6 +1,7 @@
 "use client";
 
 import { Categoria, Horario } from "@/types";
+import { formatearRangoHoras } from "@/lib/formato";
 
 const DIAS_CORTOS: Record<Horario["dia"], string> = {
   lunes: "Lun",
@@ -72,7 +73,7 @@ export default function CategoriasTabla({
                         key={horario.id}
                         className="inline-flex rounded-full bg-brand-green-soft px-2.5 py-1 text-xs font-medium text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
                       >
-                        {DIAS_CORTOS[horario.dia]} {horario.horaInicio}–{horario.horaFin}
+                        {DIAS_CORTOS[horario.dia]} {formatearRangoHoras(horario.horaInicio, horario.horaFin)}
                       </span>
                     ))}
                   </div>

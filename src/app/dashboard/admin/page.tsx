@@ -8,7 +8,7 @@ import { SaludoPanel } from "@/components/dashboard/saludo-panel";
 import { Indicador } from "@/components/dashboard/indicador";
 import { GraficoAsistencia } from "@/components/dashboard/grafico-asistencia";
 import { EstadoPagos } from "@/components/dashboard/estado-pagos";
-import { formatearDiaMes, formatearFechaCorta, formatearFechaHora as formatoFechaHora } from "@/lib/formato";
+import { formatearDiaMes, formatearFechaCorta, formatearFechaHora as formatoFechaHora, formatearRangoHoras } from "@/lib/formato";
 import { useAuth } from "@/hooks/use-auth";
 import { alumnosCargados, obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerRegistrosAsistencia } from "@/store/asistencia-store";
@@ -176,7 +176,7 @@ export default function AdminDashboardPage() {
                         {actividad.tipo === "entrenamiento" ? actividad.categoria ?? actividad.titulo : actividad.titulo}
                       </p>
                       <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-                        <span className="capitalize font-semibold">{actividad.tipo}</span> · {actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}
+                        <span className="capitalize font-semibold">{actividad.tipo}</span> · {formatearRangoHoras(actividad.horaInicio, actividad.horaFin)}
                       </p>
                       <p className="mt-0.5 truncate text-[11px] text-slate-400">{actividad.ubicacion}</p>
                     </div>

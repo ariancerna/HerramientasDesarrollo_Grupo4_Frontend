@@ -26,7 +26,7 @@ export default function IngresoAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div className="mx-auto max-w-3xl">
         <header className="mb-6 text-center sm:text-left">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Mi QR de ingreso</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">Mi QR de ingreso</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Muestra este código al profesor al llegar al entrenamiento para registrar tu asistencia.
           </p>

@@ -58,7 +58,7 @@ export default function HistorialAlumnoPage() {
       <div>
           <header className="mb-6">
             {/* ❌ Eliminado: <p>MI ESPACIO</p> */}
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-ink">
               Mi historial de asistencia
             </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

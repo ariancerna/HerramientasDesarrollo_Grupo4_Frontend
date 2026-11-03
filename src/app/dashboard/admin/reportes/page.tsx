@@ -89,7 +89,7 @@ export default function ReportesPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
             Reportes de asistencia
           </h1>
         </header>

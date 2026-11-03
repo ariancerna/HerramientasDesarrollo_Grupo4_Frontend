@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Categoria } from "@/types";
+import { formatearRangoHoras } from "@/lib/formato";
 
 interface CategoriasListaProps {
   categorias: Categoria[];
@@ -154,7 +155,7 @@ export function CategoriasLista({ categorias, onEditar, onEliminar }: Categorias
                           {DIA_CORTO[horario.dia] ?? horario.dia}
                         </span>
                         <span className="text-slate-500 dark:text-slate-400">
-                          {horario.horaInicio}–{horario.horaFin}
+                          {formatearRangoHoras(horario.horaInicio, horario.horaFin)}
                         </span>
                       </div>
                     ))}

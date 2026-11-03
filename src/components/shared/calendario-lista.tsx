@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ActividadCalendario, EventoClub } from "@/types/calendario";
 import type { Categoria } from "@/types";
+import { formatearRangoHoras } from "@/lib/formato";
 
 interface CalendarioListaProps {
   actividades: ActividadCalendario[];
@@ -121,8 +122,7 @@ export function CalendarioLista({
                     </p>
                   </div>
                   <p className="mt-0.5 truncate text-xs text-slate-400">
-                    {actividad.ubicacion} · {actividad.horaInicio}
-                    {actividad.horaFin ? ` – ${actividad.horaFin}` : ""}
+                    {actividad.ubicacion} · {formatearRangoHoras(actividad.horaInicio, actividad.horaFin)}
                     {actividad.categoria ? ` · ${actividad.categoria}` : ""}
                   </p>
                 </div>

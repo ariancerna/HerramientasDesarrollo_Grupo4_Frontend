@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Anuncio } from "@/types/anuncio";
+import { InsigniaEstado } from "@/components/ui/insignia-estado";
 
 interface AnuncioListaProps {
   anuncios: Anuncio[];
@@ -200,18 +201,7 @@ export function AnuncioLista({
 /* PIEZAS */
 
 function EstadoBadge({ estado }: { estado: "borrador" | "enviado" }) {
-  const enviado = estado === "enviado";
-  return (
-    <span
-      className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-extrabold ${
-        enviado
-          ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
-          : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-      }`}
-    >
-      {enviado ? "Enviado" : "Borrador"}
-    </span>
-  );
+  return <InsigniaEstado estado={estado} />;
 }
 
 function formatearFecha(fecha: string) {

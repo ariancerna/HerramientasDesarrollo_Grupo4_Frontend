@@ -10,6 +10,7 @@ import type {
   ActividadCalendario,
   TipoActividad,
 } from "@/types/calendario";
+import { formatearRangoHoras } from "@/lib/formato";
 
 type FiltroActividad = TipoActividad | "todos";
 
@@ -45,7 +46,7 @@ export default function CalendarioAlumnoPage() {
     <RoleGuard allowedRoles={["alumno"]}>
       <div>
         <header className="mb-6">
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
             Calendario
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -253,9 +254,7 @@ function formatearFechaLarga(fecha: string) {
 }
 
 function formatearHorario(actividad: ActividadCalendario) {
-  return actividad.horaFin
-    ? `${actividad.horaInicio} – ${actividad.horaFin}`
-    : actividad.horaInicio;
+  return formatearRangoHoras(actividad.horaInicio, actividad.horaFin);
 }
 
 function PinIcon() {

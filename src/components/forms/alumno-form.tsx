@@ -105,7 +105,7 @@ export default function AlumnoForm({
           {alumnoAEditar ? "Editar alumno" : "Nuevo alumno"}
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Completa los datos del jugador.
+          Completa los datos del alumno.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">

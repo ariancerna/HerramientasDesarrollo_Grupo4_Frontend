@@ -83,7 +83,7 @@ export default function AnunciosProfesorPage() {
         <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
            
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Anuncios</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-ink">Anuncios</h1>
             <p className="mt-1 text-sm text-slate-500">Envía avisos a tus alumnos y administra tus borradores.</p>
           </div>
           <button type="button" onClick={abrirNuevo} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-green-dark">Nuevo anuncio</button>

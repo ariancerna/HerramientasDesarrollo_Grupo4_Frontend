@@ -92,7 +92,7 @@ export default function AlumnosAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
             Gestión de alumnos
           </h1>
         </header>

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { HorarioAsignado, NOMBRES_DIAS } from "@/types/horario";
+import { formatearRangoHoras } from "@/lib/formato";
+import { InsigniaEstado } from "@/components/ui/insignia-estado";
 
 interface HorarioListaProps {
   horarios: HorarioAsignado[];
@@ -45,19 +47,11 @@ export function HorarioLista({ horarios }: HorarioListaProps) {
                   {horario.categoria}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-slate-400">
-                  {horario.horaInicio} – {horario.horaFin} · {horario.cancha ?? "Cancha por confirmar"}
+                  {formatearRangoHoras(horario.horaInicio, horario.horaFin)} · {horario.cancha ?? "Cancha por confirmar"}
                 </p>
               </div>
 
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-extrabold ${
-                  estaActivo
-                    ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
-                    : "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
-                }`}
-              >
-                {estaActivo ? "Activo" : "Cancelado"}
-              </span>
+              <InsigniaEstado estado={estaActivo ? "activo" : "inactivo"} etiqueta={estaActivo ? "Activo" : "Cancelado"} />
             </button>
           );
         })}

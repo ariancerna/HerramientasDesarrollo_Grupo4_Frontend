@@ -11,6 +11,7 @@ import { obtenerAsistenciasPorEstudiante } from "@/store/asistencia-store";
 import { obtenerAnuncios } from "@/store/anuncios-store";
 import { obtenerMensualidadActual, obtenerPagosPorEstudiante } from "@/store/pagos-store";
 import { obtenerProximasActividades } from "@/store/calendario-store";
+import { formatearFechaCorta as formatoFechaCorta, formatearFechaHora as formatoFechaHora, formatearHora, formatearRangoHoras } from "@/lib/formato";
 
 export default function AlumnoDashboardPage() {
   useDatosRemotos();
@@ -64,7 +65,7 @@ export default function AlumnoDashboardPage() {
               <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <dt className="text-xs text-slate-500 dark:text-slate-400">Próxima actividad</dt>
                 <dd className="mt-1 text-lg font-bold text-slate-950 dark:text-white">
-                  {proximaActividad?.horaInicio ?? "Sin agenda"}
+                  {proximaActividad ? formatearHora(proximaActividad.horaInicio) : "Sin agenda"}
                 </dd>
               </dl>
               <dl className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -143,7 +144,7 @@ export default function AlumnoDashboardPage() {
                         <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.titulo}</p>
                         <span className="rounded-full bg-brand-green-soft px-2 py-0.5 text-[10px] font-bold uppercase text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">{actividad.tipo}</span>
                       </div>
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{formatearRangoHoras(actividad.horaInicio, actividad.horaFin)}</p>
                       <p className="mt-1 truncate text-xs text-slate-400">{actividad.ubicacion}</p>
                     </div>
                   </div>
@@ -203,13 +204,13 @@ export default function AlumnoDashboardPage() {
 }
 
 function formatearActividad(fecha: string, hora: string) {
-  return `${new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`))} · ${hora}`;
+  return `${formatoFechaCorta(fecha)} · ${formatearHora(hora)}`;
 }
 function fechaPeriodo(fecha: Date) {
   return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}`;
 }
 function formatearFechaHora(fecha: string) {
-  return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(fecha));
+  return formatoFechaHora(fecha);
 }
 
 function PanelHeader({ title, description, href, linkLabel }: { title: string; description: string; href?: string; linkLabel?: string }) {

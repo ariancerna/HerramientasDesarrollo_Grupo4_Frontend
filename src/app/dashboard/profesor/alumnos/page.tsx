@@ -105,7 +105,7 @@ export default function AlumnosProfesorPage() {
     <RoleGuard allowedRoles={["profesor"]}>
       <div>
         <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
             Alumnos
           </h1>
           <button

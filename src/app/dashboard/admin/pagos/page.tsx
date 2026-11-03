@@ -7,6 +7,8 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import { PagosLista } from "@/components/shared/pagos-lista";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { mensajeError } from "@/lib/api";
+import { CircleCheck, Clock, Users } from "lucide-react";
+import { Indicador } from "@/components/dashboard/indicador";
 import { Student } from "@/types/student";
 import { alumnosCargados, obtenerAlumnos } from "@/store/alumnos-store";
 import type { PagoMensualidad } from "@/types/pago";
@@ -109,7 +111,7 @@ export default function PagosAdminPage() {
     <RoleGuard allowedRoles={["administrador"]}>
       <div>
         <header className="mb-6">
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Pagos</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">Pagos</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Registra los pagos y consulta las deudas pendientes de los alumnos. Periodo actual:{" "}
             {formatearPeriodo(periodo)}.
@@ -121,11 +123,11 @@ export default function PagosAdminPage() {
           <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
         </div>
 
-        <dl className="mb-5 grid gap-3 sm:grid-cols-3">
-          <Resumen label="Alumnos" valor={alumnos.length} />
-          <Resumen label="Pagos al día" valor={pagados} tono="verde" />
-          <Resumen label="Por pagar" valor={pendientes} tono="rojo" />
-        </dl>
+        <section className="mb-5 grid gap-3 sm:grid-cols-3" aria-label="Resumen del mes">
+          <Indicador etiqueta="Alumnos" valor={alumnos.length} icono={<Users className="h-5 w-5" />} tono="azul" cargando={!alumnosCargados()} />
+          <Indicador etiqueta="Pagos al día" valor={pagados} icono={<CircleCheck className="h-5 w-5" />} tono="verde" cargando={!pagosCargados()} />
+          <Indicador etiqueta="Por pagar" valor={pendientes} icono={<Clock className="h-5 w-5" />} tono="ambar" cargando={!pagosCargados()} />
+        </section>
 
         <div className="mb-5 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:flex-row">
           <input
@@ -211,20 +213,5 @@ export default function PagosAdminPage() {
         )}
       </div>
     </RoleGuard>
-  );
-}
-
-function Resumen({ label, valor, tono = "azul" }: { label: string; valor: number; tono?: "azul" | "verde" | "rojo" }) {
-  const colores = {
-    azul: "border-slate-200 text-slate-950 dark:border-slate-700 dark:text-white",
-    verde:
-      "border-brand-green/20 text-brand-green dark:border-brand-green/30 dark:text-brand-lime-light",
-    rojo: "border-red-200 text-red-700 dark:border-red-500/30 dark:text-red-400",
-  };
-  return (
-    <div className={`rounded-lg border bg-white p-4 shadow-sm dark:bg-slate-900 ${colores[tono]}`}>
-      <dt className="text-sm text-slate-500 dark:text-slate-400">{label}</dt>
-      <dd className="mt-1 text-2xl font-bold">{valor}</dd>
-    </div>
   );
 }

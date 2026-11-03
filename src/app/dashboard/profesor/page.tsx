@@ -10,6 +10,7 @@ import { obtenerCategorias } from "@/store/categorias-store";
 import { obtenerAlumnos } from "@/store/alumnos-store";
 import { obtenerProximasActividades } from "@/store/calendario-store";
 import { obtenerEvaluacionesPorProfesor } from "@/store/evaluaciones-store";
+import { formatearDiaMes, formatearFechaCorta as formatoFechaCorta, formatearRangoHoras } from "@/lib/formato";
 
 export default function ProfesorDashboardPage() {
   useDatosRemotos();
@@ -50,7 +51,7 @@ export default function ProfesorDashboardPage() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-green dark:text-brand-lime-light">Próxima sesión</p>
                   <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{proximaSesion?.categoria ?? "Sin sesión asignada"}</h2>
-                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{proximaSesion ? `${proximaSesion.ubicacion} · ${proximaSesion.horaInicio} – ${proximaSesion.horaFin}` : "Revisa tu horario o consulta a administración."}</p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{proximaSesion ? `${proximaSesion.ubicacion} · ${formatearRangoHoras(proximaSesion.horaInicio, proximaSesion.horaFin)}` : "Revisa tu horario o consulta a administración."}</p>
                 </div>
                 <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"><AttendanceIcon /></span>
               </div>
@@ -76,7 +77,7 @@ export default function ProfesorDashboardPage() {
                           <p className="truncate text-sm font-bold text-navy dark:text-slate-100">{actividad.categoria ?? actividad.titulo}</p>
                           <span className="rounded-full bg-brand-green-soft px-2 py-0.5 text-[10px] font-bold uppercase text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light">{actividad.tipo}</span>
                         </div>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{actividad.horaInicio}{actividad.horaFin ? ` – ${actividad.horaFin}` : ""} · {actividad.ubicacion}</p>
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{formatearRangoHoras(actividad.horaInicio, actividad.horaFin)} · {actividad.ubicacion}</p>
                       </div>
                       <Link href="/dashboard/profesor/asistencia" aria-label={`Registrar asistencia de ${actividad.categoria ?? actividad.titulo}`} className="hidden rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-brand-green transition hover:border-brand-lime sm:block dark:border-slate-700 dark:text-brand-lime-light">Registrar</Link>
                     </div>
@@ -139,8 +140,8 @@ function MetricCard({ label, value, detail, href }: { label: string; value: stri
   );
 }
 
-function formatearFecha(fecha: string) { return new Intl.DateTimeFormat("es-PE", { weekday: "long", day: "numeric", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
-function formatearFechaCorta(fecha: string) { return new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short" }).format(new Date(`${fecha}T12:00:00`)); }
+function formatearFecha(fecha: string) { return formatoFechaCorta(fecha); }
+function formatearFechaCorta(fecha: string) { return formatearDiaMes(fecha); }
 
 function PanelHeader({ title, description, href, linkLabel }: { title: string; description: string; href: string; linkLabel: string }) {
   return <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 dark:border-slate-800"><div><h2 className="font-bold text-navy dark:text-white">{title}</h2><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p></div><Link href={href} className="whitespace-nowrap text-xs font-bold text-brand-green dark:text-brand-lime-light">{linkLabel} →</Link></div>;

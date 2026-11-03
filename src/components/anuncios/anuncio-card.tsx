@@ -1,4 +1,5 @@
 import { Anuncio } from "@/types/anuncio";
+import { InsigniaEstado } from "@/components/ui/insignia-estado";
 
 interface AnuncioCardProps {
   anuncio: Anuncio;
@@ -27,9 +28,7 @@ export default function AnuncioCard({
           <h2 className="text-lg font-bold text-slate-950 dark:text-white">{anuncio.titulo}</h2>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{fecha}</p>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${anuncio.estado === "enviado" ? "bg-brand-green-soft text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light" : "bg-amber-100 text-amber-700"}`}>
-          {anuncio.estado === "enviado" ? "Enviado" : "Borrador"}
-        </span>
+        <InsigniaEstado estado={anuncio.estado} />
       </div>
       <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-600 dark:text-slate-300">{anuncio.mensaje}</p>
       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
