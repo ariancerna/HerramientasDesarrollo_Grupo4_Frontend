@@ -11,6 +11,7 @@ import UserAvatar from "@/components/shared/user-avatar";
 interface AlumnoListaProps {
   alumnos: Student[];
   onEditar: (alumno: Student) => void;
+  cargando?: boolean;
   onEliminar: (alumno: Student) => void;
 }
 
@@ -29,7 +30,7 @@ function Identidad({ alumno }: { alumno: Student }) {
 }
 
 /** Padrón de alumnos: tabla ordenable con detalle en un panel lateral. */
-export function AlumnoLista({ alumnos, onEditar, onEliminar }: AlumnoListaProps) {
+export function AlumnoLista({ alumnos, onEditar, onEliminar, cargando = false }: AlumnoListaProps) {
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
   const seleccionado = alumnos.find((alumno) => alumno.id === seleccionadoId) ?? null;
 
@@ -58,6 +59,7 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar }: AlumnoListaProps)
   return (
     <>
       <TablaDatos
+        cargando={cargando}
         etiqueta="Alumnos"
         filas={alumnos}
         columnas={columnas}

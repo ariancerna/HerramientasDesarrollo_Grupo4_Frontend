@@ -14,6 +14,7 @@ import {
   actualizarProfesor,
   eliminarProfesor,
   filtrarProfesores,
+  profesoresCargados,
 } from "@/store/profesores-store";
 import { mensajeError } from "@/lib/api";
 import { ErrorBanner } from "@/components/shared/error-banner";
@@ -142,6 +143,7 @@ export default function ProfesoresPage() {
         </div>
 
         <ProfesorLista
+          cargando={!profesoresCargados()}
           profesores={profesoresFiltrados}
           categorias={categorias}
           onEditar={handleEditar}

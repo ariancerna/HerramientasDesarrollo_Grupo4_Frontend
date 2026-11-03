@@ -12,6 +12,7 @@ import {
   crearAlumno,
   eliminarAlumno,
   filtrarAlumnos,
+  alumnosCargados,
   useAlumnos,
 } from "@/store/alumnos-store";
 import { mensajeError } from "@/lib/api";
@@ -106,6 +107,7 @@ export default function AlumnosAdminPage() {
         </div>
 
         <AlumnoLista
+          cargando={!alumnosCargados()}
           alumnos={alumnosFiltrados}
           onEditar={handleEditar}
           onEliminar={handleEliminar}

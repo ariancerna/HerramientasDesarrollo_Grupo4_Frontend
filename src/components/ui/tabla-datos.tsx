@@ -25,13 +25,15 @@ interface TablaDatosProps<T> {
   /** Columna por la que se ordena al inicio. */
   ordenInicial?: string;
   etiqueta: string;
+  /** Muestra filas esqueleto mientras llegan los datos (evita el "sin registros" momentáneo). */
+  cargando?: boolean;
 }
 
 const comparador = new Intl.Collator("es", { numeric: true, sensitivity: "base" });
 
 /** Tabla de datos del sistema: orden por columna, paginación y tarjetas en móvil. */
 export function TablaDatos<T>({
-  filas, columnas, claveFila, onFilaClick, tarjeta, vacio, porPagina = 10, ordenInicial, etiqueta,
+  filas, columnas, claveFila, onFilaClick, tarjeta, vacio, porPagina = 10, ordenInicial, etiqueta, cargando = false,
 }: TablaDatosProps<T>) {
   const [orden, setOrden] = useState<{ clave: string; asc: boolean } | null>(
     ordenInicial ? { clave: ordenInicial, asc: true } : null,
@@ -58,6 +60,22 @@ export function TablaDatos<T>({
 
   const alternarOrden = (clave: string) =>
     setOrden((actual) => (actual?.clave === clave ? { clave, asc: !actual.asc } : { clave, asc: true }));
+
+  if (cargando && filas.length === 0) {
+    return (
+      <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm" aria-busy="true" aria-label={`Cargando ${etiqueta.toLowerCase()}`}>
+        <div className="h-11 border-b border-line bg-surface-muted/60" />
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="flex items-center gap-4 border-b border-line px-4 py-3.5 last:border-0">
+            <span className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-surface-muted" />
+            <span className="h-3.5 w-1/4 animate-pulse rounded bg-surface-muted" />
+            <span className="ml-auto h-3.5 w-1/6 animate-pulse rounded bg-surface-muted" />
+            <span className="hidden h-3.5 w-1/6 animate-pulse rounded bg-surface-muted md:block" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (filas.length === 0) {
     return (

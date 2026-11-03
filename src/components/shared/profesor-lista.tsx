@@ -12,6 +12,7 @@ interface ProfesorListaProps {
   profesores: Profesor[];
   categorias: Categoria[];
   onEditar: (profesor: Profesor) => void;
+  cargando?: boolean;
   onEliminar: (profesor: Profesor) => void;
 }
 
@@ -39,7 +40,7 @@ function Chips({ nombres }: { nombres: string[] }) {
 }
 
 /** Plantel de profesores: tabla ordenable con detalle en un panel lateral. */
-export function ProfesorLista({ profesores, categorias, onEditar, onEliminar }: ProfesorListaProps) {
+export function ProfesorLista({ profesores, categorias, onEditar, onEliminar, cargando = false }: ProfesorListaProps) {
   const sedes = useSedes();
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
   const seleccionado = profesores.find((p) => p.id === seleccionadoId) ?? null;
@@ -73,6 +74,7 @@ export function ProfesorLista({ profesores, categorias, onEditar, onEliminar }: 
   return (
     <>
       <TablaDatos
+        cargando={cargando}
         etiqueta="Profesores"
         filas={profesores}
         columnas={columnas}

@@ -43,6 +43,7 @@ export const obtenerPagosIniciales = pagos.obtenerInicial;
 // LEER
 export const obtenerPagos = pagos.obtener;
 export const suscribirPagos = pagos.suscribir;
+export const pagosCargados = pagos.cargada;
 
 export function obtenerPagosPorEstudiante(estudianteId: string): PagoMensualidad[] {
   return obtenerPagos()

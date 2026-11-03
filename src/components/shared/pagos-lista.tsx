@@ -20,6 +20,7 @@ interface PagosListaProps {
   filas: Fila[];
   montoBase: number;
   onRegistrar: (alumno: Student) => void;
+  cargando?: boolean;
   onMarcarDeuda: (pago: PagoMensualidad, alumno: Student) => void;
 }
 
@@ -39,7 +40,7 @@ function Identidad({ alumno }: { alumno: Student }) {
 }
 
 /** Mensualidades por alumno: tabla ordenable con detalle y acciones en un panel lateral. */
-export function PagosLista({ filas, montoBase, onRegistrar, onMarcarDeuda }: PagosListaProps) {
+export function PagosLista({ filas, montoBase, onRegistrar, onMarcarDeuda, cargando = false }: PagosListaProps) {
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
   const seleccionada = filas.find((f) => f.alumno.id === seleccionadoId) ?? null;
 
@@ -72,6 +73,7 @@ export function PagosLista({ filas, montoBase, onRegistrar, onMarcarDeuda }: Pag
   return (
     <>
       <TablaDatos
+        cargando={cargando}
         etiqueta="Mensualidades"
         filas={filas}
         columnas={columnas}

@@ -7,7 +7,7 @@ import { PagosLista } from "@/components/shared/pagos-lista";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { mensajeError } from "@/lib/api";
 import { Student } from "@/types/student";
-import { obtenerAlumnos } from "@/store/alumnos-store";
+import { alumnosCargados, obtenerAlumnos } from "@/store/alumnos-store";
 import type { PagoMensualidad } from "@/types/pago";
 import {
   obtenerMensualidadActual,
@@ -15,6 +15,7 @@ import {
   marcarPagoPendiente,
   formatearMonto,
   formatearPeriodo,
+  pagosCargados,
 } from "@/store/pagos-store";
 
 type FiltroPago = "todos" | "pagados" | "pendientes";
@@ -155,6 +156,7 @@ export default function PagosAdminPage() {
         </div>
 
         <PagosLista
+          cargando={!pagosCargados() || !alumnosCargados()}
           filas={filas}
           montoBase={MONTO_MENSUALIDAD}
           onRegistrar={abrirModalRegistro}

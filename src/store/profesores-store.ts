@@ -31,6 +31,7 @@ export const obtenerProfesoresIniciales = profesores.obtenerInicial;
 export const obtenerProfesores = profesores.obtener;
 export const suscribirProfesores = profesores.suscribir;
 export const useProfesores = () => useColeccion(profesores);
+export const profesoresCargados = profesores.cargada;
 
 /** Verifica si un nombre de usuario ya está en uso (por otro profesor). */
 export function usuarioProfesorDisponible(usuario: string, idAExcluir?: string): boolean {

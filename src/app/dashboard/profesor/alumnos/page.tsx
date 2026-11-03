@@ -12,6 +12,7 @@ import { ErrorBanner } from "@/components/shared/error-banner";
 import { mensajeError } from "@/lib/api";
 import { Student, StudentFormData } from "@/types/student";
 import {
+  alumnosCargados,
   useAlumnos,
   filtrarAlumnos,
   crearAlumno,
@@ -130,6 +131,7 @@ export default function AlumnosProfesorPage() {
         </div>
 
         <AlumnoLista
+          cargando={!alumnosCargados()}
           alumnos={alumnosFiltrados}
           onEditar={abrirModalEdicion}
           onEliminar={handleEliminar}
