@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import EvaluacionForm from "@/components/evaluaciones/evaluacion-form";
@@ -59,8 +60,10 @@ export default function EvaluacionesProfesorPage() {
     try {
       if (id) {
         await actualizarEvaluacion(id, data);
+        avisar("Evaluación actualizada.");
       } else {
         await crearEvaluacion(data);
+        avisar("Evaluación registrada.");
       }
       cerrarFormulario();
     } catch (err) {
@@ -81,6 +84,7 @@ export default function EvaluacionesProfesorPage() {
     setError(null);
     try {
       await eliminarEvaluacion(evaluacion.id);
+      avisar("Evaluación eliminada.");
     } catch (err) {
       setError(mensajeError(err, "No se pudo eliminar la evaluación."));
     }

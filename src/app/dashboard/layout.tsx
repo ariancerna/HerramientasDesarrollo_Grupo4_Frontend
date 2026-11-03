@@ -4,6 +4,7 @@ import { RoleGuard } from "@/components/shared/role-guard";
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
 import MobileBottomNav from "@/components/shared/mobile-bottom-nav";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function DashboardLayout({
   children,
@@ -21,6 +22,7 @@ export default function DashboardLayout({
           </main>
         </div>
         <MobileBottomNav />
+        <Toaster />
       </div>
     </RoleGuard>
   );

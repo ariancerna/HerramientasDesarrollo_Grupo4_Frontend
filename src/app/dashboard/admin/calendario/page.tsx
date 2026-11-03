@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { avisar } from "@/components/ui/toaster";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import { useConfirm } from "@/hooks/use-confirm";
 import EventoForm from "@/components/forms/evento-form";
@@ -33,7 +34,6 @@ export default function CalendarioAdminPage() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [eventoAEditar, setEventoAEditar] = useState<EventoClub | null>(null);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
@@ -46,12 +46,6 @@ export default function CalendarioAdminPage() {
     [eventos, categorias],
   );
 
-  useEffect(() => {
-    if (mensajeExito) {
-      const timer = setTimeout(() => setMensajeExito(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [mensajeExito]);
 
   const handleNuevo = () => {
     setEventoAEditar(null);
@@ -68,10 +62,10 @@ export default function CalendarioAdminPage() {
     try {
       if (id) {
         await actualizarEvento(id, data);
-        setMensajeExito(`Evento "${data.titulo}" actualizado correctamente`);
+        avisar(`Evento "${data.titulo}" actualizado correctamente`);
       } else {
         await crearEvento(data);
-        setMensajeExito(`Evento "${data.titulo}" programado correctamente`);
+        avisar(`Evento "${data.titulo}" programado correctamente`);
       }
       setMostrarFormulario(false);
       setEventoAEditar(null);
@@ -97,7 +91,7 @@ export default function CalendarioAdminPage() {
     setError(null);
     try {
       await eliminarEvento(evento.id);
-      setMensajeExito(`Evento "${evento.titulo}" eliminado correctamente`);
+      avisar(`Evento "${evento.titulo}" eliminado correctamente`);
     } catch (err) {
       setError(mensajeError(err, "No se pudo eliminar el evento."));
     }
@@ -119,11 +113,6 @@ export default function CalendarioAdminPage() {
           <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
         </div>
 
-        {mensajeExito && (
-          <div className="mb-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
-            <p className="font-medium">{mensajeExito}</p>
-          </div>
-        )}
 
         <div className="mb-6 flex justify-end">
           <button

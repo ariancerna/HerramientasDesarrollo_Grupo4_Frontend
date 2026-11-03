@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useMemo, useState } from "react";
 import AnuncioCard from "@/components/anuncios/anuncio-card";
 import AnuncioForm from "@/components/anuncios/anuncio-form";
@@ -50,6 +51,7 @@ export default function AnunciosProfesorPage() {
       } else {
         await crearAnuncio(data, estado);
       }
+      avisar(estado === "enviado" ? "Anuncio enviado a tus alumnos." : "Borrador guardado.");
       setMostrarFormulario(false);
       setAnuncioAEditar(null);
     } catch (err) {
@@ -69,6 +71,7 @@ export default function AnunciosProfesorPage() {
     setError(null);
     try {
       await eliminarAnuncio(anuncio.id);
+      avisar("Anuncio eliminado.");
     } catch (err) {
       setError(mensajeError(err, "No se pudo eliminar el anuncio."));
     }

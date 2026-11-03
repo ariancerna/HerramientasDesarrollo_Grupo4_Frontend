@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { avisar } from "@/components/ui/toaster";
+import { useState, useSyncExternalStore } from "react";
 import { Categoria } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { RoleGuard } from "@/components/shared/role-guard";
@@ -27,16 +28,9 @@ export default function CategoriasPage() {
   const [categoriaAEditar, setCategoriaAEditar] = useState<Categoria | null>(
     null
   );
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirm();
 
-  useEffect(() => {
-    if (mensajeExito) {
-      const timer = setTimeout(() => setMensajeExito(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [mensajeExito]);
 
   const handleAbrirFormularioNuevo = () => {
     setCategoriaAEditar(null);
@@ -56,10 +50,10 @@ export default function CategoriasPage() {
     try {
       if (id) {
         await actualizarCategoria(id, data);
-        setMensajeExito(`Categoría "${data.nombre}" actualizada correctamente`);
+        avisar(`Categoría "${data.nombre}" actualizada correctamente`);
       } else {
         await crearCategoria(data);
-        setMensajeExito(`Categoría "${data.nombre}" creada correctamente`);
+        avisar(`Categoría "${data.nombre}" creada correctamente`);
       }
     } catch (err) {
       setError(mensajeError(err, "Error al guardar la categoría"));
@@ -89,7 +83,7 @@ export default function CategoriasPage() {
     setError(null);
     try {
       await eliminarCategoria(categoria.id);
-      setMensajeExito(`Categoría "${categoria.nombre}" eliminada correctamente`);
+      avisar(`Categoría "${categoria.nombre}" eliminada correctamente`);
     } catch (err) {
       setError(mensajeError(err, "Error al eliminar la categoría"));
     }
@@ -114,11 +108,6 @@ export default function CategoriasPage() {
           </button>
         </div>
 
-        {mensajeExito && (
-          <div className="rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green shadow-sm animate-in fade-in dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
-            <p className="font-medium">{mensajeExito}</p>
-          </div>
-        )}
 
         <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
 

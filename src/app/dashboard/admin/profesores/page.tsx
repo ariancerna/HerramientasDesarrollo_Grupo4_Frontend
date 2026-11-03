@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { DatosProfesor, Profesor } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -67,8 +68,10 @@ export default function ProfesoresPage() {
     try {
       if (id) {
         await actualizarProfesor(id, data, categoriaIds);
+        avisar("Datos del profesor actualizados.");
       } else {
         await crearProfesor(data, categoriaIds);
+        avisar(`${data.nombre} fue registrado con su cuenta de acceso.`);
       }
       setMostrarFormulario(false);
       setProfesorAEditar(null);
@@ -95,6 +98,7 @@ export default function ProfesoresPage() {
     setError(null);
     try {
       await eliminarProfesor(profesor.id);
+      avisar(`${profesor.nombre} fue eliminado.`);
     } catch (err) {
       setError(mensajeError(err, "No se pudo eliminar el profesor."));
     }

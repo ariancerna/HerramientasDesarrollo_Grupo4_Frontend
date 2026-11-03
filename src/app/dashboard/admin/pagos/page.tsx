@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useDatosRemotos } from "@/lib/remote-collection";
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
@@ -37,7 +38,6 @@ export default function PagosAdminPage() {
   const alumnos: Student[] = obtenerAlumnos();
   const [texto, setTexto] = useState("");
   const [filtro, setFiltro] = useState<FiltroPago>("todos");
-  const [mensaje, setMensaje] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [modalAlumno, setModalAlumno] = useState<Student | null>(null);
@@ -73,11 +73,6 @@ export default function PagosAdminPage() {
   const pagados = alumnos.filter((a) => obtenerMensualidadActual(a.id)?.estado === "pagado").length;
   const pendientes = alumnos.length - pagados;
 
-  const mostrarMensaje = (texto: string) => {
-    setMensaje(texto);
-    window.setTimeout(() => setMensaje(null), 3000);
-  };
-
   const abrirModalRegistro = (alumno: Student) => {
     setModalAlumno(alumno);
     setMetodoSeleccionado("Yape");
@@ -91,7 +86,7 @@ export default function PagosAdminPage() {
     setGuardando(true);
     try {
       await registrarPagoAlumno(modalAlumno.id, periodo, metodoSeleccionado, codigoOperacion);
-      mostrarMensaje(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
+      avisar(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
       setModalAlumno(null);
     } catch (err) {
       setError(mensajeError(err, "No se pudo registrar el pago."));
@@ -104,7 +99,7 @@ export default function PagosAdminPage() {
     setError(null);
     try {
       await marcarPagoPendiente(pago.id);
-      mostrarMensaje(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
+      avisar(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
     } catch (err) {
       setError(mensajeError(err, "No se pudo actualizar el pago."));
     }
@@ -121,11 +116,6 @@ export default function PagosAdminPage() {
           </p>
         </header>
 
-        {mensaje && (
-          <div className="mb-5 rounded-lg border border-brand-green/20 bg-brand-green-soft p-4 text-sm text-brand-green dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light">
-            {mensaje}
-          </div>
-        )}
 
         <div className="mb-5">
           <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />

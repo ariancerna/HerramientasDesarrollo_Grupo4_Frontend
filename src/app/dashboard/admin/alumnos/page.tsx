@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useMemo, useState } from "react";
 import { RoleGuard } from "@/components/shared/role-guard";
 import AlumnoFiltros from "@/components/shared/alumno-filtros";
@@ -65,6 +66,7 @@ export default function AlumnosAdminPage() {
     setError(null);
     try {
       await eliminarAlumno(alumno.id);
+      avisar(`${alumno.nombres} ${alumno.apellidos} quedó dado de baja.`);
     } catch (err) {
       setError(mensajeError(err, "No se pudo dar de baja al alumno."));
     }
@@ -75,8 +77,10 @@ export default function AlumnosAdminPage() {
     try {
       if (id) {
         await actualizarAlumno(id, data);
+        avisar("Datos del alumno actualizados.");
       } else {
         await crearAlumno(data);
+        avisar(`${data.nombres} ${data.apellidos} fue registrado.`);
       }
       setIsModalOpen(false);
     } catch (err) {

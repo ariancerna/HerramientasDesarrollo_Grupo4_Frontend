@@ -1,5 +1,6 @@
 "use client";
 
+import { avisar } from "@/components/ui/toaster";
 import { useMemo, useState } from "react";
 import AsistenciaForm from "@/components/forms/asistencia-form";
 import { AsistenciaLista } from "@/components/shared/asistencia-lista";
@@ -24,7 +25,6 @@ export default function AsistenciaAdminPage() {
   const [fecha, setFecha] = useState("");
   const [registroACorregir, setRegistroACorregir] =
     useState<RegistroAsistencia | null>(null);
-  const [mensajeExito, setMensajeExito] = useState("");
 
   const registrosFiltrados = useMemo(
     () => filtrarAsistencias(registros, { texto, categoria, fecha }),
@@ -38,7 +38,7 @@ export default function AsistenciaAdminPage() {
     try {
       await corregirAsistencia(registroACorregir.id, datos);
       setRegistroACorregir(null);
-      setMensajeExito("La asistencia fue corregida correctamente.");
+      avisar("La asistencia fue corregida correctamente.");
     } catch (err) {
       setError(mensajeError(err, "No se pudo corregir la asistencia."));
     }
@@ -104,19 +104,11 @@ export default function AsistenciaAdminPage() {
           <ErrorBanner mensaje={error} onCerrar={() => setError(null)} />
         </div>
 
-        {mensajeExito && (
-          <div
-            role="status"
-            className="mb-5 rounded-xl border border-brand-green/20 bg-brand-green-soft p-4 text-sm font-medium text-brand-green dark:border-brand-green/30 dark:bg-brand-green/10 dark:text-brand-lime-light"
-          >
-            {mensajeExito}
-          </div>
-        )}
 
         <AsistenciaLista
           registros={registrosFiltrados}
           onCorregir={(registro) => {
-            setMensajeExito("");
+            avisar("");
             setRegistroACorregir(registro);
           }}
         />
