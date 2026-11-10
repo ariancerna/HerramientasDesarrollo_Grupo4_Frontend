@@ -72,6 +72,19 @@ export async function registrarPagoAlumno(
   await pagos.recargar();
 }
 
+/**
+ * El alumno paga su mensualidad con tarjeta: el token viene de Culqi Checkout
+ * y el backend crea el cargo con el importe guardado en la base de datos.
+ */
+export async function pagarMensualidadConCulqi(periodo: string, token: string, email: string): Promise<PagoMensualidad> {
+  const pago = await api<PagoApi>("/me/pagos/culqi", {
+    method: "POST",
+    body: { periodo, token, email },
+  });
+  await pagos.recargar();
+  return aPago(pago);
+}
+
 /** Revierte un pago registrado por error: vuelve a quedar como deuda pendiente. */
 export async function marcarPagoPendiente(id: string): Promise<void> {
   await api(`/pagos/${id}/marcar-pendiente`, { method: "POST" });

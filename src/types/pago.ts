@@ -10,6 +10,6 @@ export interface PagoMensualidad {
   vencimiento: string;
   estado: EstadoPago;
   fechaPago?: string;
-  metodoPago?: "Yape" | "Plin" | "Transferencia" | "Efectivo";
+  metodoPago?: "Yape" | "Plin" | "Transferencia" | "Efectivo" | "Tarjeta";
   codigoOperacion?: string;
 }
