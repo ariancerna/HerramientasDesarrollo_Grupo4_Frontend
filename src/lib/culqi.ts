@@ -2,6 +2,7 @@
  * Integración con Culqi Checkout Custom (https://js.culqi.com/checkout-js).
  * El checkout tokeniza la tarjeta en el navegador; el token se envía al
  * backend, que es el único que conoce la llave secreta y crea el cargo.
+ * Sin llave pública la app usa el formulario del modo demostración.
  */
 
 const CULQI_SCRIPT_URL = "https://js.culqi.com/checkout-js";
