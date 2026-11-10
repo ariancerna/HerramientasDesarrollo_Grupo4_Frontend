@@ -10,9 +10,10 @@ import UserAvatar from "@/components/shared/user-avatar";
 
 interface AlumnoListaProps {
   alumnos: Student[];
-  onEditar: (alumno: Student) => void;
+  /** Sin onEditar ni onEliminar la lista es de solo lectura (vista del profesor). */
+  onEditar?: (alumno: Student) => void;
   cargando?: boolean;
-  onEliminar: (alumno: Student) => void;
+  onEliminar?: (alumno: Student) => void;
 }
 
 const nombreCompleto = (alumno: Student) => `${alumno.nombres} ${alumno.apellidos}`;
@@ -34,12 +35,16 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar, cargando = false }:
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
   const seleccionado = alumnos.find((alumno) => alumno.id === seleccionadoId) ?? null;
 
+  const soloLectura = !onEditar && !onEliminar;
+
   const acciones = (alumno: Student) => (
     <div className="flex justify-end gap-1" onClick={(event) => event.stopPropagation()}>
-      <button type="button" onClick={() => onEditar(alumno)} aria-label={`Editar a ${nombreCompleto(alumno)}`} title="Editar" className="grid h-8 w-8 place-items-center rounded-md text-muted transition-colors hover:bg-surface-muted hover:text-ink">
-        <Pencil className="h-4 w-4" />
-      </button>
-      {alumno.estado === "activo" && (
+      {onEditar && (
+        <button type="button" onClick={() => onEditar(alumno)} aria-label={`Editar a ${nombreCompleto(alumno)}`} title="Editar" className="grid h-8 w-8 place-items-center rounded-md text-muted transition-colors hover:bg-surface-muted hover:text-ink">
+          <Pencil className="h-4 w-4" />
+        </button>
+      )}
+      {onEliminar && alumno.estado === "activo" && (
         <button type="button" onClick={() => onEliminar(alumno)} aria-label={`Dar de baja a ${nombreCompleto(alumno)}`} title="Dar de baja" className="grid h-8 w-8 place-items-center rounded-md text-muted transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400">
           <UserMinus className="h-4 w-4" />
         </button>
@@ -53,7 +58,7 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar, cargando = false }:
     { clave: "categoria", encabezado: "Categoría", celda: (a) => a.categoria || <span className="text-muted">Sin categoría</span>, orden: (a) => a.categoria },
     { clave: "telefono", encabezado: "Teléfono", celda: (a) => <span className="num">{a.telefono || "—"}</span>, clase: "hidden lg:table-cell" },
     { clave: "estado", encabezado: "Estado", celda: (a) => <InsigniaEstado estado={a.estado} />, orden: (a) => a.estado },
-    { clave: "acciones", encabezado: "", celda: acciones, clase: "w-24 text-right" },
+    ...(soloLectura ? [] : [{ clave: "acciones", encabezado: "", celda: acciones, clase: "w-24 text-right" }]),
   ];
 
   return (
@@ -81,12 +86,14 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar, cargando = false }:
         titulo={seleccionado ? nombreCompleto(seleccionado) : ""}
         subtitulo={seleccionado?.categoria || "Sin categoría asignada"}
         pie={
-          seleccionado && (
+          seleccionado && !soloLectura && (
             <>
-              <button type="button" onClick={() => onEditar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
-                <Pencil className="h-4 w-4" /> Editar
-              </button>
-              {seleccionado.estado === "activo" && (
+              {onEditar && (
+                <button type="button" onClick={() => onEditar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
+                  <Pencil className="h-4 w-4" /> Editar
+                </button>
+              )}
+              {onEliminar && seleccionado.estado === "activo" && (
                 <button type="button" onClick={() => onEliminar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10">
                   <UserMinus className="h-4 w-4" /> Dar de baja
                 </button>
