@@ -46,6 +46,22 @@ function normalizarCredencial(value: string): string {
   return value.trim();
 }
 
+/** Guarda los tokens, consulta GET /auth/me y crea la sesión local. */
+async function iniciarSesionConTokens(tokens: { accessToken: string; refreshToken: string }): Promise<LoginResult> {
+  saveTokens({ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
+  const me = await api<UsuarioApi>("/auth/me");
+  const usuarioSesion: Usuario = {
+    id: me.id,
+    usuario: me.usuario,
+    nombre: me.nombre,
+    rol: ROLES_API[me.rol],
+    estudianteId: me.estudianteId,
+    fotoUrl: me.fotoUrl,
+  };
+  saveSession(usuarioSesion);
+  return { ok: true, rol: usuarioSesion.rol };
+}
+
 function cerrarSesionLocal() {
   clearTokens();
   clearSession();
@@ -82,22 +98,25 @@ export function useAuth() {
         body: { usuario: normalizarCredencial(usuario), password: normalizarCredencial(password) },
         auth: false,
       });
-      saveTokens(tokens);
-
-      const me = await api<UsuarioApi>("/auth/me");
-      const usuarioSesion: Usuario = {
-        id: me.id,
-        usuario: me.usuario,
-        nombre: me.nombre,
-        rol: ROLES_API[me.rol],
-        estudianteId: me.estudianteId,
-        fotoUrl: me.fotoUrl,
-      };
-      saveSession(usuarioSesion);
-      return { ok: true, rol: usuarioSesion.rol };
+      return await iniciarSesionConTokens(tokens);
     } catch (error) {
       clearTokens();
       return { ok: false, error: mensajeError(error, "Usuario o contraseña incorrectos.") };
+    }
+  }, []);
+
+  /** Acceso con Google: canjea los tokens que entregó Supabase por la sesión del club. */
+  const loginConGoogle = useCallback(async (accessToken: string, refreshToken: string): Promise<LoginResult> => {
+    try {
+      const sesion = await api<{ accessToken: string; refreshToken: string }>("/auth/google", {
+        method: "POST",
+        body: { accessToken, refreshToken },
+        auth: false,
+      });
+      return await iniciarSesionConTokens(sesion);
+    } catch (error) {
+      clearTokens();
+      return { ok: false, error: mensajeError(error, "No se pudo iniciar sesión con Google.") };
     }
   }, []);
 
@@ -160,5 +179,5 @@ export function useAuth() {
     return () => clearInterval(interval);
   }, [session]);
 
-  return { session, isLoading, login, logout, actualizarUsuarioActual, actualizarFotoActual };
+  return { session, isLoading, login, loginConGoogle, logout, actualizarUsuarioActual, actualizarFotoActual };
 }
