@@ -1,27 +1,49 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+
+import { api, mensajeError } from "@/lib/api";
+import { ROUTES } from "@/constants/routes";
 
 /**
- * Acceso con Google. La autenticación con el proveedor la integra otro
- * integrante del equipo; mientras tanto el botón informa que aún no está activo.
+ * Acceso con Google (Supabase Auth). Pide al backend la URL de autorización y
+ * redirige a Google; al volver, /auth/callback completa el inicio de sesión.
  */
 export function GoogleButton() {
-  const [aviso, setAviso] = useState(false);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState("");
+
+  async function continuarConGoogle() {
+    setError("");
+    setCargando(true);
+    try {
+      const redirectTo = `${window.location.origin}${ROUTES.AUTH_CALLBACK}`;
+      const { url } = await api<{ url: string }>(
+        `/auth/google/url?redirectTo=${encodeURIComponent(redirectTo)}`,
+        { auth: false },
+      );
+      window.location.assign(url);
+    } catch (e) {
+      setError(mensajeError(e, "No se pudo iniciar el acceso con Google."));
+      setCargando(false);
+    }
+  }
 
   return (
     <div>
       <button
         type="button"
-        onClick={() => setAviso(true)}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-line bg-surface text-[15px] font-semibold text-ink transition-colors hover:bg-surface-muted"
+        onClick={continuarConGoogle}
+        disabled={cargando}
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-line bg-surface text-[15px] font-semibold text-ink transition-colors hover:bg-surface-muted disabled:cursor-wait disabled:opacity-70"
       >
-        <GoogleIcon />
-        Continuar con Google
+        {cargando ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <GoogleIcon />}
+        {cargando ? "Redirigiendo a Google…" : "Continuar con Google"}
       </button>
-      {aviso && (
-        <p role="status" className="mt-3 rounded-lg bg-primary-soft px-3.5 py-2.5 text-center text-[13px] text-primary dark:text-blue-200">
-          El acceso con Google estará disponible próximamente. Por ahora ingresa con tu usuario y contraseña.
+      {error && (
+        <p role="alert" className="mt-3 rounded-lg border border-danger/30 bg-danger-light px-3.5 py-2.5 text-center text-[13px] font-medium text-danger">
+          {error}
         </p>
       )}
     </div>
