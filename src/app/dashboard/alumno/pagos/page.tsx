@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useDatosRemotos } from "@/lib/remote-collection";
 import { RoleGuard } from "@/components/shared/role-guard";
+import { ErrorBanner } from "@/components/shared/error-banner";
+import { PagarConTarjeta } from "@/components/shared/pagar-con-tarjeta";
 import { useAuth } from "@/hooks/use-auth";
 import {
   formatearMonto,
@@ -24,13 +27,13 @@ const ESTADO_CONFIG: Record<
     etiqueta: "Pendiente",
     clase:
       "bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-400/20",
-    detalle: "Realiza el pago antes de la fecha de vencimiento.",
+    detalle: "Realiza el pago antes de la fecha de vencimiento. Puedes pagar en línea con tarjeta.",
   },
   vencido: {
     etiqueta: "Vencido",
     clase:
       "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/15 dark:text-red-300 dark:ring-red-400/20",
-    detalle: "Comunícate con administración para regularizar tu mensualidad.",
+    detalle: "Paga en línea con tarjeta o comunícate con administración para regularizar tu mensualidad.",
   },
 };
 
@@ -41,6 +44,8 @@ export default function PagosAlumnoPage() {
   const pagos = estudianteId ? obtenerPagosPorEstudiante(estudianteId) : [];
   const mensualidad = pagos[0];
   const pagosRealizados = pagos.filter((pago) => pago.estado === "pagado");
+  const [errorPago, setErrorPago] = useState<string | null>(null);
+  const [pagoConfirmado, setPagoConfirmado] = useState<PagoMensualidad | null>(null);
 
   return (
     <RoleGuard allowedRoles={["alumno"]}>
@@ -54,6 +59,28 @@ export default function PagosAlumnoPage() {
             Consulta el estado de tu mensualidad y el historial de pagos.
           </p>
         </header>
+
+        {pagoConfirmado && (
+          <div
+            role="status"
+            className="mb-4 flex items-start justify-between gap-3 rounded-lg border border-brand-green/30 bg-brand-green-soft p-4 text-sm text-brand-green dark:bg-brand-green/15 dark:text-brand-lime-light"
+          >
+            <p className="font-medium">
+              Pago aprobado: {formatearMonto(pagoConfirmado.monto)} de {formatearPeriodo(pagoConfirmado.periodo)}.
+              {pagoConfirmado.codigoOperacion && (
+                <span className="block text-xs opacity-80">Código de operación: {pagoConfirmado.codigoOperacion}</span>
+              )}
+            </p>
+            <button type="button" onClick={() => setPagoConfirmado(null)} aria-label="Cerrar mensaje" className="shrink-0">
+              ×
+            </button>
+          </div>
+        )}
+        {errorPago && (
+          <div className="mb-4">
+            <ErrorBanner mensaje={errorPago} onCerrar={() => setErrorPago(null)} />
+          </div>
+        )}
 
         {!estudianteId ? (
           <MensajeVacio texto="No se pudo identificar al alumno asociado a esta sesión." />
@@ -80,6 +107,21 @@ export default function PagosAlumnoPage() {
                   <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
                     {ESTADO_CONFIG[mensualidad.estado].detalle}
                   </p>
+                  {mensualidad.estado !== "pagado" && (
+                    <div className="mt-5">
+                      <PagarConTarjeta
+                        mensualidad={mensualidad}
+                        onPagado={(pago) => {
+                          setErrorPago(null);
+                          setPagoConfirmado(pago);
+                        }}
+                        onError={(mensaje) => {
+                          setPagoConfirmado(null);
+                          setErrorPago(mensaje);
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-6 rounded-xl border border-white/15 bg-white/5 px-5 py-4">
                   <div>
