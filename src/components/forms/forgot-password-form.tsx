@@ -8,7 +8,8 @@ import { NuevaPasswordForm } from "@/components/forms/nueva-password-form";
 import { ROUTES } from "@/constants/routes";
 import { api, mensajeError } from "@/lib/api";
 
-const RESEND_COOLDOWN_SECONDS = 30;
+// Supabase solo permite pedir un código por correo cada 60 segundos.
+const RESEND_COOLDOWN_SECONDS = 60;
 
 export function ForgotPasswordForm() {
   const router = useRouter();
