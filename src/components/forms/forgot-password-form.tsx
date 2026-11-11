@@ -1,7 +1,7 @@
 // src/components/forms/forgot-password-form.tsx
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { NuevaPasswordForm } from "@/components/forms/nueva-password-form";
@@ -25,6 +25,16 @@ export function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [verificando, setVerificando] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [aviso, setAviso] = useState("");
+
+  // Cuenta regresiva para habilitar "Reenviar código".
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const temporizador = window.setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => window.clearTimeout(temporizador);
+  }, [cooldown]);
+
+  const correoNormalizado = correo.trim().toLowerCase();
 
   function handleCorreoChange(event: ChangeEvent<HTMLInputElement>) {
     setCorreo(event.target.value);
@@ -41,25 +51,37 @@ export function ForgotPasswordForm() {
   }
 
   function enviarCodigo() {
-    if (!correo.trim() || !correo.includes("@")) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoNormalizado)) {
       setError("Ingresa un correo válido.");
       return;
     }
 
     setError("");
+    setCodigoError("");
+    setAviso("");
     setLoading(true);
 
     api("/auth/password/forgot", {
       method: "POST",
-      body: { correo: correo.trim() },
+      body: { correo: correoNormalizado },
       auth: false,
     })
       .then(() => {
+        if (codigoEnviado) setAviso("Te enviamos un código nuevo. El anterior ya no es válido.");
+        setCodigo("");
         setCodigoEnviado(true);
         setCooldown(RESEND_COOLDOWN_SECONDS);
       })
       .catch((err) => setError(mensajeError(err, "No se pudo enviar el código.")))
       .finally(() => setLoading(false));
+  }
+
+  function cambiarCorreo() {
+    setCodigoEnviado(false);
+    setCodigo("");
+    setCodigoError("");
+    setAviso("");
+    setCooldown(0);
   }
 
   function handleSubmit(event: FormEvent) {
@@ -80,7 +102,7 @@ export function ForgotPasswordForm() {
 
     api<{ resetToken: string }>("/auth/password/verify", {
       method: "POST",
-      body: { correo: correo.trim(), codigo },
+      body: { correo: correoNormalizado, codigo },
       auth: false,
     })
       .then((data) => {
@@ -134,6 +156,7 @@ export function ForgotPasswordForm() {
             autoComplete="email"
             value={correo}
             onChange={handleCorreoChange}
+            readOnly={codigoEnviado}
             placeholder="tucorreo@ejemplo.com"
             className={`h-12 w-full rounded-xl border bg-surface pl-11 pr-4 text-[14px] text-ink outline-none transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-primary-soft ${
               error
@@ -144,7 +167,17 @@ export function ForgotPasswordForm() {
         </div>
 
         {error && (
-          <p className="mt-1.5 text-xs font-medium text-danger">{error}</p>
+          <p role="alert" className="mt-1.5 text-xs font-medium text-danger">{error}</p>
+        )}
+        {codigoEnviado && (
+          <button
+            type="button"
+            onClick={cambiarCorreo}
+            disabled={loading || verificando}
+            className="mt-1.5 text-xs font-semibold text-primary hover:underline disabled:opacity-50"
+          >
+            Usar otro correo
+          </button>
         )}
       </div>
 
@@ -160,7 +193,8 @@ export function ForgotPasswordForm() {
               Hemos enviado un código de 6 dígitos a:
             </p>
 
-            <p className="mt-1 text-sm font-bold text-ink">{correo}</p>
+            <p className="mt-1 text-sm font-bold text-ink">{correoNormalizado}</p>
+            <p className="mt-1 text-xs text-body">El código vence en 10 minutos.</p>
           </div>
 
           <div className="relative">
@@ -183,8 +217,13 @@ export function ForgotPasswordForm() {
           </div>
 
           {codigoError && (
-            <p className="mt-1.5 text-xs font-medium text-danger">
+            <p role="alert" className="mt-1.5 text-xs font-medium text-danger">
               {codigoError}
+            </p>
+          )}
+          {aviso && !codigoError && (
+            <p role="status" className="mt-1.5 text-xs font-medium text-chart-win">
+              {aviso}
             </p>
           )}
 

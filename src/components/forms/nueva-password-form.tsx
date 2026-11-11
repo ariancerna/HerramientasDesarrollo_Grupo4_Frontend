@@ -24,6 +24,10 @@ export function NuevaPasswordForm({ resetToken, onCompletado }: NuevaPasswordFor
       setError("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
+    if (password.trim() !== password) {
+      setError("La contraseña no puede empezar ni terminar con espacios.");
+      return;
+    }
     if (password !== confirmar) {
       setError("Las contraseñas no coinciden.");
       return;
@@ -85,7 +89,8 @@ export function NuevaPasswordForm({ resetToken, onCompletado }: NuevaPasswordFor
         aria-label="Confirmar contraseña"
         className={inputClass}
       />
-      {error && <p className="text-xs font-medium text-danger">{error}</p>}
+      <p className="text-xs text-muted">Mínimo 6 caracteres.</p>
+      {error && <p role="alert" className="text-xs font-medium text-danger">{error}</p>}
       <button
         type="submit"
         disabled={guardando}
