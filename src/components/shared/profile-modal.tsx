@@ -133,13 +133,16 @@ export default function ProfileModal({ session, onClose }: ProfileModalProps) {
               <button type="button" onClick={() => inputFoto.current?.click()} disabled={foto.subiendo} className="text-primary-light hover:underline disabled:opacity-60 dark:text-blue-300">
                 {foto.fotoUrl ? "Cambiar foto" : "Subir foto"}
               </button>
-              {foto.fotoUrl && (
+              {foto.fotoPropia && (
                 <button type="button" onClick={() => void foto.cambiar(null)} disabled={foto.subiendo} className="text-red-600 hover:underline disabled:opacity-60 dark:text-red-400">
                   Quitar foto
                 </button>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted">JPG, PNG o WebP de hasta 1.5 MB. También puedes arrastrarla sobre la foto.</p>
+            <p className="mt-1 text-xs text-muted">
+              {foto.fotoUrl && !foto.fotoPropia && "Se muestra la foto de tu cuenta de Google. "}
+              JPG, PNG o WebP de hasta 1.5 MB. También puedes arrastrarla sobre la foto.
+            </p>
             {foto.error && <p role="alert" className="mt-2 text-xs font-medium text-danger">{foto.error}</p>}
           </div>
 
