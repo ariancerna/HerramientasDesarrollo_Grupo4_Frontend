@@ -17,7 +17,7 @@ const DIAGONAL = "polygon(0 0, 100% 0, 76% 100%, 0 100%)";
 
 interface AuthShellProps {
   titulo: string;
-  subtitulo: string;
+  subtitulo: ReactNode;
   children: ReactNode;
   /** Contenido bajo la tarjeta (enlaces secundarios). */
   pie?: ReactNode;
