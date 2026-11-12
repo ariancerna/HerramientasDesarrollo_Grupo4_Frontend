@@ -6,17 +6,16 @@ type BarcodeFormat = "pdf417" | "qr_code";
 
 /** QR de ingreso generado en el perfil del alumno y PDF417 del reverso del DNI. */
 const FORMATOS_DESEADOS: BarcodeFormat[] = ["qr_code", "pdf417"];
+/** Pausa entre lecturas: suficiente para que se sienta inmediato sin saturar el equipo. */
+const INTERVALO_LECTURA_MS = 120;
+const ANCHO_MAXIMO_LECTURA = 1280;
 
-type BarcodeDetectorResult = {
-  rawValue: string;
-};
-
-type BarcodeDetectorInstance = {
-  detect: (source: ImageBitmapSource) => Promise<BarcodeDetectorResult[]>;
+type Detector = {
+  detect: (source: ImageBitmapSource) => Promise<{ rawValue: string }[]>;
 };
 
 type BarcodeDetectorConstructor = {
-  new (options: { formats: BarcodeFormat[] }): BarcodeDetectorInstance;
+  new (options: { formats: BarcodeFormat[] }): Detector;
   getSupportedFormats?: () => Promise<string[]>;
 };
 
@@ -25,12 +24,52 @@ interface Pdf417ScannerProps {
   onError?: (message: string) => void;
 }
 
-function getBarcodeDetector() {
-  return (
-    window as typeof window & {
-      BarcodeDetector?: BarcodeDetectorConstructor;
+/**
+ * Usa el lector nativo del navegador cuando existe y lee QR y PDF417 (Chrome en
+ * Android o macOS). En el resto (Chrome/Edge en Windows, Firefox, Safari...) usa
+ * el lector zxing en WebAssembly, que funciona en cualquier navegador moderno.
+ */
+async function crearDetector(): Promise<Detector> {
+  const Nativo = (window as typeof window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;
+  if (Nativo) {
+    try {
+      const soportados = (await Nativo.getSupportedFormats?.()) ?? [];
+      if (FORMATOS_DESEADOS.every((formato) => soportados.includes(formato))) {
+        return new Nativo({ formats: FORMATOS_DESEADOS });
+      }
+    } catch {
+      // Se usa el lector en WebAssembly.
     }
-  ).BarcodeDetector;
+  }
+
+  const { BarcodeDetector, prepareZXingModule } = await import("barcode-detector/ponyfill");
+  try {
+    // El .wasm se sirve desde el propio sitio (lo copia scripts/copiar-zxing-wasm.mjs).
+    await prepareZXingModule({
+      overrides: {
+        locateFile: (ruta: string, prefijo: string) => (ruta.endsWith(".wasm") ? "/zxing/zxing_reader.wasm" : prefijo + ruta),
+      },
+      fireImmediately: true,
+    });
+  } catch {
+    // Respaldo: CDN de jsDelivr (valor por defecto de la librería).
+    await prepareZXingModule({ overrides: {}, fireImmediately: true });
+  }
+  return new BarcodeDetector({ formats: FORMATOS_DESEADOS });
+}
+
+function mensajeErrorCamara(error: unknown) {
+  const nombre = error instanceof DOMException ? error.name : "";
+  if (nombre === "NotAllowedError" || nombre === "SecurityError") {
+    return "No se dio permiso para usar la cámara. Haz clic en el candado de la barra de direcciones, permite la cámara y vuelve a intentarlo.";
+  }
+  if (nombre === "NotFoundError" || nombre === "OverconstrainedError") {
+    return "No se encontró ninguna cámara conectada a este equipo.";
+  }
+  if (nombre === "NotReadableError" || nombre === "AbortError") {
+    return "La cámara está siendo usada por otra aplicación (Zoom, Meet, otra pestaña…). Ciérrala y vuelve a intentarlo.";
+  }
+  return error instanceof Error && error.message ? error.message : "No fue posible iniciar el escáner.";
 }
 
 export default function Pdf417Scanner({
@@ -40,9 +79,12 @@ export default function Pdf417Scanner({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const frameRef = useRef<number | null>(null);
+  const temporizadorRef = useRef<number | null>(null);
+  const detectorRef = useRef<Promise<Detector> | null>(null);
   const activeRef = useRef(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [iniciando, setIniciando] = useState(false);
+  const [espejo, setEspejo] = useState(false);
   const [message, setMessage] = useState(
     "Activa la cámara y coloca el QR de ingreso del alumno (o el código PDF417 de su DNI) dentro del recuadro.",
   );
@@ -59,9 +101,9 @@ export default function Pdf417Scanner({
   const stopCamera = useCallback(() => {
     activeRef.current = false;
 
-    if (frameRef.current !== null) {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = null;
+    if (temporizadorRef.current !== null) {
+      window.clearTimeout(temporizadorRef.current);
+      temporizadorRef.current = null;
     }
 
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -78,35 +120,30 @@ export default function Pdf417Scanner({
 
   const startCamera = async () => {
     stopCamera();
+    setIniciando(true);
     setMessage("Solicitando permiso para usar la cámara…");
 
     try {
+      if (!window.isSecureContext) {
+        throw new Error("La cámara solo funciona en páginas seguras (https o localhost).");
+      }
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error("Este navegador no permite acceder a la cámara.");
+        throw new Error("Este navegador no permite acceder a la cámara. Actualízalo o usa el registro manual.");
       }
 
-      const BarcodeDetectorApi = getBarcodeDetector();
-      if (!BarcodeDetectorApi) {
-        throw new Error(
-          "Este navegador no puede leer códigos con la cámara. Usa Chrome o Edge, o registra la asistencia de forma manual.",
-        );
-      }
-
-      const supportedFormats =
-        (await BarcodeDetectorApi.getSupportedFormats?.()) ?? [];
-      const formatos =
-        supportedFormats.length > 0
-          ? FORMATOS_DESEADOS.filter((formato) => supportedFormats.includes(formato))
-          : FORMATOS_DESEADOS;
-      if (formatos.length === 0) {
-        throw new Error(
-          "Este dispositivo no puede leer códigos QR ni PDF417. Registra la asistencia de forma manual.",
-        );
-      }
+      // El lector se prepara mientras el usuario da permiso a la cámara.
+      detectorRef.current ??= crearDetector();
+      detectorRef.current.catch(() => {
+        detectorRef.current = null;
+      });
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
-        video: { facingMode: { ideal: "environment" } },
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
       });
 
       streamRef.current = stream;
@@ -116,48 +153,62 @@ export default function Pdf417Scanner({
         throw new Error("No se pudo iniciar la vista de la cámara.");
       }
 
+      // La cámara frontal o la webcam de una PC se muestran como espejo, que es lo natural.
+      const ajustes = stream.getVideoTracks()[0]?.getSettings();
+      setEspejo(ajustes?.facingMode !== "environment");
+
       video.srcObject = stream;
       await video.play();
-
-      const detector = new BarcodeDetectorApi({ formats: formatos });
       activeRef.current = true;
       setIsScanning(true);
+      setMessage("Preparando el lector de códigos…");
+
+      let detector: Detector;
+      try {
+        detector = await detectorRef.current;
+      } catch {
+        throw new Error("No se pudo cargar el lector de códigos. Revisa tu conexión o registra la asistencia de forma manual.");
+      }
+      if (!activeRef.current) return;
       setMessage("Buscando el código QR o PDF417…");
 
       const scanFrame = async () => {
         if (!activeRef.current) return;
 
         const canvas = canvasRef.current;
-        if (canvas && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
+        if (canvas && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && video.videoWidth > 0) {
+          const escala = Math.min(1, ANCHO_MAXIMO_LECTURA / video.videoWidth);
+          canvas.width = Math.round(video.videoWidth * escala);
+          canvas.height = Math.round(video.videoHeight * escala);
           const context = canvas.getContext("2d", { willReadFrequently: true });
 
           if (context) {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const results = await detector.detect(canvas);
-            const value = results.find((result) => result.rawValue)?.rawValue;
+            try {
+              const results = await detector.detect(canvas);
+              const value = results.find((result) => result.rawValue)?.rawValue;
 
-            if (value) {
-              stopCamera();
-              setMessage("DNI detectado correctamente.");
-              onDetected(value);
-              return;
+              if (value && activeRef.current) {
+                stopCamera();
+                setMessage("Código detectado correctamente.");
+                onDetected(value);
+                return;
+              }
+            } catch {
+              // Un cuadro que no se pudo procesar no detiene el escaneo.
             }
           }
         }
 
-        frameRef.current = requestAnimationFrame(scanFrame);
+        if (activeRef.current) temporizadorRef.current = window.setTimeout(scanFrame, INTERVALO_LECTURA_MS);
       };
 
-      frameRef.current = requestAnimationFrame(scanFrame);
+      void scanFrame();
     } catch (error) {
       stopCamera();
-      reportError(
-        error instanceof Error
-          ? error.message
-          : "No fue posible iniciar el escáner.",
-      );
+      reportError(mensajeErrorCamara(error));
+    } finally {
+      setIniciando(false);
     }
   };
 
@@ -189,7 +240,7 @@ export default function Pdf417Scanner({
       <div className="relative aspect-video overflow-hidden rounded-lg bg-navy">
         <video
           ref={videoRef}
-          className="h-full w-full object-cover"
+          className={`h-full w-full object-cover ${espejo ? "-scale-x-100" : ""}`}
           muted
           playsInline
           aria-label="Vista de la cámara para escanear el DNI"
@@ -215,9 +266,10 @@ export default function Pdf417Scanner({
         <button
           type="button"
           onClick={isScanning ? stopCamera : startCamera}
-          className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2"
+          disabled={iniciando}
+          className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-brand-green focus:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
         >
-          {isScanning ? "Detener cámara" : "Activar cámara"}
+          {iniciando ? "Activando cámara…" : isScanning ? "Detener cámara" : "Activar cámara"}
         </button>
       </div>
 

@@ -42,3 +42,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# motor de lectura de códigos copiado en postinstall
+/public/zxing/
