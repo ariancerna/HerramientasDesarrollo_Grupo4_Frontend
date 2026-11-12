@@ -26,7 +26,12 @@ export function useFotoPerfil() {
   const usuario = session?.usuario;
   const esAlumno = usuario?.rol === "alumno";
   const alumno = esAlumno ? alumnos.find((item) => item.id === usuario?.estudianteId) : undefined;
-  const fotoUrl = esAlumno ? alumno?.fotoUrl : usuario?.fotoUrl;
+  // El alumno usa la foto de su ficha; si no subió ninguna, se muestra la de su
+  // cuenta (por ejemplo la de Google), igual que en el menú de perfil.
+  const fotoFicha = esAlumno ? alumno?.fotoUrl || undefined : usuario?.fotoUrl;
+  const fotoUrl = fotoFicha ?? usuario?.fotoUrl;
+  /** true si la foto la subió el usuario (se puede quitar); false si viene de Google. */
+  const fotoPropia = Boolean(fotoFicha);
 
   const cambiar = useCallback(
     async (archivo: File | null) => {
@@ -64,5 +69,5 @@ export function useFotoPerfil() {
     [esAlumno, actualizarFotoActual],
   );
 
-  return { fotoUrl, subiendo, error, cambiar };
+  return { fotoUrl, fotoPropia, subiendo, error, cambiar };
 }
