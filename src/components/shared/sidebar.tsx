@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { NAV_ITEMS, NavIcon } from "@/constants/nav-items";
+import { TarjetaCategoria } from "@/components/shared/tarjeta-categoria";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -58,6 +59,8 @@ export default function Sidebar() {
           })}
         </ul>
       </nav>
+
+      <TarjetaCategoria />
     </aside>
   );
 }

@@ -91,9 +91,14 @@ export function TablaDatos<T>({
         <ul className="divide-y divide-line md:hidden">
           {visibles.map((fila) => (
             <li key={claveFila(fila)}>
-              <button type="button" onClick={() => onFilaClick?.(fila)} className="w-full px-4 py-3 text-left transition-colors hover:bg-surface-muted">
-                {tarjeta(fila)}
-              </button>
+              {onFilaClick ? (
+                <button type="button" onClick={() => onFilaClick(fila)} className="w-full px-4 py-3 text-left transition-colors hover:bg-surface-muted">
+                  {tarjeta(fila)}
+                </button>
+              ) : (
+                // Sin acción de fila la tarjeta no es un botón (así puede contener sus propios botones).
+                <div className="px-4 py-3">{tarjeta(fila)}</div>
+              )}
             </li>
           ))}
         </ul>

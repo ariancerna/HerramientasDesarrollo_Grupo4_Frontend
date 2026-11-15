@@ -14,7 +14,8 @@ export type IconName =
     | "payments"
     | "evaluation"
     | "announcement"
-    | "qr";
+    | "qr"
+    | "accounts";
 
 export interface NavItem {
     label: string;
@@ -28,6 +29,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
         { label: "Inicio", shortLabel: "Inicio", href: "/dashboard/admin", icon: "home" },
         { label: "Alumnos", shortLabel: "Alumnos", href: "/dashboard/admin/alumnos", icon: "students" },
         { label: "Profesores", shortLabel: "Profesores", href: "/dashboard/admin/profesores", icon: "teacher" },
+        { label: "Usuarios", shortLabel: "Usuarios", href: "/dashboard/admin/usuarios", icon: "accounts" },
         { label: "Asistencia", shortLabel: "Asistencia", href: "/dashboard/admin/asistencia", icon: "attendance" },
         { label: "Pagos", shortLabel: "Pagos", href: "/dashboard/admin/pagos", icon: "payments" },
         { label: "Calendario", shortLabel: "Calendario", href: "/dashboard/admin/calendario", icon: "calendar" },
@@ -112,6 +114,15 @@ export function NavIcon({ name, className }: { name: IconName; className?: strin
         return (
             <Icon className={cls}>
                 <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+            </Icon>
+        );
+    if (name === "accounts")
+        return (
+            <Icon className={cls}>
+                <circle cx="9" cy="8" r="3.2" />
+                <path d="M3 20c.6-3.4 2.8-5.4 6-5.4 1.4 0 2.6.4 3.6 1.1" />
+                <circle cx="17.5" cy="16.5" r="2.3" />
+                <path d="M17.5 12.6v1.6M17.5 18.8v1.6M21.4 16.5h-1.6M15.2 16.5h-1.6M20.3 13.7l-1.1 1.1M15.8 18.2l-1.1 1.1M20.3 19.3l-1.1-1.1M15.8 14.8l-1.1-1.1" />
             </Icon>
         );
     if (name === "teacher")
