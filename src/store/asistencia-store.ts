@@ -7,6 +7,7 @@ import {
 } from "@/types/asistencia";
 import { api, ApiError, apiTodasLasPaginas } from "@/lib/api";
 import { crearColeccionRemota, useColeccion } from "@/lib/remote-collection";
+import { hoyEnLima } from "@/lib/fechas";
 import { getSession } from "@/store/auth-store";
 
 export type {
@@ -32,6 +33,14 @@ const asistencias = crearColeccionRemota<RegistroAsistencia>("asistencias", asyn
 
 export const suscribirAsistencias = asistencias.suscribir;
 export const useRegistrosAsistencia = () => useColeccion(asistencias);
+export const asistenciasCargadas = asistencias.cargada;
+/** Vuelve a pedir los registros al API (p. ej. los que otro profesor marcó desde otro equipo). */
+export const recargarAsistencias = asistencias.recargar;
+
+/** Día (YYYY-MM-DD, hora de Lima) al que pertenece un registro, igual que lo cuenta el backend. */
+export function fechaDeRegistro(registro: Pick<RegistroAsistencia, "fechaHora">): string {
+  return hoyEnLima(new Date(registro.fechaHora));
+}
 
 function fechaLocal(fechaHora: string) {
   const fecha = new Date(fechaHora);
