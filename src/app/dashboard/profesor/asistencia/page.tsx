@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Image from "next/image";
+import { PanelAsistenciasProfesor } from "@/components/asistencia/panel-asistencias-profesor";
 import Pdf417Scanner from "@/components/scanner/pdf417-scanner";
 import { mensajeError as textoError } from "@/lib/api";
 import { hoyEnLima } from "@/lib/fechas";
@@ -357,6 +358,8 @@ export default function AsistenciaProfesorPage() {
             </p>
           </div>
         )}
+
+        <PanelAsistenciasProfesor />
       </div>
     </div>
   );
