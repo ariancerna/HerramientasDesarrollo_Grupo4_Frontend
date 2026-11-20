@@ -69,9 +69,11 @@ export async function actualizarAnuncio(
   data: AnuncioFormData,
   estado: EstadoAnuncio,
 ): Promise<Anuncio> {
-  const actualizado = aAnuncio(
-    await api<AnuncioApi>(`/anuncios/${id}`, { method: "PUT", body: cuerpoAnuncio(data, estado) }),
-  );
+  // Un anuncio ya enviado solo admite corregir el texto: no vuelve a borrador
+  // ni cambia de destinatarios (ya recibieron la notificación).
+  const yaEnviado = obtenerAnuncios().find((anuncio) => anuncio.id === id)?.estado === "enviado";
+  const cuerpo = yaEnviado ? { titulo: data.titulo, mensaje: data.mensaje } : cuerpoAnuncio(data, estado);
+  const actualizado = aAnuncio(await api<AnuncioApi>(`/anuncios/${id}`, { method: "PUT", body: cuerpo }));
   anuncios.establecer(obtenerAnuncios().map((anuncio) => (anuncio.id === id ? actualizado : anuncio)));
   return actualizado;
 }

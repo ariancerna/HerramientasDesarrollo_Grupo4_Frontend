@@ -45,13 +45,14 @@ export default function AnunciosProfesorPage() {
 
   const guardar = async (data: AnuncioFormData, estado: EstadoAnuncio, id?: string) => {
     setError(null);
+    const eraEnviado = Boolean(id) && anuncioAEditar?.estado === "enviado";
     try {
       if (id) {
         await actualizarAnuncio(id, data, estado);
       } else {
         await crearAnuncio(data, estado);
       }
-      avisar(estado === "enviado" ? "Anuncio enviado a tus alumnos." : "Borrador guardado.");
+      avisar(eraEnviado ? "Anuncio actualizado." : estado === "enviado" ? "Anuncio enviado a tus alumnos." : "Borrador guardado.");
       setMostrarFormulario(false);
       setAnuncioAEditar(null);
     } catch (err) {

@@ -46,14 +46,16 @@ export default function AnuncioForm({
     return seleccionados;
   };
 
+  const yaEnviado = anuncioAEditar?.estado === "enviado";
+
   const guardar = (event: React.FormEvent, estado: EstadoAnuncio) => {
     event.preventDefault();
     const nuevosErrores: string[] = [];
-    const destinatarios = obtenerDestinatarios();
+    const destinatarios = yaEnviado ? anuncioAEditar.destinatarios : obtenerDestinatarios();
     if (!titulo.trim()) nuevosErrores.push("El título es obligatorio.");
     if (!mensaje.trim()) nuevosErrores.push("El mensaje es obligatorio.");
-    if (destinatarios.length === 0) nuevosErrores.push("Selecciona al menos un destinatario.");
-    if (modo === "categoria" && !categoriaId) nuevosErrores.push("Selecciona una categoría.");
+    if (!yaEnviado && destinatarios.length === 0) nuevosErrores.push("Selecciona al menos un destinatario.");
+    if (!yaEnviado && modo === "categoria" && !categoriaId) nuevosErrores.push("Selecciona una categoría.");
     setErrores(nuevosErrores);
     if (nuevosErrores.length > 0) return;
 
@@ -77,7 +79,11 @@ export default function AnuncioForm({
             <h2 id="anuncio-form-title" className="text-lg font-bold text-slate-950 dark:text-white">
               {anuncioAEditar ? "Editar anuncio" : "Nuevo anuncio"}
             </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Redacta un aviso para tus alumnos.</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {yaEnviado
+                ? "Este anuncio ya fue enviado: puedes corregir el título y el mensaje."
+                : "Redacta un aviso para tus alumnos."}
+            </p>
           </div>
           <button type="button" onClick={onClose} aria-label="Cerrar ventana" className="grid h-8 w-8 place-items-center rounded-lg text-xl leading-none text-slate-500 hover:bg-slate-100">×</button>
         </div>
@@ -92,6 +98,17 @@ export default function AnuncioForm({
             <textarea rows={4} value={mensaje} onChange={(event) => setMensaje(event.target.value)} className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Escribe el aviso para tus alumnos..." />
           </label>
 
+          {yaEnviado ? (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-800/60">
+              <p className="font-medium text-slate-700 dark:text-slate-200">
+                Destinatarios: {anuncioAEditar.destinatarios.length}{" "}
+                {anuncioAEditar.destinatarios.length === 1 ? "alumno" : "alumnos"}
+              </p>
+              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                No se pueden cambiar porque el anuncio ya les llegó. Si necesitas avisar a otros alumnos, crea un anuncio nuevo.
+              </p>
+            </div>
+          ) : (
           <AnuncioDestinatarios
             alumnos={alumnos}
             categorias={categorias}
@@ -102,6 +119,7 @@ export default function AnuncioForm({
             onCategoriaChange={setCategoriaId}
             onSeleccionadosChange={setSeleccionados}
           />
+          )}
 
           {errores.length > 0 && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -111,8 +129,14 @@ export default function AnuncioForm({
 
           <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
             <button type="button" onClick={onClose} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Cancelar</button>
-            <button type="button" onClick={(event) => guardar(event, "borrador")} className="rounded-lg border border-brand-green px-4 py-2.5 text-sm font-bold text-brand-green hover:bg-brand-green-soft">Guardar borrador</button>
-            <button type="button" onClick={(event) => guardar(event, "enviado")} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-green-dark">Enviar anuncio</button>
+            {yaEnviado ? (
+              <button type="button" onClick={(event) => guardar(event, "enviado")} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-green-dark">Guardar cambios</button>
+            ) : (
+              <>
+                <button type="button" onClick={(event) => guardar(event, "borrador")} className="rounded-lg border border-brand-green px-4 py-2.5 text-sm font-bold text-brand-green hover:bg-brand-green-soft">Guardar borrador</button>
+                <button type="button" onClick={(event) => guardar(event, "enviado")} className="rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-green-dark">Enviar anuncio</button>
+              </>
+            )}
           </div>
         </form>
       </div>
