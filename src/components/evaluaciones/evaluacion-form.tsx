@@ -15,9 +15,8 @@ interface EvaluacionFormProps {
 
 type Errores = Partial<Record<"alumnoId" | "fecha" | "observaciones", string>>;
 
-function fechaActual() {
-  return new Date().toISOString().slice(0, 10);
-}
+// Hoy en Lima: con toISOString() (UTC) después de las 7 p. m. salía la fecha de mañana.
+const fechaActual = () => hoyEnLima();
 
 export default function EvaluacionForm({
   alumnos,
