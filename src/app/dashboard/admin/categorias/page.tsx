@@ -56,7 +56,10 @@ export default function CategoriasPage() {
         avisar(`Categoría "${data.nombre}" creada correctamente`);
       }
     } catch (err) {
-      setError(mensajeError(err, "Error al guardar la categoría"));
+      const mensaje = mensajeError(err, "No se pudo guardar la categoría.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

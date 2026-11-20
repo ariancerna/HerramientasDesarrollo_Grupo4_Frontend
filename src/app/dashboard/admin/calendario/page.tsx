@@ -70,7 +70,10 @@ export default function CalendarioAdminPage() {
       setMostrarFormulario(false);
       setEventoAEditar(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar el evento."));
+      const mensaje = mensajeError(err, "No se pudo guardar el evento.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

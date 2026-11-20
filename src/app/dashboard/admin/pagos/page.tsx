@@ -91,7 +91,10 @@ export default function PagosAdminPage() {
       avisar(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
       setModalAlumno(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo registrar el pago."));
+      const mensaje = mensajeError(err, "No se pudo registrar el pago.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     } finally {
       setGuardando(false);
     }
@@ -103,7 +106,10 @@ export default function PagosAdminPage() {
       await marcarPagoPendiente(pago.id);
       avisar(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo actualizar el pago."));
+      const mensaje = mensajeError(err, "No se pudo actualizar el pago.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 
