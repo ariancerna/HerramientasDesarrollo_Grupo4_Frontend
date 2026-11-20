@@ -22,12 +22,13 @@ const claseCampo =
 
 function fechaLegible(fecha: string) {
   // Mediodía en Lima para que el día no cambie por la zona horaria del equipo.
-  return new Intl.DateTimeFormat("es-PE", {
+  const texto = new Intl.DateTimeFormat("es-PE", {
     timeZone: "America/Lima",
     weekday: "long",
     day: "numeric",
     month: "long",
   }).format(new Date(`${fecha}T12:00:00-05:00`));
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 /**
@@ -73,7 +74,7 @@ export function PanelAsistenciasProfesor() {
     const presentes = new Set(registradas.map((registro) => registro.estudianteId));
     return alumnos
       .filter((alumno) => alumno.estado === "activo" && alcance.has(alumno.categoria) && !presentes.has(alumno.id))
-      .sort((a, b) => `${a.apellidos} ${a.nombres}`.localeCompare(`${b.apellidos} ${b.nombres}`, "es"));
+      .sort((a, b) => `${a.nombres} ${a.apellidos}`.localeCompare(`${b.nombres} ${b.apellidos}`, "es"));
   }, [alumnos, registradas, alcance]);
 
   const total = registradas.length + faltan.length;
@@ -103,7 +104,7 @@ export function PanelAsistenciasProfesor() {
           <h2 id="panel-asistencias-title" className="text-lg font-semibold text-slate-900 dark:text-white">
             {esHoy ? "Asistencias de hoy" : "Asistencias del día"}
           </h2>
-          <p className="mt-0.5 text-sm capitalize text-slate-600 dark:text-slate-400">{fechaLegible(fecha)}</p>
+          <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">{fechaLegible(fecha)}</p>
         </div>
 
         <div className="grid grid-cols-[1fr_1fr_auto] items-end gap-2 sm:w-auto">
