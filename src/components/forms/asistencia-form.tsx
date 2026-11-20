@@ -6,6 +6,7 @@ import {
   RegistroAsistencia,
 } from "@/types/asistencia";
 import { useConfirm } from "@/hooks/use-confirm";
+import { hoyEnLima } from "@/lib/fechas";
 
 interface AsistenciaFormProps {
   registro: RegistroAsistencia;
@@ -48,6 +49,10 @@ export default function AsistenciaForm({
       setError("Selecciona una fecha y hora válidas.");
       return;
     }
+    if (fechaHora.getTime() > Date.now()) {
+      setError("La asistencia no puede quedar registrada en una fecha u hora futura.");
+      return;
+    }
 
     const confirmado = await confirm({
       title: "Guardar corrección",
@@ -69,7 +74,7 @@ export default function AsistenciaForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
       <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <h2 className="text-lg font-bold text-slate-950 dark:text-white">Corregir asistencia</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -85,7 +90,7 @@ export default function AsistenciaForm({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
           <label>
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Fecha
@@ -93,6 +98,7 @@ export default function AsistenciaForm({
             <input
               type="date"
               value={fecha}
+              max={hoyEnLima()}
               onChange={(event) => setFecha(event.target.value)}
               required
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"

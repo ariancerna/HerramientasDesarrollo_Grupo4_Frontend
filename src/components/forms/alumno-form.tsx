@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Student, StudentFormData } from "@/types/student";
 import { useNombresCategorias } from "@/store/categorias-store";
 import { useConfirm } from "@/hooks/use-confirm";
+import { errorNombrePersona } from "@/lib/validaciones";
 
 interface AlumnoFormProps {
   alumnoAEditar: Student | null;
@@ -54,12 +55,10 @@ export default function AlumnoForm({
     if (!/^\d{8}$/.test(form.dni)) {
       nuevosErrores.dni = "El DNI debe tener exactamente 8 dígitos.";
     }
-    if (!form.nombres.trim()) {
-      nuevosErrores.nombres = "Los nombres son obligatorios.";
-    }
-    if (!form.apellidos.trim()) {
-      nuevosErrores.apellidos = "Los apellidos son obligatorios.";
-    }
+    const errorNombres = errorNombrePersona(form.nombres, "Los nombres");
+    if (errorNombres) nuevosErrores.nombres = errorNombres;
+    const errorApellidos = errorNombrePersona(form.apellidos, "Los apellidos");
+    if (errorApellidos) nuevosErrores.apellidos = errorApellidos;
     if (!form.email.trim()) {
       nuevosErrores.email = "El correo es obligatorio.";
     } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
@@ -99,7 +98,7 @@ export default function AlumnoForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
       <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <h2 className="text-lg font-bold text-slate-950 dark:text-white">
           {alumnoAEditar ? "Editar alumno" : "Nuevo alumno"}

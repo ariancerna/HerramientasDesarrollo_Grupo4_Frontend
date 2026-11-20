@@ -91,7 +91,10 @@ export default function PagosAdminPage() {
       avisar(`Pago registrado para ${modalAlumno.nombres} ${modalAlumno.apellidos}.`);
       setModalAlumno(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo registrar el pago."));
+      const mensaje = mensajeError(err, "No se pudo registrar el pago.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     } finally {
       setGuardando(false);
     }
@@ -103,7 +106,10 @@ export default function PagosAdminPage() {
       await marcarPagoPendiente(pago.id);
       avisar(`Se marcó como pendiente el pago de ${alumno.nombres} ${alumno.apellidos}.`);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo actualizar el pago."));
+      const mensaje = mensajeError(err, "No se pudo actualizar el pago.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 
@@ -156,7 +162,7 @@ export default function PagosAdminPage() {
         />
 
         {modalAlumno && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-4">
             <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-slate-900">
               <h2 className="text-lg font-bold text-slate-950 dark:text-white">Registrar pago</h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

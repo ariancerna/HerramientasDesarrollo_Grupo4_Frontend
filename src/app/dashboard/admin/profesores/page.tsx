@@ -76,7 +76,10 @@ export default function ProfesoresPage() {
       setMostrarFormulario(false);
       setProfesorAEditar(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar el profesor."));
+      const mensaje = mensajeError(err, "No se pudo guardar el profesor.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

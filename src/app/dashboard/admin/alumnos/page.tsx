@@ -84,7 +84,10 @@ export default function AlumnosAdminPage() {
       }
       setIsModalOpen(false);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar el alumno."));
+      const mensaje = mensajeError(err, "No se pudo guardar el alumno.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

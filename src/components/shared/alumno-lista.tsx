@@ -89,7 +89,11 @@ export function AlumnoLista({ alumnos, onEditar, onEliminar, cargando = false }:
           seleccionado && !soloLectura && (
             <>
               {onEditar && (
-                <button type="button" onClick={() => onEditar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
+                <button type="button" onClick={() => {
+                  // Se cierra el panel para que el formulario no quede detrás de él.
+                  setSeleccionadoId(null);
+                  onEditar(seleccionado);
+                }} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
                   <Pencil className="h-4 w-4" /> Editar
                 </button>
               )}

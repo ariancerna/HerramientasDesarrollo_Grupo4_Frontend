@@ -12,7 +12,7 @@ export default function EvaluacionModal({
   onClose,
 }: EvaluacionModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-8">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-8">
       <div
         role="dialog"
         aria-modal="true"

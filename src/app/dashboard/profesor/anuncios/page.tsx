@@ -55,7 +55,10 @@ export default function AnunciosProfesorPage() {
       setMostrarFormulario(false);
       setAnuncioAEditar(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar el anuncio."));
+      const mensaje = mensajeError(err, "No se pudo guardar el anuncio.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

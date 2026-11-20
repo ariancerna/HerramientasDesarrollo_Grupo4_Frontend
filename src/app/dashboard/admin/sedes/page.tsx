@@ -49,7 +49,10 @@ export default function SedesPage() {
       setMostrarFormulario(false);
       setSedeAEditar(null);
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar la sede."));
+      const mensaje = mensajeError(err, "No se pudo guardar la sede.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

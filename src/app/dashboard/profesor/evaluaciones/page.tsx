@@ -67,7 +67,10 @@ export default function EvaluacionesProfesorPage() {
       }
       cerrarFormulario();
     } catch (err) {
-      setError(mensajeError(err, "No se pudo guardar la evaluación."));
+      const mensaje = mensajeError(err, "No se pudo guardar la evaluación.");
+      setError(mensaje);
+      // El aviso se ve aunque el formulario siga abierto encima del banner.
+      avisar(mensaje, "error");
     }
   };
 

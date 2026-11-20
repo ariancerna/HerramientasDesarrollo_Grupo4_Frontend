@@ -97,11 +97,17 @@ export function PagosLista({ filas, montoBase, onRegistrar, onMarcarDeuda, carga
         pie={
           seleccionada &&
           (seleccionada.pago?.estado === "pagado" ? (
-            <button type="button" onClick={() => onMarcarDeuda(seleccionada.pago!, seleccionada.alumno)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+            <button type="button" onClick={() => {
+              setSeleccionadoId(null);
+              onMarcarDeuda(seleccionada.pago!, seleccionada.alumno);
+            }} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface-muted">
               <RotateCcw className="h-4 w-4" /> Marcar como deuda
             </button>
           ) : (
-            <button type="button" onClick={() => onRegistrar(seleccionada.alumno)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
+            <button type="button" onClick={() => {
+              setSeleccionadoId(null);
+              onRegistrar(seleccionada.alumno);
+            }} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
               <Wallet className="h-4 w-4" /> Registrar pago
             </button>
           ))

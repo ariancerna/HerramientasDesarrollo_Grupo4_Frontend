@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Categoria } from "@/types";
 import { EventoClub } from "@/types/calendario";
 import { useConfirm } from "@/hooks/use-confirm";
+import { hoyEnLima, yaPaso } from "@/lib/fechas";
 
 interface EventoFormData {
   titulo: string;
@@ -60,6 +61,16 @@ export default function EventoForm({
     if (!form.titulo.trim()) nuevos.titulo = "El título es obligatorio.";
     if (!form.fecha) nuevos.fecha = "Selecciona la fecha.";
     if (!form.horaInicio) nuevos.horaInicio = "Selecciona la hora de inicio.";
+    // Los eventos se programan a futuro. Al editar uno pasado se pueden corregir sus
+    // textos, pero no dejarlo (o moverlo) en una fecha u hora que ya pasó.
+    const cambiaMomento = !eventoAEditar || form.fecha !== eventoAEditar.fecha || form.horaInicio !== eventoAEditar.horaInicio;
+    if (form.fecha && form.horaInicio && cambiaMomento && yaPaso(form.fecha, form.horaInicio)) {
+      if (form.fecha < hoyEnLima()) nuevos.fecha = "La fecha ya pasó. Elige hoy o un día futuro.";
+      else nuevos.horaInicio = "Esa hora ya pasó. Elige una hora posterior.";
+    }
+    if (form.horaInicio && form.horaFin && form.horaFin <= form.horaInicio) {
+      nuevos.horaFin = "La hora de fin debe ser posterior a la de inicio.";
+    }
     if (!form.ubicacion.trim()) nuevos.ubicacion = "La ubicación es obligatoria.";
     if (!form.descripcion.trim()) nuevos.descripcion = "La descripción es obligatoria.";
     setErrores(nuevos);
@@ -98,7 +109,7 @@ export default function EventoForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
       <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <h2 className="text-lg font-bold text-slate-950 dark:text-white">
           {eventoAEditar ? "Editar evento" : "Programar evento o entrenamiento especial"}
@@ -107,7 +118,7 @@ export default function EventoForm({
           Se mostrará en el calendario del club y de los alumnos de la categoría seleccionada.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2">
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Título
@@ -130,6 +141,7 @@ export default function EventoForm({
             <input
               type="date"
               value={form.fecha}
+              min={eventoAEditar && eventoAEditar.fecha < hoyEnLima() ? undefined : hoyEnLima()}
               onChange={(e) => setForm({ ...form, fecha: e.target.value })}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
@@ -178,9 +190,13 @@ export default function EventoForm({
             <input
               type="time"
               value={form.horaFin}
+              min={form.horaInicio || undefined}
               onChange={(e) => setForm({ ...form, horaFin: e.target.value })}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />
+            {errores.horaFin && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errores.horaFin}</p>
+            )}
           </label>
 
           <label className="sm:col-span-2">

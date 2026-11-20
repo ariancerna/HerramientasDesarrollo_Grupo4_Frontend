@@ -12,6 +12,7 @@ import {
   useAlumnos,
 } from "@/store/alumnos-store";
 import type { Student, StudentProfileData } from "@/types/student";
+import { errorNombrePersona } from "@/lib/validaciones";
 
 const MAX_FOTO_BYTES = 1_500_000;
 const FORMATOS_FOTO = ["image/jpeg", "image/png", "image/webp"];
@@ -127,12 +128,10 @@ function PerfilForm({
   const validar = () => {
     const nuevosErrores: ErroresPerfil = {};
 
-    if (!form.nombres.trim()) {
-      nuevosErrores.nombres = "Los nombres son obligatorios.";
-    }
-    if (!form.apellidos.trim()) {
-      nuevosErrores.apellidos = "Los apellidos son obligatorios.";
-    }
+    const errorNombres = errorNombrePersona(form.nombres, "Los nombres");
+    if (errorNombres) nuevosErrores.nombres = errorNombres;
+    const errorApellidos = errorNombrePersona(form.apellidos, "Los apellidos");
+    if (errorApellidos) nuevosErrores.apellidos = errorApellidos;
     if (!form.email.trim()) {
       nuevosErrores.email = "El correo es obligatorio.";
     } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {

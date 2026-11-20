@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Pdf417Scanner from "@/components/scanner/pdf417-scanner";
 import { mensajeError as textoError } from "@/lib/api";
+import { hoyEnLima } from "@/lib/fechas";
 import {
   buscarEstudiantePorDni,
   EstudianteAsistencia,
@@ -140,6 +141,10 @@ export default function AsistenciaProfesorPage() {
       setMensajeError("La fecha u hora seleccionada no es válida.");
       return;
     }
+    if (fechaHora.getTime() > Date.now()) {
+      setMensajeError("No puedes registrar una asistencia en una fecha u hora futura.");
+      return;
+    }
 
     if (!estudiante.activo) {
       setMensajeError("El estudiante encontrado no está activo.");
@@ -231,7 +236,7 @@ export default function AsistenciaProfesorPage() {
                 Completa los datos cuando no sea posible leer el código con la cámara.
               </p>
 
-              <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
+              <form onSubmit={registrarManual} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
                 <label className="sm:col-span-2">
                   <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     DNI del estudiante
@@ -256,6 +261,7 @@ export default function AsistenciaProfesorPage() {
                   <input
                     type="date"
                     value={fechaManual}
+                    max={hoyEnLima()}
                     onChange={(event) => setFechaManual(event.target.value)}
                     required
                     className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
