@@ -118,7 +118,7 @@ export default function EventoForm({
           Se mostrará en el calendario del club y de los alumnos de la categoría seleccionada.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2">
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Título

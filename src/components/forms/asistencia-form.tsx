@@ -90,7 +90,7 @@ export default function AsistenciaForm({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
           <label>
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Fecha

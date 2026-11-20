@@ -67,7 +67,7 @@ export default function EvaluacionForm({
       titulo={evaluacionAEditar ? "Editar evaluación" : "Registrar evaluación"}
       onClose={onClose}
     >
-      <form onSubmit={guardar} className="mt-5 space-y-4">
+      <form onSubmit={guardar} noValidate className="mt-5 space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2">
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">Alumno</span>

@@ -236,7 +236,7 @@ export default function AsistenciaProfesorPage() {
                 Completa los datos cuando no sea posible leer el código con la cámara.
               </p>
 
-              <form onSubmit={registrarManual} className="mt-5 grid gap-4 sm:grid-cols-2">
+              <form onSubmit={registrarManual} noValidate className="mt-5 grid gap-4 sm:grid-cols-2">
                 <label className="sm:col-span-2">
                   <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     DNI del estudiante
