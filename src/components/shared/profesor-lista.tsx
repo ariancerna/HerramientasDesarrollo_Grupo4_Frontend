@@ -98,7 +98,11 @@ export function ProfesorLista({ profesores, categorias, onEditar, onEliminar, ca
         pie={
           seleccionado && (
             <>
-              <button type="button" onClick={() => onEditar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
+              <button type="button" onClick={() => {
+                  // Se cierra el panel para que el formulario no quede detrás de él.
+                  setSeleccionadoId(null);
+                  onEditar(seleccionado);
+                }} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand-green px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-green-dark">
                 <Pencil className="h-4 w-4" /> Editar
               </button>
               <button type="button" onClick={() => onEliminar(seleccionado)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10">

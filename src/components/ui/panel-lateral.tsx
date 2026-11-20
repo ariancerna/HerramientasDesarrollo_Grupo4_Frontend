@@ -14,7 +14,13 @@ interface PanelLateralProps {
   pie?: ReactNode;
 }
 
-/** Panel de detalle que se desliza desde la derecha (se cierra con Escape o clic fuera). */
+/**
+ * Panel de detalle que se desliza desde la derecha (se cierra con Escape o clic fuera).
+ *
+ * Capas de la app (de abajo hacia arriba): barra superior z-30 · navegación z-40/50 ·
+ * panel lateral z-[55] · formularios y modales z-[60] · confirmaciones z-[65] · avisos z-[70].
+ * Así un formulario abierto desde el panel nunca queda detrás de su fondo desenfocado.
+ */
 export function PanelLateral({ abierto, titulo, subtitulo, onCerrar, children, pie }: PanelLateralProps) {
   useEffect(() => {
     if (!abierto) return;

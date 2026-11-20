@@ -156,7 +156,7 @@ export default function PagosAdminPage() {
         />
 
         {modalAlumno && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-4">
             <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-slate-900">
               <h2 className="text-lg font-bold text-slate-950 dark:text-white">Registrar pago</h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

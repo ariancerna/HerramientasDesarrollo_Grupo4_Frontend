@@ -55,7 +55,7 @@ export default function SedeForm({ sedeAEditar, onClose, onGuardar }: SedeFormPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-4 sm:py-6">
       <div className="my-auto w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:p-6">
         <h2 className="text-lg font-bold text-slate-950 dark:text-white">
           {sedeAEditar ? "Editar sede" : "Nueva sede"}
