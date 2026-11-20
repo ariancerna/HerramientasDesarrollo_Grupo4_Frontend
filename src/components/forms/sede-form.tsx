@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sede } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useSedes } from "@/store/sedes-store";
 
 interface SedeFormProps {
   sedeAEditar: Sede | null;
@@ -15,6 +16,7 @@ type Errores = Partial<{ nombre: string }>;
 const formularioVacio: Omit<Sede, "id"> = { nombre: "", direccion: "" };
 
 export default function SedeForm({ sedeAEditar, onClose, onGuardar }: SedeFormProps) {
+  const sedes = useSedes();
   const [form, setForm] = useState<Omit<Sede, "id">>(() => {
     if (!sedeAEditar) return formularioVacio;
     return { nombre: sedeAEditar.nombre, direccion: sedeAEditar.direccion ?? "" };
@@ -28,6 +30,8 @@ export default function SedeForm({ sedeAEditar, onClose, onGuardar }: SedeFormPr
       nuevosErrores.nombre = "El nombre de la sede es obligatorio.";
     } else if (form.nombre.trim().length < 3) {
       nuevosErrores.nombre = "El nombre debe tener mínimo 3 caracteres.";
+    } else if (sedes.some((s) => s.id !== sedeAEditar?.id && s.nombre.trim().toLowerCase() === form.nombre.trim().toLowerCase())) {
+      nuevosErrores.nombre = "Ya existe una sede con ese nombre.";
     }
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Categoria, Horario } from "@/types";
 import { HorarioForm } from "./horario-form";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useCategorias } from "@/store/categorias-store";
 
 interface CategoriaFormProps {
   categoriaAEditar: Categoria | null;
@@ -28,6 +29,7 @@ export default function CategoriaForm({
   onClose,
   onGuardar,
 }: CategoriaFormProps) {
+  const categorias = useCategorias();
   const [form, setForm] = useState<Omit<Categoria, "id">>(() => {
     if (!categoriaAEditar) return formularioVacio;
     return {
@@ -64,6 +66,8 @@ export default function CategoriaForm({
       nuevosErrores.nombre = "El nombre es obligatorio.";
     } else if (form.nombre.trim().length < 3) {
       nuevosErrores.nombre = "El nombre debe tener mínimo 3 caracteres.";
+    } else if (categorias.some((c) => c.id !== categoriaAEditar?.id && c.nombre.trim().toLowerCase() === form.nombre.trim().toLowerCase())) {
+      nuevosErrores.nombre = "Ya existe una categoría con ese nombre.";
     }
 
     if (form.descripcion && !form.descripcion.trim()) {
