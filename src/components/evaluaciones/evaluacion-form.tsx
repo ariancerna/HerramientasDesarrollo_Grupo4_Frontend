@@ -4,6 +4,7 @@ import { useState } from "react";
 import EvaluacionModal from "@/components/evaluaciones/evaluacion-modal";
 import { Student } from "@/types/student";
 import { Evaluacion, EvaluacionFormData } from "@/types/evaluacion";
+import { hoyEnLima } from "@/lib/fechas";
 
 interface EvaluacionFormProps {
   alumnos: Student[];
@@ -48,6 +49,7 @@ export default function EvaluacionForm({
     const nuevosErrores: Errores = {};
     if (!form.alumnoId) nuevosErrores.alumnoId = "Selecciona un alumno.";
     if (!form.fecha) nuevosErrores.fecha = "Selecciona una fecha.";
+    else if (form.fecha > hoyEnLima()) nuevosErrores.fecha = "La fecha de la evaluación no puede ser futura.";
     if (!form.observaciones.trim()) {
       nuevosErrores.observaciones = "Escribe una observación.";
     }
@@ -89,6 +91,7 @@ export default function EvaluacionForm({
             <input
               type="date"
               value={form.fecha}
+              max={hoyEnLima()}
               onChange={(event) => setForm({ ...form, fecha: event.target.value })}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             />

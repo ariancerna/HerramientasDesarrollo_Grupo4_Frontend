@@ -6,6 +6,7 @@ import {
   RegistroAsistencia,
 } from "@/types/asistencia";
 import { useConfirm } from "@/hooks/use-confirm";
+import { hoyEnLima } from "@/lib/fechas";
 
 interface AsistenciaFormProps {
   registro: RegistroAsistencia;
@@ -46,6 +47,10 @@ export default function AsistenciaForm({
     const fechaHora = new Date(`${fecha}T${hora}:00`);
     if (!fecha || !hora || Number.isNaN(fechaHora.getTime())) {
       setError("Selecciona una fecha y hora válidas.");
+      return;
+    }
+    if (fechaHora.getTime() > Date.now()) {
+      setError("La asistencia no puede quedar registrada en una fecha u hora futura.");
       return;
     }
 
@@ -93,6 +98,7 @@ export default function AsistenciaForm({
             <input
               type="date"
               value={fecha}
+              max={hoyEnLima()}
               onChange={(event) => setFecha(event.target.value)}
               required
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-lime/30 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
