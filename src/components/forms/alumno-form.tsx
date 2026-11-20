@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Student, StudentFormData } from "@/types/student";
 import { useNombresCategorias } from "@/store/categorias-store";
 import { useConfirm } from "@/hooks/use-confirm";
+import { errorNombrePersona } from "@/lib/validaciones";
 
 interface AlumnoFormProps {
   alumnoAEditar: Student | null;
@@ -54,12 +55,10 @@ export default function AlumnoForm({
     if (!/^\d{8}$/.test(form.dni)) {
       nuevosErrores.dni = "El DNI debe tener exactamente 8 dígitos.";
     }
-    if (!form.nombres.trim()) {
-      nuevosErrores.nombres = "Los nombres son obligatorios.";
-    }
-    if (!form.apellidos.trim()) {
-      nuevosErrores.apellidos = "Los apellidos son obligatorios.";
-    }
+    const errorNombres = errorNombrePersona(form.nombres, "Los nombres");
+    if (errorNombres) nuevosErrores.nombres = errorNombres;
+    const errorApellidos = errorNombrePersona(form.apellidos, "Los apellidos");
+    if (errorApellidos) nuevosErrores.apellidos = errorApellidos;
     if (!form.email.trim()) {
       nuevosErrores.email = "El correo es obligatorio.";
     } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {

@@ -5,6 +5,7 @@ import { Categoria, DatosProfesor, Profesor } from "@/types";
 import { usuarioProfesorDisponible } from "@/store/profesores-store";
 import { useSedes } from "@/store/sedes-store";
 import { useConfirm } from "@/hooks/use-confirm";
+import { errorNombreCompleto } from "@/lib/validaciones";
 
 interface ProfesorFormData {
   nombre: string;
@@ -55,9 +56,8 @@ export default function ProfesorForm({
   const validar = (): boolean => {
     const nuevosErrores: Errores = {};
 
-    if (!form.nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
-    }
+    const errorNombre = errorNombreCompleto(form.nombre);
+    if (errorNombre) nuevosErrores.nombre = errorNombre;
 
     if (!form.usuario.trim()) {
       nuevosErrores.usuario = "El usuario es obligatorio.";
